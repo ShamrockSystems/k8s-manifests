@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oxigraph-secondary
+  labels:
+    app: oxigraph-secondary
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: oxigraph-secondary
+  template:
+    metadata:
+      labels:
+        app: oxigraph-secondary
+    spec:
+      volumes:
+        - name: oxigraph-primary-data
+          persistentVolumeClaim:
+            claimName: oxigraph-primary-pvc
+      containers:
+        - name: oxigraph
+          image: ghcr.io/oxigraph/oxigraph:v0.3.22
+          args:
+            - serve-secondary
+            - --primary-location
+            - /primary
+            - --bind
+            - 0.0.0.0:7878
+          ports:
+            - containerPort: 7878
+          volumeMounts:
+            - mountPath: /primary
+              name: oxigraph-primary-data

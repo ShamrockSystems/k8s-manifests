@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: oxigraph-primary-pvc
+  namespace: deeppharmgraph
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 32Gi
+  storageClassName: filesystem-erasure
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oxigraph-primary
+  name: oxigraph-primary
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oxigraph-primary
+  template:
+    metadata:
+      labels:
+        app: oxigraph-primary
+    spec:
+      containers:
+      - args:
+        - --location
+        - /data
+        - serve
+        - --bind
+        - 0.0.0.0:7878
+        image: ghcr.io/oxigraph/oxigraph:v0.3.22
+        name: oxigraph
+        ports:
+        - containerPort: 7878
+        volumeMounts:
+        - mountPath: /data
+          name: oxigraph-data
+      volumes:
+      - name: oxigraph-data
+        persistentVolumeClaim:
+          claimName: oxigraph-primary-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oxigraph-secondary
+  name: oxigraph-secondary
+  namespace: deeppharmgraph
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: oxigraph-secondary
+  template:
+    metadata:
+      labels:
+        app: oxigraph-secondary
+    spec:
+      containers:
+      - args:
+        - serve-secondary
+        - --primary-location
+        - /primary
+        - --bind
+        - 0.0.0.0:7878
+        image: ghcr.io/oxigraph/oxigraph:v0.3.22
+        name: oxigraph
+        ports:
+        - containerPort: 7878
+        volumeMounts:
+        - mountPath: /primary
+          name: oxigraph-primary-data
+      volumes:
+      - name: oxigraph-primary-data
+        persistentVolumeClaim:
+          claimName: oxigraph-primary-pvc

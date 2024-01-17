@@ -113,3 +113,21 @@ builds:
     buildPath: builds/in-cluster/whereabouts
     cluster: in-cluster
     name: whereabouts
+  - timestamp: 1705514196
+    sourceHash: 60e39a27724e5fe0f4b9550b2edc88f6a4f32ea5b64b7a4ef2b3e0a388ea6f63
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-meta
+    buildHash: 1a9c9f44f4a26bf2cc6652dd69833ad18fa659a4ba00cdb841f162a85365a333
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-meta
+    cluster: in-cluster
+    name: dpg-meta
+  - timestamp: 1705514210
+    sourceHash: ea3aa484b00ace9390bd20a5abc639e2882a1d5840f71ba5d42599499c1c7f6a
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-datastore
+    buildHash: 2aa7b99c89f69dbdf68ade35d55e8ae80ccfa2ff3934dbc46d7087e61456435e
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-datastore
+    cluster: in-cluster
+    name: dpg-datastore
