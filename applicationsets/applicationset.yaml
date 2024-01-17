@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kustomanager
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/ShamrockSystems/k8s-manifests.git
+        revision: HEAD
+        directories:
+          - path: builds/in-cluster/*
+  template:
+    metadata:
+      name: '{{ index .path.segments 1 }}-{{.path.basename}}'
+      namespace: argocd
+    spec:
+      project: "kustomanager"
+      source:
+        repoURL: https://github.com/ShamrockSystems/k8s-manifests.git
+        targetRevision: HEAD
+        path: '{{.path.path}}'
+      destination:
+        name: '{{ index .path.segments 1 }}'

@@ -1,0 +1,46 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: mixed-line-ending
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 3.1.54
+    hooks:
+      - id: checkov
+        args: [-d .]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.13
+    hooks:
+      - id: ruff
+        args: [--select, I, --fix]
+        name: ruff sort imports
+      - id: ruff
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-check-blanket-noqa
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.33.0
+    hooks:
+      - id: yamllint
+        args: [--strict]
+  - repo: https://github.com/pdm-project/pdm
+    rev: 2.11.2
+    hooks:
+      - id: pdm-sync
+        additional_dependencies:
+          - keyring
+      - id: pdm-lock-check
+  - repo: local
+    hooks:
+      - id: kustomanager
+        name: kustomanager-build
+        entry: pdm run kustomanager build
+        language: system
+        pass_filenames: false

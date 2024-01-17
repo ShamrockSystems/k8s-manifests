@@ -1,0 +1,21 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rook-ceph-operator-config
+  namespace: rook-ceph
+data:
+  CSI_PLUGIN_ENABLE_SELINUX_HOST_MOUNT: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rook-ceph-operator
+  namespace: rook-ceph
+spec:
+  template:
+    spec:
+      containers:
+        - name: rook-ceph-operator
+          env:
+            - name: ROOK_HOSTPATH_REQUIRES_PRIVILEGED
+              value: "true"

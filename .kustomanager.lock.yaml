@@ -1,0 +1,115 @@
+apiVersion: kustomanager.shamrock.systems/v1alpha1
+kind: KustomanagerLockfile
+
+# Metadata for the repository this lockfile resides in
+repo:
+  url: https://github.com/ShamrockSystems/k8s-manifests.git
+  revision: HEAD
+
+# A list of clusters accesible from the Argo CD installation
+# This information is used to populate the generate ApplicationSet resource.
+clusters:
+  - name: in-cluster
+    directory: ./cluster-metal
+    destination:
+      server: https://kubernetes.default.svc
+
+# The directory where ApplicationSet resources are generated and managed
+applicationsetDir: ./applicationsets
+
+# The directory where all managed files are placed.
+# This *should* be added to version control.
+buildDir: ./builds
+
+# Build lock information containing relevant build state
+builds:
+  - timestamp: 1705509577
+    sourceHash: 00bc9136fbec031979d7720d0a3a95b2859b2299520e76e8bd686fa4ff6e450a
+    sourceHashType: sha256
+    sourcePath: cluster-metal/argocd
+    buildHash: 38cf1d3f3eaf9f85dd1685d41fe3d37b3f41705a78d708e3e92efea446e5cd5d
+    buildHashType: sha256
+    buildPath: builds/in-cluster/argocd
+    cluster: in-cluster
+    name: argocd
+  - timestamp: 1705509603
+    sourceHash: a9a5b74d0853d19ec0f52fd90fe5245e6640df09f32f045b3085d016248c0745
+    sourceHashType: sha256
+    sourcePath: cluster-metal/cert-manager
+    buildHash: 76541462d2a4ee234f809613add582071a80ec0ae8acf97234ea0754c7aa49e9
+    buildHashType: sha256
+    buildPath: builds/in-cluster/cert-manager
+    cluster: in-cluster
+    name: cert-manager
+  - timestamp: 1705509607
+    sourceHash: 0ba9a0e62754c0dec1e279a65727496a9ef56247d981e06c03560651df096217
+    sourceHashType: sha256
+    sourcePath: cluster-metal/cilium
+    buildHash: cd1772cd9a8d46356d72ccd19978846944bf3e9e8f1ea8af413b2583a3daebca
+    buildHashType: sha256
+    buildPath: builds/in-cluster/cilium
+    cluster: in-cluster
+    name: cilium
+  - timestamp: 1705509611
+    sourceHash: 910fba04e99536e03e79a53aa61d5c130947911309921222902847569ac4059a
+    sourceHashType: sha256
+    sourcePath: cluster-metal/cloudflared
+    buildHash: 1722b8e27eb6b53bad2562655b51a7bcf518daff983f6ffe7880069f8d187f5f
+    buildHashType: sha256
+    buildPath: builds/in-cluster/cloudflared
+    cluster: in-cluster
+    name: cloudflared
+  - timestamp: 1705509616
+    sourceHash: 37a87588e6f0f84159ca797e9bfd6930edf0361e0a71828472aacefa6d3aa895
+    sourceHashType: sha256
+    sourcePath: cluster-metal/gateway-api
+    buildHash: 4134ec0fb14ef573245ea1087acd5d4c52921a33fc7fe230a95b3c284c930a98
+    buildHashType: sha256
+    buildPath: builds/in-cluster/gateway-api
+    cluster: in-cluster
+    name: gateway-api
+  - timestamp: 1705509626
+    sourceHash: f20a39bc9286c25d4070edef0961910929bdff31c6910df816f64bfc8a11b781
+    sourceHashType: sha256
+    sourcePath: cluster-metal/multus
+    buildHash: 8542d7e698a8ad80b5c7c90803c655ef6a268361e1d5b752173018fb57e8de33
+    buildHashType: sha256
+    buildPath: builds/in-cluster/multus
+    cluster: in-cluster
+    name: multus
+  - timestamp: 1705509629
+    sourceHash: 05770aea3ff45ab3bfab934a524f65c65c93dd3b0256ce71b383c75c157459b5
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rbac
+    buildHash: a2a8a3e21a318fc40ecbdf06a484b22ac58125f51546bd72de5cfb38b6e64c76
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rbac
+    cluster: in-cluster
+    name: rbac
+  - timestamp: 1705509631
+    sourceHash: 172f1d5e20ce95ba51916c4ac13dd53a7d6bede486b75a5126aac1f7ac4211b1
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rook
+    buildHash: e39ff978f967e6425b448a64187024671b0ebb409777ecc241ebaf907a188cba
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rook
+    cluster: in-cluster
+    name: rook
+  - timestamp: 1705509638
+    sourceHash: 037c0eba23ebefeafb1f83eaf62c4296340e6684c65c89e45d81a9f5e8323032
+    sourceHashType: sha256
+    sourcePath: cluster-metal/sealed-secrets
+    buildHash: c0e307e7a6d226329f1b92909195fdb497cae3093f552b90607d06793b1e4d3a
+    buildHashType: sha256
+    buildPath: builds/in-cluster/sealed-secrets
+    cluster: in-cluster
+    name: sealed-secrets
+  - timestamp: 1705509643
+    sourceHash: 3f0fc30018c4882ed0c7e754a1e5ad27e62488540e4123d50e0c34f55892d942
+    sourceHashType: sha256
+    sourcePath: cluster-metal/whereabouts
+    buildHash: 4ac71987ab6a2c9558971de96ddadab251be619c2197b2613d702467fba34c06
+    buildHashType: sha256
+    buildPath: builds/in-cluster/whereabouts
+    cluster: in-cluster
+    name: whereabouts

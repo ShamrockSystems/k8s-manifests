@@ -1,0 +1,12 @@
+kubectl -n argocd         delete po argocd-dex-server-5cb44cbfcd-hms2j
+kubectl -n argocd         delete po argocd-dex-server-5cb44cbfcd-kvzhr
+kubectl -n argocd         delete po argocd-dex-server-5cb44cbfcd-wgrtg
+kubectl -n argocd         delete po argocd-notifications-controller-566465df76-5qh26
+kubectl -n argocd         delete po argocd-notifications-controller-566465df76-n57fs
+kubectl -n argocd         delete po argocd-notifications-controller-566465df76-wz8pv
+kubectl -n argocd         delete po argocd-repo-server-6d5f959b8f-4sl6k
+kubectl -n argocd         delete po argocd-repo-server-6d5f959b8f-8qh98
+kubectl -n argocd         delete po argocd-repo-server-6d5f959b8f-b2lwn
+kubectl -n argocd         delete po argocd-server-7b6bb89949-n4r2p
+kubectl -n argocd         delete po argocd-server-7b6bb89949-n8bxk
+kubectl -n argocd         delete po argocd-server-7b6bb89949-scmb9

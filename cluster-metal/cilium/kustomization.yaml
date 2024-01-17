@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ./ciliumloadbalancerpool.yaml
+  - ./certificate.yaml
+  - ./gateway.yaml
+
+helmCharts:
+  - releaseName: cilium
+    namespace: kube-system
+    name: cilium
+    repo: https://helm.cilium.io
+    version: 1.14.5
+    valuesFile: values.cilium.yaml
+    includeCRDs: true
+    apiVersions:
+      - gateway.networking.k8s.io/v1beta1/GatewayClass
+
+patches:
+  - target:
+      kind: CronJob
+    patch: |
+      - op: replace
+        path: /apiVersion
+        value: batch/v1

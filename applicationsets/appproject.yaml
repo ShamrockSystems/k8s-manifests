@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: kustomanager
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Kustomanager-managed Project
+
+  sourceRepos:
+    - https://github.com/ShamrockSystems/k8s-manifests.git
+
+  destinations:
+    - name: in-cluster
+      namespace: "*"
+
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"

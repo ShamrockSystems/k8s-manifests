@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: http-dashboard
+  namespace: rook-ceph
+spec:
+  parentRefs:
+    - name: http-gateway
+      namespace: kube-system
+  hostnames: [metal-ceph.shamrock.systems]
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: rook-ceph-mgr-dashboard
+          port: 7000

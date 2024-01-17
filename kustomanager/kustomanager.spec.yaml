@@ -1,0 +1,4 @@
+apiVersion: kustomanager.shamrock.systems/v1alpha1
+kind: Kustomanager
+
+ignoreApplicationDifferences: ...
