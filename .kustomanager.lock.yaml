@@ -122,8 +122,17 @@ builds:
     buildPath: builds/in-cluster/dpg-meta
     cluster: in-cluster
     name: dpg-meta
-  - timestamp: 1705514210
-    sourceHash: ea3aa484b00ace9390bd20a5abc639e2882a1d5840f71ba5d42599499c1c7f6a
+  - timestamp: 1706110925
+    sourceHash: fb840b9f593322451c7e0468dffd7dc7e603cf0783bc27699a96ba72a3fb0b5b
+    sourceHashType: sha256
+    sourcePath: cluster-metal/olm
+    buildHash: 01298f1df96ae31351bc96073fb93c9824ca0df1b23fea9a96c8833f1e48e381
+    buildHashType: sha256
+    buildPath: builds/in-cluster/olm
+    cluster: in-cluster
+    name: olm
+  - timestamp: 1706110940
+    sourceHash: 5d5c8d0fe167a1f4a7973f9c1e3f91673c8843568e74abcd46436cf5a90d88ef
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-datastore
     buildHash: 2aa7b99c89f69dbdf68ade35d55e8ae80ccfa2ff3934dbc46d7087e61456435e
