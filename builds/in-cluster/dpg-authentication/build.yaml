@@ -1,0 +1,131 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dpg-authentication-keycloak
+  namespace: deeppharmgraph
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: keycloak
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: keycloak
+  name: keycloak
+  namespace: deeppharmgraph
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: keycloak
+    spec:
+      containers:
+      - args:
+        - start-dev
+        env:
+        - name: DB_VENDOR
+          value: postgres
+        - name: DB_ADDR
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: keycloakdb-pguser-keycloakdb
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: keycloakdb-pguser-keycloakdb
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: dbname
+              name: keycloakdb-pguser-keycloakdb
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: keycloakdb-pguser-keycloakdb
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: keycloakdb-pguser-keycloakdb
+        - name: KEYCLOAK_ADMIN
+          value: admin
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          value: initial
+        - name: KC_PROXY
+          value: edge
+        image: quay.io/keycloak/keycloak:23.0
+        name: keycloak
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 8443
+          name: https
+        readinessProbe:
+          httpGet:
+            path: /realms/master
+            port: 8080
+      restartPolicy: Always
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: http-dashboard
+  namespace: deeppharmgraph
+spec:
+  hostnames:
+  - dpg-auth.shamrock.systems
+  parentRefs:
+  - name: http-gateway
+    namespace: kube-system
+  rules:
+  - backendRefs:
+    - name: dpg-authentication-keycloak
+      port: 80
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+---
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: keycloakdb
+  namespace: deeppharmgraph
+spec:
+  backups:
+    pgbackrest:
+      configuration:
+      - secret:
+          name: pgo-backrest-repo-config
+      global:
+        repo1-path: /pgbackrest/postgres-operator/hippo-s3/repo1
+      image: registry.developers.crunchydata.com/crunchydata/crunchy-pgbackrest:ubi8-2.47-2
+      repos:
+      - name: repo1
+        s3:
+          bucket: pgo
+          endpoint: s3-metal.shamrock.systems
+          region: default
+  image: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-15.5-0
+  instances:
+  - dataVolumeClaimSpec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+    replicas: 2
+  postgresVersion: 15
