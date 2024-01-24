@@ -140,3 +140,12 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
+  - timestamp: 1706114861
+    sourceHash: 34b98f744f04ef5d576635bc968507d75d7142b8168d29a2c4e2f9301a9ca452
+    sourceHashType: sha256
+    sourcePath: cluster-metal/pgo
+    buildHash: 5fa3482c58b94564fac51c7498f34e9555d79d2a2d6c92d3d8d7d778a78413d0
+    buildHashType: sha256
+    buildPath: builds/in-cluster/pgo
+    cluster: in-cluster
+    name: pgo

@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: postgresql
+  namespace: pgo
+spec:
+  name: postgresql
+  channel: v5
+  source: operatorhubio-catalog
+  sourceNamespace: olm
