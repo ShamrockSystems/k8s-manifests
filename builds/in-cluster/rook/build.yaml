@@ -23478,6 +23478,41 @@ spec:
   pinning:
     distributed: 1
 ---
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStore
+metadata:
+  name: object-erasure
+  namespace: rook-ceph
+spec:
+  dataPool:
+    erasureCoded:
+      codingChunks: 2
+      dataChunks: 4
+    failureDomain: osd
+    parameters:
+      compression_mode: none
+  gateway:
+    annotations: null
+    instances: 1
+    labels: null
+    placement: null
+    port: 80
+    resources: null
+    sslCertificateRef: null
+  healthCheck:
+    readinessProbe:
+      disabled: false
+    startupProbe:
+      disabled: false
+  metadataPool:
+    failureDomain: host
+    parameters:
+      compression_mode: none
+    replicated:
+      requireSafeReplicaSize: true
+      size: 2
+  preservePoolsOnDelete: true
+---
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:

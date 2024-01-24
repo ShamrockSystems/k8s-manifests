@@ -86,15 +86,6 @@ builds:
     buildPath: builds/in-cluster/rbac
     cluster: in-cluster
     name: rbac
-  - timestamp: 1705509631
-    sourceHash: 172f1d5e20ce95ba51916c4ac13dd53a7d6bede486b75a5126aac1f7ac4211b1
-    sourceHashType: sha256
-    sourcePath: cluster-metal/rook
-    buildHash: e39ff978f967e6425b448a64187024671b0ebb409777ecc241ebaf907a188cba
-    buildHashType: sha256
-    buildPath: builds/in-cluster/rook
-    cluster: in-cluster
-    name: rook
   - timestamp: 1705509638
     sourceHash: 037c0eba23ebefeafb1f83eaf62c4296340e6684c65c89e45d81a9f5e8323032
     sourceHashType: sha256
@@ -140,3 +131,12 @@ builds:
     buildPath: builds/in-cluster/dpg-datastore
     cluster: in-cluster
     name: dpg-datastore
+  - timestamp: 1706111905
+    sourceHash: a55ab880833957f84550e8ff1fc50e80d30d75d9642fe59ec4e13f6a98bf4c50
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rook
+    buildHash: b1082299a3da6611db63da6fa35c5c89fbf8928d524e3e10d52fd7a359c87ffa
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rook
+    cluster: in-cluster
+    name: rook

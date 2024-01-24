@@ -11,6 +11,7 @@ resources:
   - ./storage-replicated/
   - ./storage-erasure/
   - ./storage-filesystem/
+  - ./cephobjectstore.yaml
 
 patches:
   - path: overlays/operator.yaml
