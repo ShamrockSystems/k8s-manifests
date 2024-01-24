@@ -23513,6 +23513,46 @@ spec:
       size: 2
   preservePoolsOnDelete: true
 ---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: http-dashboard
+  namespace: rook-ceph
+spec:
+  hostnames:
+  - metal-ceph.shamrock.systems
+  parentRefs:
+  - name: http-gateway
+    namespace: kube-system
+  rules:
+  - backendRefs:
+    - name: rook-ceph-mgr-dashboard
+      port: 7000
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: http-object-erasure
+  namespace: rook-ceph
+spec:
+  hostnames:
+  - s3-metal.shamrock.systems
+  parentRefs:
+  - name: http-gateway
+    namespace: kube-system
+  rules:
+  - backendRefs:
+    - name: rook-ceph-rgw-object-erasure
+      port: 80
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+---
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:

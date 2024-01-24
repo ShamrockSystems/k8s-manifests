@@ -131,11 +131,11 @@ builds:
     buildPath: builds/in-cluster/dpg-datastore
     cluster: in-cluster
     name: dpg-datastore
-  - timestamp: 1706111905
-    sourceHash: a55ab880833957f84550e8ff1fc50e80d30d75d9642fe59ec4e13f6a98bf4c50
+  - timestamp: 1706112502
+    sourceHash: 0663444e636918c323e6a265546a511426a25e317204ee2a24d99b68458a8c2e
     sourceHashType: sha256
     sourcePath: cluster-metal/rook
-    buildHash: b1082299a3da6611db63da6fa35c5c89fbf8928d524e3e10d52fd7a359c87ffa
+    buildHash: cf2448bf4749333b9713326ded1851787bb02330353eb4c5c6db28fe8a9e7f5f
     buildHashType: sha256
     buildPath: builds/in-cluster/rook
     cluster: in-cluster

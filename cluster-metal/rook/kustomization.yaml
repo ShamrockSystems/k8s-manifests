@@ -12,6 +12,7 @@ resources:
   - ./storage-erasure/
   - ./storage-filesystem/
   - ./cephobjectstore.yaml
+  - ./httproute.yaml
 
 patches:
   - path: overlays/operator.yaml
