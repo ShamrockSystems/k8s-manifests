@@ -158,3 +158,12 @@ builds:
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster
     name: dpg-authentication
+  - timestamp: 1706118414
+    sourceHash: d1306a5d69e64f0552b80eecb8899ee1b946fccb2c1df805df7be9ff20a3cdff
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-processing
+    buildHash: f5300aedaf1ad42118072c55a911a2832554e94c64b669d9efb73de65a015a77
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-processing
+    cluster: in-cluster
+    name: dpg-processing
