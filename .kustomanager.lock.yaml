@@ -167,3 +167,12 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
+  - timestamp: 1706224264
+    sourceHash: cc5c34690261f35c648e758aaaaeb8133e9d51136e292d7d85264d7f9ac4f6f7
+    sourceHashType: sha256
+    sourcePath: cluster-metal/prometheus-operator
+    buildHash: a4de69bb3cb30a9d3b50d416b7812a85701cb285b1f4c08f68060dfaf65faa5c
+    buildHashType: sha256
+    buildPath: builds/in-cluster/prometheus-operator
+    cluster: in-cluster
+    name: prometheus-operator
