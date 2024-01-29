@@ -24,3 +24,6 @@ spec:
         path: '{{.path.path}}'
       destination:
         name: '{{ index .path.segments 1 }}'
+      syncPolicy:
+        syncOptions:
+          - ServerSideApply=true
