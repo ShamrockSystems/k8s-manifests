@@ -1,6 +1,7 @@
 import logging
 import sys
 import time
+from io import BytesIO
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ from kustomanager.meta import (
     LOG_HASH,
     LOG_HASH_NAME,
 )
+from kustomanager.util import normalize_line_endings
 
 TIMESTAMP = int(time.time())
 logger = logging.getLogger("cli")
@@ -144,7 +146,15 @@ def build():
 def load_lockfile(yaml: YAML) -> tuple[Any, dict]:
     LOCKFILE_PATH = Path(Path.cwd(), LOCKFILE_NAME)
 
-    lockfile = yaml.load(LOCKFILE_PATH)
+    # ruamel.yaml comment attachment does not behave consistently if line endings are not translated beforehand.
+    # Therefore, load the file first,
+    with open(LOCKFILE_PATH, "r", encoding="utf-8") as f:
+        # translate
+        converted = BytesIO()
+        converted.write(normalize_line_endings(f.read()).encode("utf-8"))
+        converted.seek(0)
+    # and provide ruamel.yaml a BytesIO
+    lockfile = yaml.load(converted)
 
     return lockfile
 

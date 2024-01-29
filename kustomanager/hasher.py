@@ -10,6 +10,7 @@ from gitignore_parser import (
 from gitignore_parser import handle_negation as evaluate_rules
 
 from kustomanager.meta import DEFAULT_HASH_TYPE, IGNOREFILES, LOG_HASH
+from kustomanager.util import normalize_line_endings
 
 logger = logging.getLogger("hasher")
 
@@ -66,9 +67,7 @@ def _directory_hash(
                     # Git will checkout with different line endings depending on the system.
                     # These need to be normalized for consistent hashing.
                     decoded_content = content.decode("utf-8")
-                    normalized_content = decoded_content.replace("\r\n", "\n").replace(
-                        "\r", "\n"
-                    )
+                    normalized_content = normalize_line_endings(decoded_content)
                     hashed.update(normalized_content.encode())
                 except UnicodeDecodeError:
                     hashed.update(content)
