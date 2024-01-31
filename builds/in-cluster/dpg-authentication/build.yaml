@@ -86,7 +86,7 @@ metadata:
   namespace: deeppharmgraph
 spec:
   hostnames:
-  - dpg-auth.shamrock.systems
+  - dpg-auth.forging.cc
   parentRefs:
   - name: http-gateway
     namespace: kube-system

@@ -7,7 +7,7 @@ spec:
   parentRefs:
     - name: http-gateway
       namespace: kube-system
-  hostnames: [dpg-auth.shamrock.systems]
+  hostnames: [dpg-auth.forging.cc]
   rules:
     - matches:
         - path:
