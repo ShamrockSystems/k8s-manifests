@@ -2107,11 +2107,11 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 metadata:
-  name: http-processing-webserver
+  name: http-processing-flower
   namespace: deeppharmgraph
 spec:
   hostnames:
-  - dpg-processing.shamrock.systems
+  - dpg-processing-flower.forging.cc
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
@@ -2121,7 +2121,32 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: dpg-processing-airflow-webserver
+      name: dpg-processing-airflow-flower
+      port: 5555
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: http-processing-webserver
+  namespace: deeppharmgraph
+spec:
+  hostnames:
+  - dpg-processing.forging.cc
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: http-gateway
+    namespace: kube-system
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: dpg-processing-airflow-web
       port: 8080
       weight: 1
     matches:
