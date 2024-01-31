@@ -5,19 +5,230 @@ metadata:
     name: ot-operators
   name: ot-operators
 ---
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: ot-operators
+  labels:
+    app.kubernetes.io/component: service-account
+    app.kubernetes.io/instance: ot-redis-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redis-operator
+    app.kubernetes.io/part-of: ot-redis-operator
+    app.kubernetes.io/version: 0.15.1
+    helm.sh/chart: redis-operator-0.15.9
+  name: redis-operator
   namespace: ot-operators
 ---
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
+  labels:
+    app.kubernetes.io/component: role
+    app.kubernetes.io/instance: ot-redis-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redis-operator
+    app.kubernetes.io/part-of: ot-redis-operator
+    app.kubernetes.io/version: 0.15.1
+    helm.sh/chart: redis-operator-0.15.9
+  name: redis-operator
+rules:
+- apiGroups:
+  - redis.redis.opstreelabs.in
+  resources:
+  - rediss
+  - redisclusters
+  - redisreplications
+  - redis
+  - rediscluster
+  - redissentinel
+  - redissentinels
+  - redisreplication
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- nonResourceURLs:
+  - '*'
+  verbs:
+  - get
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - redis.redis.opstreelabs.in
+  resources:
+  - redis/finalizers
+  - rediscluster/finalizers
+  - redisclusters/finalizers
+  - redissentinel/finalizers
+  - redissentinels/finalizers
+  - redisreplication/finalizers
+  - redisreplications/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - redis.redis.opstreelabs.in
+  resources:
+  - redis/status
+  - rediscluster/status
+  - redisclusters/status
+  - redissentinel/status
+  - redissentinels/status
+  - redisreplication/status
+  - redisreplications/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - pods/exec
+  - pods
+  - services
+  - configmaps
+  - events
+  - persistentvolumeclaims
+  - namespace
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: role-binding
+    app.kubernetes.io/instance: ot-redis-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redis-operator
+    app.kubernetes.io/part-of: ot-redis-operator
+    app.kubernetes.io/version: 0.15.1
+    helm.sh/chart: redis-operator-0.15.9
+  name: redis-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: redis-operator
+subjects:
+- kind: ServiceAccount
+  name: redis-operator
+  namespace: ot-operators
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/instance: ot-redis-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redis-operator
+    app.kubernetes.io/part-of: ot-redis-operator
+    app.kubernetes.io/version: 0.15.1
+    helm.sh/chart: redis-operator-0.15.9
+  name: webhook-service
+  namespace: ot-operators
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 9443
+  selector:
+    name: redis-operator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/instance: ot-redis-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redis-operator
+    app.kubernetes.io/part-of: ot-redis-operator
+    app.kubernetes.io/version: 0.15.1
+    helm.sh/chart: redis-operator-0.15.9
   name: redis-operator
   namespace: ot-operators
 spec:
-  channel: stable
-  name: redis-operator
-  source: operatorhubio-catalog
-  sourceNamespace: olm
+  replicas: 1
+  selector:
+    matchLabels:
+      name: redis-operator
+  template:
+    metadata:
+      annotations:
+        cert-manager.io/inject-ca-from: ot-operators/serving-cert
+      labels:
+        name: redis-operator
+    spec:
+      containers:
+      - args:
+        - --leader-elect
+        command:
+        - /manager
+        env:
+        - name: ENABLE_WEBHOOKS
+          value: "false"
+        image: quay.io/opstree/redis-operator:v0.15.1
+        imagePullPolicy: Always
+        name: redis-operator
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+      serviceAccount: redis-operator
+      serviceAccountName: redis-operator

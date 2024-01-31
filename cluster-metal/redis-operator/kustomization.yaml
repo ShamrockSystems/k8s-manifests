@@ -3,5 +3,11 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
-  - ./operatorgroup.yaml
-  - ./subscription.yaml
+
+helmCharts:
+  - releaseName: ot-redis-operator
+    namespace: ot-operators
+    name: redis-operator
+    repo: https://ot-container-kit.github.io/helm-charts/
+    version: 0.15.9
+    valuesFile: values.redis-operator.yaml
