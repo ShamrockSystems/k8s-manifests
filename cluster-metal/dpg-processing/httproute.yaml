@@ -16,7 +16,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - group: ''
+        - group: ""
           kind: Service
           name: dpg-processing-airflow-web
           port: 8080
@@ -39,8 +39,14 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            add:
+              - name: X-Forwarded-Proto
+                value: "https"
       backendRefs:
-        - group: ''
+        - group: ""
           kind: Service
           name: dpg-processing-airflow-flower
           port: 5555

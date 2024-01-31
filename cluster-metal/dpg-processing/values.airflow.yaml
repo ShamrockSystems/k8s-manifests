@@ -234,6 +234,11 @@ airflow:
         secretKeyRef:
           name: airflow-env-secret
           key: AIRFLOW__WEBSERVER__SECRET_KEY
+    - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+      valueFrom:
+        configMapKeyRef:
+          name: airflow-env-configmap
+          key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
     - name: AUTH_KEYCLOAK_API_BASE_URL
       valueFrom:
         configMapKeyRef:
@@ -254,6 +259,11 @@ airflow:
         configMapKeyRef:
           name: airflow-env-configmap
           key: AUTH_KEYCLOAK_AUTHORIZE_URL
+    - name: AUTH_KEYCLOAK_JWKS_URL
+      valueFrom:
+        configMapKeyRef:
+          name: airflow-env-configmap
+          key: AUTH_KEYCLOAK_JWKS_URL
     - name: AUTH_KEYCLOAK_CLIENT_ID
       valueFrom:
         configMapKeyRef:
@@ -741,32 +751,64 @@ web:
     ##
     stringOverride: |
       import os
+      from typing import Any, Union
+
+      from airflow.www.security import AirflowSecurityManager
       from flask_appbuilder.security.manager import AUTH_OAUTH
 
+
+      class KeycloakAuthorizer(AirflowSecurityManager):
+          def get_oauth_user_info(
+              self, provider: str, resp: Any
+          ) -> dict[str, Union[str, list[str]]]:
+              me = self.appbuilder.sm.oauth_remotes[provider].get("openid-connect/userinfo")
+              me.raise_for_status()
+              data = me.json()
+              payload = {
+                  "first_name": data.get("given_name", ""),
+                  "last_name": data.get("family_name", ""),
+                  "email": data.get("email", ""),
+                  "name": data.get("name", ""),
+                  "username": data.get("preferred_username", ""),
+                  "role_keys": data.get("roles", []),
+              }
+              print(payload)
+              return payload
+
+
       AUTH_TYPE = AUTH_OAUTH
-      AUTH_ROLE_ADMIN = 'Admin'
-      AUTH_ROLE_PUBLIC = 'Public'
+
+      AUTH_ROLES_MAPPING = {
+          "Admin": ["Admin"],
+          "Public": ["Public"],
+          "Viewer": ["Viewer"],
+          "User": ["User"],
+          "Op": ["Op"],
+      }
+
+      AUTH_ROLES_SYNC_AT_LOGIN = True
       AUTH_USER_REGISTRATION = True
 
       OAUTH_PROVIDERS = [
           {
-              'name': 'keycloak',
-              'icon': 'fa-key',
-              'token_key': 'access_token',
-              'remote_app': {
-                  'api_base_url': os.environ['AUTH_KEYCLOAK_API_BASE_URL'],
-                  'client_kwargs': {
-                      'scope': os.environ['AUTH_KEYCLOAK_SCOPE']
-                  },
-                  'request_token_url': None,
-                  'access_token_url': os.environ['AUTH_KEYCLOAK_ACCESS_TOKEN_URL'],
-                  'authorize_url': os.environ['AUTH_KEYCLOAK_AUTHORIZE_URL'],
-                  'client_id': os.environ['AUTH_KEYCLOAK_CLIENT_ID'],
-                  'client_secret': os.environ['AUTH_KEYCLOAK_CLIENT_SECRET'],
-                  'airflow_base_url': os.environ['AUTH_KEYCLOAK_AIRFLOW_BASE_URL']
-              }
+              "name": "keycloak",
+              "icon": "fa-key",
+              "token_key": "access_token",
+              "remote_app": {
+                  "api_base_url": os.environ["AUTH_KEYCLOAK_API_BASE_URL"],
+                  "client_kwargs": {"scope": os.environ["AUTH_KEYCLOAK_SCOPE"]},
+                  "request_token_url": None,
+                  "access_token_url": os.environ["AUTH_KEYCLOAK_ACCESS_TOKEN_URL"],
+                  "authorize_url": os.environ["AUTH_KEYCLOAK_AUTHORIZE_URL"],
+                  "jwks_uri": os.environ["AUTH_KEYCLOAK_JWKS_URL"],
+                  "client_id": os.environ["AUTH_KEYCLOAK_CLIENT_ID"],
+                  "client_secret": os.environ["AUTH_KEYCLOAK_CLIENT_SECRET"],
+                  "airflow_base_url": os.environ["AUTH_KEYCLOAK_AIRFLOW_BASE_URL"],
+              },
           }
       ]
+
+      SECURITY_MANAGER_CLASS = KeycloakAuthorizer
 
 ## the name of a Secret containing a `webserver_config.py` key
 ##
