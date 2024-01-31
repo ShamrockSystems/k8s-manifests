@@ -22,15 +22,15 @@ spec:
             - name: DB_VENDOR
               value: "postgres"
             - name: DB_ADDR
-              valueFrom: {secretKeyRef: {name: keycloakdb-pguser-keycloakdb, key: host}}
+              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: host}}
             - name: DB_PORT
-              valueFrom: {secretKeyRef: {name: keycloakdb-pguser-keycloakdb, key: port}}
+              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: port}}
             - name: DB_DATABASE
-              valueFrom: {secretKeyRef: {name: keycloakdb-pguser-keycloakdb, key: dbname}}
+              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: dbname}}
             - name: DB_USER
-              valueFrom: {secretKeyRef: {name: keycloakdb-pguser-keycloakdb, key: user}}
+              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: user}}
             - name: DB_PASSWORD
-              valueFrom: {secretKeyRef: {name: keycloakdb-pguser-keycloakdb, key: password}}
+              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: password}}
             - name: KEYCLOAK_ADMIN
               value: "admin"
             - name: KEYCLOAK_ADMIN_PASSWORD

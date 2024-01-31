@@ -176,11 +176,11 @@ builds:
     buildPath: builds/in-cluster/cloudnative-pg
     cluster: in-cluster
     name: cloudnative-pg
-  - timestamp: 1706690820
-    sourceHash: 1b732843ca4e140c9b588c2e29b3bb4159c33b5d19415f61131e5c20cc917864
+  - timestamp: 1706691361
+    sourceHash: f879be5c3263af45d6c762bd0828f68b64e14e900cac47f6ec3af24b9cf0ed0f
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-authentication
-    buildHash: 4deee825de5c34c8fe894d70b8875ff65e3cab57d1ac3ff7f0a0241d2f27f1e7
+    buildHash: 9447cd4a1e859773629a2ee5114c5338e7b13663d172d3a75caccd43533011cd
     buildHashType: sha256
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster

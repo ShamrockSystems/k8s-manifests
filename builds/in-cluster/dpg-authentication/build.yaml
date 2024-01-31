@@ -39,27 +39,27 @@ spec:
           valueFrom:
             secretKeyRef:
               key: host
-              name: keycloakdb-pguser-keycloakdb
+              name: keycloak-postgres-app
         - name: DB_PORT
           valueFrom:
             secretKeyRef:
               key: port
-              name: keycloakdb-pguser-keycloakdb
+              name: keycloak-postgres-app
         - name: DB_DATABASE
           valueFrom:
             secretKeyRef:
               key: dbname
-              name: keycloakdb-pguser-keycloakdb
+              name: keycloak-postgres-app
         - name: DB_USER
           valueFrom:
             secretKeyRef:
               key: user
-              name: keycloakdb-pguser-keycloakdb
+              name: keycloak-postgres-app
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
-              name: keycloakdb-pguser-keycloakdb
+              name: keycloak-postgres-app
         - name: KEYCLOAK_ADMIN
           value: admin
         - name: KEYCLOAK_ADMIN_PASSWORD
