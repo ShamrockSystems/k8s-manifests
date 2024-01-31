@@ -1,0 +1,10 @@
+apiVersion: databases.spotahome.com/v1
+kind: RedisFailover
+metadata:
+  name: airflow-redis
+  namespace: deeppharmgraph
+spec:
+  sentinel:
+    replicas: 1
+  redis:
+    replicas: 1

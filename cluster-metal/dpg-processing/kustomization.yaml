@@ -4,6 +4,8 @@ kind: Kustomization
 namespace: deeppharmgraph
 
 resources:
+  - ./cluster.postgres.yaml
+  - ./redisfailover.yaml
   - ./httproute.yaml
 
 helmCharts: []
