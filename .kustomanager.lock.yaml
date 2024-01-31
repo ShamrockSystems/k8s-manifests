@@ -158,15 +158,6 @@ builds:
     buildPath: builds/in-cluster/argocd
     cluster: in-cluster
     name: argocd
-  - timestamp: 1706693118
-    sourceHash: 1b359cd774fb2eadadd5fd82e2d96f0c07385837005032efdfc2b4a61b62855e
-    sourceHashType: sha256
-    sourcePath: cluster-metal/rook
-    buildHash: fbac03a76e8b05c190798aabbbc630b4187b40b4a50d8ebc032eafa17ac0b38a
-    buildHashType: sha256
-    buildPath: builds/in-cluster/rook
-    cluster: in-cluster
-    name: rook
   - timestamp: 1706694066
     sourceHash: 706b22fe711796b691821e810abb9bc9d45d7d03d46de9fb49edaadc702fdfbb
     sourceHashType: sha256
@@ -185,3 +176,12 @@ builds:
     buildPath: builds/in-cluster/redis-operator
     cluster: in-cluster
     name: redis-operator
+  - timestamp: 1706694873
+    sourceHash: fe56fa352fe0dd6df512dad8bbed494eb62d425cd3144d65d9eab467e0e036c8
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rook
+    buildHash: a9d5ed4ff2816706b0dc223eb86637c4003a59cf1418ba454d277b002103ea02
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rook
+    cluster: in-cluster
+    name: rook

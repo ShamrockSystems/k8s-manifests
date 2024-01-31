@@ -23303,7 +23303,6 @@ metadata:
   name: rook-ceph
   namespace: rook-ceph
 spec:
-  annotations: null
   cephVersion:
     allowUnsupported: false
     image: quay.io/ceph/ceph:v18.2.1
@@ -23318,7 +23317,7 @@ spec:
   crashCollector:
     disable: false
   csi:
-    cephfs: null
+    cephfs: {}
     readAffinity:
       enabled: false
   dashboard:
@@ -23354,7 +23353,6 @@ spec:
         disabled: false
       osd:
         disabled: false
-  labels: null
   logCollector:
     enabled: true
     maxLogSize: 500M
@@ -23386,10 +23384,8 @@ spec:
     mon: system-node-critical
     osd: system-node-critical
   removeOSDsIfOutAndSafeToRemove: false
-  resources: null
   skipUpgradeChecks: false
   storage:
-    config: null
     nodes:
     - devices:
       - name: /dev/disk/by-id/scsi-SHITACHI_HUS72302CLAR2000_YGKXBJ1K
