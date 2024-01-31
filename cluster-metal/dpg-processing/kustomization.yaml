@@ -4,6 +4,8 @@ kind: Kustomization
 namespace: deeppharmgraph
 
 resources:
+  - ./sealedsecret.yaml
+  - ./redis.yaml
   - ./cluster.postgres.yaml
   - ./httproute.yaml
 

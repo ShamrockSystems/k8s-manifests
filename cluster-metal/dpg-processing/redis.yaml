@@ -1,0 +1,25 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: Redis
+metadata:
+  name: airflow-redis-standalone
+  namespace: deeppharmgraph
+spec:
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v7.0.12
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      name: airflow-redis-secret
+      key: password
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi
+  redisExporter:
+    enabled: false
+    image: quay.io/opstree/redis-exporter:v1.44.0
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
