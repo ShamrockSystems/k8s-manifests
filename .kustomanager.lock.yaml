@@ -176,12 +176,3 @@ builds:
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster
     name: dpg-authentication
-  - timestamp: 1706691650
-    sourceHash: 4f025924a4eb44400f1708bb9e2463cde5bd180c01a4ff91b13445b793d6e17b
-    sourceHashType: sha256
-    sourcePath: cluster-metal/pgo
-    buildHash: 31035108674da95518ce1c410d8f8f330932641f80ada7759baba982ed15b34e
-    buildHashType: sha256
-    buildPath: builds/in-cluster/pgo
-    cluster: in-cluster
-    name: pgo
