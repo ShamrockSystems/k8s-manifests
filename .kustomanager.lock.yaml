@@ -176,3 +176,12 @@ builds:
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster
     name: dpg-authentication
+  - timestamp: 1706694665
+    sourceHash: cac35af77e6cd4d67e88485d91696f9b05887c2e3890abd47fe0e6ee75be0078
+    sourceHashType: sha256
+    sourcePath: cluster-metal/redis-operator
+    buildHash: 73f267e948b37462721a52515702361d0b44f36952c8c1b35196e1d436b8cbd6
+    buildHashType: sha256
+    buildPath: builds/in-cluster/redis-operator
+    cluster: in-cluster
+    name: redis-operator
