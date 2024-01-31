@@ -16,7 +16,10 @@ spec:
     spec:
       containers:
         - image: quay.io/keycloak/keycloak:23.0
-          args: ["start-dev"]
+          args:
+            - start
+            - --hostname=dpg-auth.forging.cc
+            - --proxy=edge
           name: keycloak
           env:
             - name: DB_VENDOR

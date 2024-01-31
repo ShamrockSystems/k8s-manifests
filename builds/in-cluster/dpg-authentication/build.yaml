@@ -31,7 +31,9 @@ spec:
     spec:
       containers:
       - args:
-        - start-dev
+        - start
+        - --hostname=dpg-auth.forging.cc
+        - --proxy=edge
         env:
         - name: DB_VENDOR
           value: postgres
