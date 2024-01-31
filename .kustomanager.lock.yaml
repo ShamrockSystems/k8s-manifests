@@ -176,11 +176,11 @@ builds:
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
     name: dpg-processing
-  - timestamp: 1706697137
-    sourceHash: 72802757b051be6c3e997d2d8893d1b4442720efb8f4f189d78dd1e6616f3ac1
+  - timestamp: 1706697431
+    sourceHash: 4323072382a72ecd3c06badb748de09021e0cf97c6905d24c606f0cffbe4eeda
     sourceHashType: sha256
     sourcePath: cluster-metal/redis-operator
-    buildHash: a1b7bd17644157145d47e67efcc5c8f0aaf179d06b441b78f51039943c18bf2c
+    buildHash: a86513c52db6a8e0dfe786a30120554648fb8ca1dc81576c1fce5c163e5f4c08
     buildHashType: sha256
     buildPath: builds/in-cluster/redis-operator
     cluster: in-cluster
