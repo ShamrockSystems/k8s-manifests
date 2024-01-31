@@ -1,0 +1,467 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: kubernetes-dashboard
+  name: kubernetes-dashboard
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - kubernetes-dashboard-key-holder
+  - kubernetes-dashboard-csrf
+  resources:
+  - secrets
+  verbs:
+  - get
+  - update
+  - delete
+- apiGroups:
+  - ""
+  resourceNames:
+  - kubernetes-dashboard-settings
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - ""
+  resourceNames:
+  - kubernetes-dashboard-metrics-scraper
+  - http:kubernetes-dashboard-metrics-scraper
+  resources:
+  - services/proxy
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard
+rules:
+- apiGroups:
+  - metrics.k8s.io
+  resources:
+  - pods
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubernetes-dashboard
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubernetes-dashboard
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+---
+apiVersion: v1
+data: null
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-settings
+  namespace: kubernetes-dashboard
+---
+apiVersion: v1
+data:
+  csrf: ""
+kind: Secret
+metadata:
+  annotations:
+    sealedsecrets.bitnami.com/managed: "true"
+  labels:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-csrf
+  namespace: kubernetes-dashboard
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    sealedsecrets.bitnami.com/managed: "true"
+  labels:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-key-holder
+  namespace: kubernetes-dashboard
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kubernetes-dashboard-api
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    app.kubernetes.io/version: v1.0.0
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-api
+  namespace: kubernetes-dashboard
+spec:
+  ports:
+  - name: api
+    port: 9000
+  selector:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/name: kubernetes-dashboard-api
+    app.kubernetes.io/part-of: kubernetes-dashboard
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: metrics-scraper
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    app.kubernetes.io/version: v1.0.9
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-metrics-scraper
+  namespace: kubernetes-dashboard
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
+    app.kubernetes.io/part-of: kubernetes-dashboard
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: web
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kubernetes-dashboard-web
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    app.kubernetes.io/version: v1.0.0
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-web
+  namespace: kubernetes-dashboard
+spec:
+  ports:
+  - name: web
+    port: 8000
+  selector:
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/name: kubernetes-dashboard-web
+    app.kubernetes.io/part-of: kubernetes-dashboard
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kubernetes-dashboard-api
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    app.kubernetes.io/version: v1.0.0
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-api
+  namespace: kubernetes-dashboard
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: kubernetes-dashboard
+      app.kubernetes.io/name: kubernetes-dashboard-api
+      app.kubernetes.io/part-of: kubernetes-dashboard
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: api
+        app.kubernetes.io/instance: kubernetes-dashboard
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: kubernetes-dashboard-api
+        app.kubernetes.io/part-of: kubernetes-dashboard
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+    spec:
+      containers:
+      - args:
+        - --enable-insecure-login
+        - --namespace=kubernetes-dashboard
+        image: docker.io/kubernetesui/dashboard-api:v1.0.0
+        imagePullPolicy: IfNotPresent
+        name: kubernetes-dashboard-api
+        ports:
+        - containerPort: 9000
+          name: api
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 250m
+            memory: 400Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 2001
+          runAsUser: 1001
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: kubernetes-dashboard
+      volumes:
+      - emptyDir: {}
+        name: tmp-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: metrics-scraper
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    app.kubernetes.io/version: v1.0.9
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-metrics-scraper
+  namespace: kubernetes-dashboard
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: kubernetes-dashboard
+      app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
+      app.kubernetes.io/part-of: kubernetes-dashboard
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: metrics-scraper
+        app.kubernetes.io/instance: kubernetes-dashboard
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
+        app.kubernetes.io/part-of: kubernetes-dashboard
+        app.kubernetes.io/version: v1.0.9
+        helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+    spec:
+      containers:
+      - image: docker.io/kubernetesui/metrics-scraper:v1.0.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+        name: kubernetes-dashboard-metrics-scraper
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 250m
+            memory: 400Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 2001
+          runAsUser: 1001
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: kubernetes-dashboard
+      volumes:
+      - emptyDir: {}
+        name: tmp-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: web
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kubernetes-dashboard-web
+    app.kubernetes.io/part-of: kubernetes-dashboard
+    app.kubernetes.io/version: v1.0.0
+    helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+  name: kubernetes-dashboard-web
+  namespace: kubernetes-dashboard
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: kubernetes-dashboard
+      app.kubernetes.io/name: kubernetes-dashboard-web
+      app.kubernetes.io/part-of: kubernetes-dashboard
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: web
+        app.kubernetes.io/instance: kubernetes-dashboard
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: kubernetes-dashboard-web
+        app.kubernetes.io/part-of: kubernetes-dashboard
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: kubernetes-dashboard-7.0.0-alpha1
+    spec:
+      containers:
+      - image: docker.io/kubernetesui/dashboard-web:v1.0.0
+        imagePullPolicy: IfNotPresent
+        name: kubernetes-dashboard-web
+        ports:
+        - containerPort: 8000
+          name: web
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 250m
+            memory: 400Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 2001
+          runAsUser: 1001
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: kubernetes-dashboard
+      volumes:
+      - emptyDir: {}
+        name: tmp-volume
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: kubernetes-dashboard-csrf
+  namespace: kubernetes-dashboard
+spec:
+  encryptedData: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      name: kubernetes-dashboard-csrf
+      namespace: default
+    type: Opaque
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: kubernetes-dashboard-key-holder
+  namespace: kubernetes-dashboard
+spec:
+  encryptedData: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      name: kubernetes-dashboard-key-holder
+      namespace: default
+    type: Opaque
