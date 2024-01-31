@@ -46,6 +46,7 @@ def invoke_kustomize(
         universal_newlines=True,
     )
     if result.returncode != 0:
+        logger.error(result.stderr)
         raise ChildProcessError
     if len(result.stderr):
         logger.warn(result.stderr)
