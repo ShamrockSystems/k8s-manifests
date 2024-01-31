@@ -24,6 +24,13 @@ data:
       - profile
       - email
   admin.enabled: "false"
+  resource.exclusions: |
+    - apiGroups:
+        - cilium.io
+      kinds:
+        - CiliumIdentity
+      clusters:
+        - "*"
 ---
 apiVersion: v1
 kind: ConfigMap

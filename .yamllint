@@ -28,7 +28,8 @@ rules:
   key-ordering: disable
   line-length: disable
   new-line-at-end-of-file: enable
-  new-lines: enable
+  new-lines:
+    type: platform
   octal-values: disable
   quoted-strings: disable
   trailing-spaces: enable

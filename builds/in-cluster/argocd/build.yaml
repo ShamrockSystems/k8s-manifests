@@ -20743,6 +20743,13 @@ data:
       - openid
       - profile
       - email
+  resource.exclusions: |
+    - apiGroups:
+        - cilium.io
+      kinds:
+        - CiliumIdentity
+      clusters:
+        - "*"
   url: https://metal-cd.shamrock.systems
 kind: ConfigMap
 metadata:
