@@ -2,8 +2,8 @@
 charts/
 
 # Secret files
-secret.yaml
-secret.yml
+secret*.yaml
+secret*.yml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

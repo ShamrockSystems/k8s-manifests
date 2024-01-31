@@ -4,9 +4,16 @@ kind: Kustomization
 namespace: deeppharmgraph
 
 resources:
-  - ./sealedsecret.yaml
+  - ./sealedsecret.redis.yaml
+  - ./sealedsecret.airflow.yaml
   - ./redis.yaml
   - ./cluster.postgres.yaml
   - ./httproute.yaml
 
-helmCharts: []
+helmCharts:
+  - releaseName: dpg-processing-airflow
+    namespace: deeppharmgraph
+    name: airflow
+    repo: https://airflow-helm.github.io/charts
+    version: 8.8.0
+    valuesFile: values.airflow.yaml

@@ -140,15 +140,6 @@ builds:
     buildPath: builds/in-cluster/cloudnative-pg
     cluster: in-cluster
     name: cloudnative-pg
-  - timestamp: 1706693118
-    sourceHash: a22ddd1b927f75881e56b26cd8ae073a6e4245fbf5cd27ffadb2039d24db09e7
-    sourceHashType: sha256
-    sourcePath: cluster-metal/argocd
-    buildHash: f0d30607380598abb7b2f98e265ca63f417ae5fa1045f6f9d179d749b54a5cbb
-    buildHashType: sha256
-    buildPath: builds/in-cluster/argocd
-    cluster: in-cluster
-    name: argocd
   - timestamp: 1706694066
     sourceHash: 706b22fe711796b691821e810abb9bc9d45d7d03d46de9fb49edaadc702fdfbb
     sourceHashType: sha256
@@ -176,11 +167,20 @@ builds:
     buildPath: builds/in-cluster/redis-operator
     cluster: in-cluster
     name: redis-operator
-  - timestamp: 1706699131
-    sourceHash: bd82242611eea372dc4d1189c3cdf8a39576736ec584270dfbb810cd645573ac
+  - timestamp: 1706701339
+    sourceHash: 29bee1c10c6edae688b1d161a3328ec556c6142627e43ad030fe61ee2f397735
+    sourceHashType: sha256
+    sourcePath: cluster-metal/argocd
+    buildHash: f0d30607380598abb7b2f98e265ca63f417ae5fa1045f6f9d179d749b54a5cbb
+    buildHashType: sha256
+    buildPath: builds/in-cluster/argocd
+    cluster: in-cluster
+    name: argocd
+  - timestamp: 1706701637
+    sourceHash: 2c4538c606a0d94189262318d9c548151a733e87d9f6b5399bccaa3a1f7fa263
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-processing
-    buildHash: 64819281a7399d9e80fb51b87a519686d58b29e1c5b50dab1d5d7d823ea2390b
+    buildHash: 9e2fb5706579f7964671987beda65c2be0b3221166c6f5605a73d2ace2cfbfba
     buildHashType: sha256
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster

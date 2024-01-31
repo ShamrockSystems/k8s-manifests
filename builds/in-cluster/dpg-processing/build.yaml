@@ -1,3 +1,2094 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow
+  namespace: deeppharmgraph
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow
+  namespace: deeppharmgraph
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - get
+  - delete
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow
+  namespace: deeppharmgraph
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: dpg-processing-airflow
+subjects:
+- kind: ServiceAccount
+  name: dpg-processing-airflow
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  AIRFLOW__CELERY__BROKER_URL_CMD: YmFzaCAtYyAnZXZhbCAiJFJFRElTX0NPTk5FQ1RJT05fQ01EIic=
+  AIRFLOW__CELERY__FLOWER_PORT: NTU1NQ==
+  AIRFLOW__CELERY__RESULT_BACKEND_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX0NFTEVSWV9DTUQiJw==
+  AIRFLOW__CELERY__WORKER_LOG_SERVER_PORT: ODc5Mw==
+  AIRFLOW__CORE__DAGS_FOLDER: L29wdC9haXJmbG93L2RhZ3M=
+  AIRFLOW__CORE__EXECUTOR: Q2VsZXJ5RXhlY3V0b3I=
+  AIRFLOW__CORE__SQL_ALCHEMY_CONN_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX1NRTEFMQ0hFTVlfQ01EIic=
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX1NRTEFMQ0hFTVlfQ01EIic=
+  AIRFLOW__LOGGING__BASE_LOG_FOLDER: L29wdC9haXJmbG93L2xvZ3M=
+  AIRFLOW__LOGGING__DAG_PROCESSOR_MANAGER_LOG_LOCATION: L29wdC9haXJmbG93L2xvZ3MvZGFnX3Byb2Nlc3Nvcl9tYW5hZ2VyL2RhZ19wcm9jZXNzb3JfbWFuYWdlci5sb2c=
+  AIRFLOW__LOGGING__WORKER_LOG_SERVER_PORT: ODc5Mw==
+  AIRFLOW__SCHEDULER__CHILD_PROCESS_LOG_DIRECTORY: L29wdC9haXJmbG93L2xvZ3Mvc2NoZWR1bGVy
+  AIRFLOW__TRIGGERER__DEFAULT_CAPACITY: MTAwMA==
+  AIRFLOW__WEBSERVER__WEB_SERVER_PORT: ODA4MA==
+  DATABASE_CELERY_CMD: ZWNobyAtbiAiZGIrcG9zdGdyZXNxbDovLyQoZXZhbCAkREFUQUJBU0VfVVNFUl9DTUQpOiQoZXZhbCAkREFUQUJBU0VfUEFTU1dPUkRfQ01EKUAke0RBVEFCQVNFX0hPU1R9OiR7REFUQUJBU0VfUE9SVH0vJHtEQVRBQkFTRV9EQn0ke0RBVEFCQVNFX1BST1BFUlRJRVN9Ig==
+  DATABASE_DB: YXBw
+  DATABASE_HOST: ZHBnLXByb2Nlc3NpbmctYWlyZmxvdy1wZ2JvdW5jZXIuZGVlcHBoYXJtZ3JhcGguc3ZjLmNsdXN0ZXIubG9jYWw=
+  DATABASE_PASSWORD_CMD: ZWNobyAiJHtEQVRBQkFTRV9QQVNTV09SRH0iIHwgcHl0aG9uMyAtYyAiaW1wb3J0IHVybGxpYi5wYXJzZTsgZW5jb2RlZF9wYXNzID0gdXJsbGliLnBhcnNlLnF1b3RlKGlucHV0KCkpOyBwcmludChlbmNvZGVkX3Bhc3MpIg==
+  DATABASE_PORT: NjQzMg==
+  DATABASE_PROPERTIES: ""
+  DATABASE_PSQL_CMD: ZWNobyAtbiAicG9zdGdyZXNxbDovLyQoZXZhbCAkREFUQUJBU0VfVVNFUl9DTUQpOiQoZXZhbCAkREFUQUJBU0VfUEFTU1dPUkRfQ01EKUAxMjcuMC4wLjE6JHtEQVRBQkFTRV9QT1JUfS8ke0RBVEFCQVNFX0RCfSR7REFUQUJBU0VfUFJPUEVSVElFU30i
+  DATABASE_SQLALCHEMY_CMD: ZWNobyAtbiAicG9zdGdyZXNxbCtwc3ljb3BnMjovLyQoZXZhbCAkREFUQUJBU0VfVVNFUl9DTUQpOiQoZXZhbCAkREFUQUJBU0VfUEFTU1dPUkRfQ01EKUAke0RBVEFCQVNFX0hPU1R9OiR7REFUQUJBU0VfUE9SVH0vJHtEQVRBQkFTRV9EQn0ke0RBVEFCQVNFX1BST1BFUlRJRVN9Ig==
+  DATABASE_USER_CMD: ZWNobyAiJHtEQVRBQkFTRV9VU0VSfSIgfCBweXRob24zIC1jICJpbXBvcnQgdXJsbGliLnBhcnNlOyBlbmNvZGVkX3VzZXIgPSB1cmxsaWIucGFyc2UucXVvdGUoaW5wdXQoKSk7IHByaW50KGVuY29kZWRfdXNlciki
+  REDIS_CONNECTION_CMD: ZWNobyAtbiAicmVkaXM6Ly8kKGV2YWwgJFJFRElTX1BBU1NXT1JEX0NNRCkke1JFRElTX0hPU1R9OiR7UkVESVNfUE9SVH0vJHtSRURJU19EQk5VTX0ke1JFRElTX1BST1BFUlRJRVN9Ig==
+  REDIS_DBNUM: MQ==
+  REDIS_HOST: YWlyZmxvdy1yZWRpcy1zdGFuZGFsb25l
+  REDIS_PASSWORD_CMD: ZWNobyAiJHtSRURJU19QQVNTV09SRH0iIHwgcHl0aG9uMyAtYyAiaW1wb3J0IHVybGxpYi5wYXJzZTsgZW5jb2RlZF9wYXNzID0gdXJsbGliLnBhcnNlLnF1b3RlKGlucHV0KCkpOyBwcmludChmXCI6e2VuY29kZWRfcGFzc31AXCIpIGlmIGxlbihlbmNvZGVkX3Bhc3MpID4gMCBlbHNlIE5vbmUi
+  REDIS_PORT: NjM3OQ==
+  REDIS_PROPERTIES: ""
+  TZ: RXRjL1VUQw==
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-config-envs
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  db_migrations.py: CiMjIyMjIyMjIyMjIyMKIyMgSW1wb3J0cyAjIwojIyMjIyMjIyMjIyMjCmltcG9ydCBsb2dnaW5nCmltcG9ydCB0aW1lCmZyb20gYWlyZmxvdy51dGlscy5kYiBpbXBvcnQgdXBncmFkZWRiCgoKIyMjIyMjIyMjIyMjIwojIyBDb25maWdzICMjCiMjIyMjIyMjIyMjIyMKbG9nID0gbG9nZ2luZy5nZXRMb2dnZXIoX19maWxlX18pCmxvZy5zZXRMZXZlbCgiSU5GTyIpCgojIGhvdyBmcmVxdWVudGx5IHRvIGNoZWNrIGZvciB1bmFwcGxpZWQgbWlncmF0aW9ucwpDT05GX19DSEVDS19NSUdSQVRJT05TX0lOVEVSVkFMID0gMzAwCgoKIyMjIyMjIyMjIyMjIyMjCiMjIEZ1bmN0aW9ucyAjIwojIyMjIyMjIyMjIyMjIyMKZnJvbSBhaXJmbG93LnV0aWxzLmRiIGltcG9ydCBjaGVja19taWdyYXRpb25zCgoKZGVmIG5lZWRzX2RiX21pZ3JhdGlvbnMoKSAtPiBib29sOgogICAgIiIiCiAgICBSZXR1cm4gYSBib29sZWFuIHJlcHJlc2VudGluZyBpZiB0aGUgZGF0YWJhc2UgaGFzIHVuYXBwbGllZCBtaWdyYXRpb25zLgogICAgIiIiCiAgICBsb2dfYWxlbWJpYyA9IGxvZ2dpbmcuZ2V0TG9nZ2VyKCJhbGVtYmljLnJ1bnRpbWUubWlncmF0aW9uIikKICAgIGxvZ19hbGVtYmljX2xldmVsID0gbG9nX2FsZW1iaWMubGV2ZWwKICAgIHRyeToKICAgICAgICBsb2dfYWxlbWJpYy5zZXRMZXZlbCgiV0FSTiIpCiAgICAgICAgY2hlY2tfbWlncmF0aW9ucygxKQogICAgICAgIGxvZ19hbGVtYmljLnNldExldmVsKGxvZ19hbGVtYmljX2xldmVsKQogICAgICAgIHJldHVybiBGYWxzZQogICAgZXhjZXB0IFRpbWVvdXRFcnJvcjoKICAgICAgICByZXR1cm4gVHJ1ZQoKCmRlZiBhcHBseV9kYl9taWdyYXRpb25zKCkgLT4gTm9uZToKICAgICIiIgogICAgQXBwbHkgYW55IHBlbmRpbmcgREIgbWlncmF0aW9ucy4KICAgICIiIgogICAgbG9nLmluZm8oIi0tLS0tLS0tIFNUQVJUIC0gQVBQTFkgREIgTUlHUkFUSU9OUyAtLS0tLS0tLSIpCiAgICB1cGdyYWRlZGIoKQogICAgbG9nLmluZm8oIi0tLS0tLS0tIEZJTklTSCAtIEFQUExZIERCIE1JR1JBVElPTlMgLS0tLS0tLS0iKQoKCmRlZiBtYWluKHN5bmNfZm9yZXZlcjogYm9vbCk6CiAgICAjIGluaXRpYWwgY2hlY2sgJiBhcHBseQogICAgaWYgbmVlZHNfZGJfbWlncmF0aW9ucygpOgogICAgICAgIGxvZy53YXJuaW5nKCJ0aGVyZSBhcmUgdW5hcHBsaWVkIGRiIG1pZ3JhdGlvbnMsIHRyaWdnZXJpbmcgYXBwbHkuLi4iKQogICAgICAgIGFwcGx5X2RiX21pZ3JhdGlvbnMoKQogICAgZWxzZToKICAgICAgICBsb2cuaW5mbygidGhlcmUgYXJlIG5vIHVuYXBwbGllZCBkYiBtaWdyYXRpb25zLCBjb250aW51aW5nLi4uIikKCiAgICBpZiBzeW5jX2ZvcmV2ZXI6CiAgICAgICAgIyBkZWZpbmUgdmFyaWFibGUgdG8gdHJhY2sgaG93IGxvbmcgc2luY2UgbGFzdCBtaWdyYXRpb25zIGNoZWNrCiAgICAgICAgbWlncmF0aW9uc19jaGVja19lcG9jaCA9IHRpbWUudGltZSgpCgogICAgICAgICMgbWFpbiBsb29wCiAgICAgICAgd2hpbGUgVHJ1ZToKICAgICAgICAgICAgaWYgKHRpbWUudGltZSgpIC0gbWlncmF0aW9uc19jaGVja19lcG9jaCkgPiBDT05GX19DSEVDS19NSUdSQVRJT05TX0lOVEVSVkFMOgogICAgICAgICAgICAgICAgbG9nLmRlYnVnKGYiY2hlY2sgaW50ZXJ2YWwgcmVhY2hlZCwgY2hlY2tpbmcgZm9yIHVuYXBwbGllZCBkYiBtaWdyYXRpb25zLi4uIikKICAgICAgICAgICAgICAgIGlmIG5lZWRzX2RiX21pZ3JhdGlvbnMoKToKICAgICAgICAgICAgICAgICAgICBsb2cud2FybmluZygidGhlcmUgYXJlIHVuYXBwbGllZCBkYiBtaWdyYXRpb25zLCB0cmlnZ2VyaW5nIGFwcGx5Li4uIikKICAgICAgICAgICAgICAgICAgICBhcHBseV9kYl9taWdyYXRpb25zKCkKICAgICAgICAgICAgICAgIG1pZ3JhdGlvbnNfY2hlY2tfZXBvY2ggPSB0aW1lLnRpbWUoKQoKICAgICAgICAgICAgIyBlbnN1cmUgd2UgZG9udCBsb29wIHRvbyBmYXN0CiAgICAgICAgICAgIHRpbWUuc2xlZXAoMC41KQoKCiMjIyMjIyMjIyMjIyMjCiMjIFJ1biBNYWluICMjCiMjIyMjIyMjIyMjIyMjCm1haW4oc3luY19mb3JldmVyPVRydWUp
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: db-migrations
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-db-migrations
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  gen_auth_file.sh: CiMhL2Jpbi9zaCAtZQoKIyBERVNDUklQVElPTjoKIyAtIHVwZGF0ZXMgdGhlIHBnYm91bmNlciBgYXV0aF9maWxlYCBmcm9tIGVudmlyb25tZW50IHZhcmlhYmxlcwojIC0gY2FsbGVkIGluIG1haW4gcGdib3VuY2VyIGNvbnRhaW5lciBzdGFydC1jb21tYW5kIHNvIHRoYXQgYGF1dGhfZmlsZWAgaXMgdXBkYXRlZCBlYWNoIHJlc3RhcnQsCiMgICBmb3IgZXhhbXBsZSwgd2hlbiB0aGUgbGl2ZW5lc3NQcm9iZSBmYWlscyBkdWUgdG8gYSBEQVRBQkFTRV9QQVNTV09SRCBzZWNyZXQgdXBkYXRlCgojIHZhcmlhYmxlcyB0byBpbmNyZWFzZSBjbGFyaXR5IG9mIHBhdHRlcm4gbWF0Y2hpbmcKT05FX1FVT1RFPSciJwpUV09fUVVPVEU9JyIiJwoKIyBwZ2JvdW5jZXIgcmVxdWlyZXMgYCJgIHRvIGJlIGVzY2FwZWQgYXMgYCIiYApFU0NBUEVEX0RBVEFCQVNFX1VTRVI9IiR7REFUQUJBU0VfVVNFUi8kT05FX1FVT1RFLyRUV09fUVVPVEV9IgpFU0NBUEVEX0RBVEFCQVNFX1BBU1NXT1JEPSIke0RBVEFCQVNFX1BBU1NXT1JELyRPTkVfUVVPVEUvJFRXT19RVU9URX0iCgojIHBnYm91bmNlciByZXF1aXJlcyBhdXRoX2ZpbGUgaW4gZm9ybWF0IGAibXktdXNlcm5hbWUiICJteS1wYXNzd29yZCJgCmVjaG8gXCIkRVNDQVBFRF9EQVRBQkFTRV9VU0VSXCIgXCIkRVNDQVBFRF9EQVRBQkFTRV9QQVNTV09SRFwiID4gL2hvbWUvcGdib3VuY2VyL3VzZXJzLnR4dAplY2hvICJTdWNjZXNzZnVsbHkgZ2VuZXJhdGVkIGF1dGhfZmlsZTogL2hvbWUvcGdib3VuY2VyL3VzZXJzLnR4dCI=
+  gen_self_signed_cert.sh: CiMhL2Jpbi9zaCAtZQoKQ0VSVF9ESVI9Ii9ob21lL3BnYm91bmNlci9nZW5lcmF0ZWQtY2VydHMiCktFWV9GSUxFPSIkQ0VSVF9ESVIvY2xpZW50LmtleSIKQ0VSVF9GSUxFPSIkQ0VSVF9ESVIvY2xpZW50LmNydCIKCiMgY3JlYXRlIHRoZSBkaXJlY3RvcnkgZm9yIHRoZSBzZWxmLXNpZ25lZCBjZXJ0aWZpY2F0ZQpta2RpciAtcCAiJENFUlRfRElSIgoKIyB2YXJpYWJsZXMgZm9yIGNlcnRpZmljYXRlIGdlbmVyYXRpb24KQ09NTU9OX05BTUU9ImxvY2FsaG9zdCIKREFZU19WQUxJRD0zNjUKCiMgZ2VuZXJhdGUgdGhlIHNlbGYtc2lnbmVkIGNlcnRpZmljYXRlIGFuZCBhIHByaXZhdGUga2V5Cm9wZW5zc2wgcmVxIC14NTA5IFwKICAtbmV3a2V5IHJzYTo0MDk2IFwKICAta2V5b3V0ICIkS0VZX0ZJTEUiIFwKICAtb3V0ICIkQ0VSVF9GSUxFIiBcCiAgLWRheXMgIiREQVlTX1ZBTElEIiBcCiAgLXN1YmogIi9DTj0kQ09NTU9OX05BTUUiIFwKICAtbm9kZXMKCiMgc2V0IHBlcm1pc3Npb25zIGZvciB0aGUgcHJpdmF0ZSBrZXkgZmlsZQpjaG1vZCA2MDAgIiRLRVlfRklMRSIKCmVjaG8gIlN1Y2Nlc3NmdWxseSBnZW5lcmF0ZWQgc2VsZi1zaWduZWQgY2VydGlmaWNhdGU6ICRDRVJUX0ZJTEUiCmVjaG8gIlN1Y2Nlc3NmdWxseSBnZW5lcmF0ZWQgc2VsZi1zaWduZWQgY2VydGlmaWNhdGUga2V5OiAkS0VZX0ZJTEUi
+  pgbouncer.ini: CltkYXRhYmFzZXNdCiogPSBob3N0PWFpcmZsb3ctcG9zdGdyZXMtcncgcG9ydD01NDMyCgpbcGdib3VuY2VyXQpwb29sX21vZGUgPSB0cmFuc2FjdGlvbgptYXhfY2xpZW50X2Nvbm4gPSAxMDAwCmRlZmF1bHRfcG9vbF9zaXplID0gIDIwCmlnbm9yZV9zdGFydHVwX3BhcmFtZXRlcnMgPSBleHRyYV9mbG9hdF9kaWdpdHMKCmxpc3Rlbl9wb3J0ID0gNjQzMgpsaXN0ZW5fYWRkciA9ICoKCmF1dGhfdHlwZSA9IG1kNQphdXRoX2ZpbGUgPSAvaG9tZS9wZ2JvdW5jZXIvdXNlcnMudHh0Cgpsb2dfZGlzY29ubmVjdGlvbnMgPSAwCmxvZ19jb25uZWN0aW9ucyA9IDAKCiMgbG9ja3Mgd2lsbCBuZXZlciBiZSByZWxlYXNlZCB3aGVuIGBwb29sX21vZGU9dHJhbnNhY3Rpb25gIChhaXJmbG93IGluaXRkYi91cGdyYWRlZGIgc2NyaXB0cyBjcmVhdGUgbG9ja3MpCnNlcnZlcl9yZXNldF9xdWVyeSA9IFNFTEVDVCBwZ19hZHZpc29yeV91bmxvY2tfYWxsKCkKc2VydmVyX3Jlc2V0X3F1ZXJ5X2Fsd2F5cyA9IDEKCiMjIENMSUVOVCBUTFMgU0VUVElOR1MgIyMKY2xpZW50X3Rsc19zc2xtb2RlID0gcHJlZmVyCmNsaWVudF90bHNfY2lwaGVycyA9IG5vcm1hbApjbGllbnRfdGxzX2tleV9maWxlID0gL2hvbWUvcGdib3VuY2VyL2dlbmVyYXRlZC1jZXJ0cy9jbGllbnQua2V5CmNsaWVudF90bHNfY2VydF9maWxlID0gL2hvbWUvcGdib3VuY2VyL2dlbmVyYXRlZC1jZXJ0cy9jbGllbnQuY3J0CgojIyBTRVJWRVIgVExTIFNFVFRJTkdTICMjCnNlcnZlcl90bHNfc3NsbW9kZSA9IHByZWZlcgpzZXJ2ZXJfdGxzX2NpcGhlcnMgPSBub3JtYWw=
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: pgbouncer
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-pgbouncer
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  sync_users.py: CiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKIyMjIyBCRUdJTjogR0xPQkFMIENPREUgIyMjIwojIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjCiMjIyMjIyMjIyMjIyMjIyMjIyMjCiMjIEdsb2JhbCBJbXBvcnRzICMjCiMjIyMjIyMjIyMjIyMjIyMjIyMjCmltcG9ydCBsb2dnaW5nCmltcG9ydCBvcwppbXBvcnQgdGltZQpmcm9tIHN0cmluZyBpbXBvcnQgVGVtcGxhdGUKZnJvbSB0eXBpbmcgaW1wb3J0IExpc3QsIERpY3QsIE9wdGlvbmFsCgoKIyMjIyMjIyMjIyMjIyMjIyMjIyMKIyMgR2xvYmFsIENvbmZpZ3MgIyMKIyMjIyMjIyMjIyMjIyMjIyMjIyMKIyB0aGUgcGF0aCB3aGljaCBTZWNyZXQvQ29uZmlnTWFwIGFyZSBtb3VudGVkIHRvCkNPTkZfX1RFTVBMQVRFU19QQVRIID0gIi9tbnQvdGVtcGxhdGVzIgoKIyBob3cgZnJlcXVlbnRseSB0byBjaGVjayBmb3IgU2VjcmV0L0NvbmZpZ01hcCB1cGRhdGVzCkNPTkZfX1RFTVBMQVRFU19TWU5DX0lOVEVSVkFMID0gMTAKCiMgaG93IGZyZXF1ZW50bHkgdG8gcmUtc3luYyBvYmplY3RzIChDb25uZWN0aW9ucywgUG9vbHMsIFVzZXJzLCBWYXJpYWJsZXMpCkNPTkZfX09CSkVDVFNfU1lOQ19JTlRFUlZBTCA9IDYwCgoKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwojIyBHbG9iYWwgRnVuY3Rpb25zICMjCiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKZGVmIHN0cmluZ19zdWJzdGl0dXRpb24ocmF3X3N0cmluZzogT3B0aW9uYWxbc3RyXSwgc3Vic3RpdHV0aW9uX21hcDogRGljdFtzdHIsIHN0cl0pIC0+IHN0cjoKICAgICIiIgogICAgQXBwbHkgYmFzaC1saWtlIHN1YnN0aXR1dGlvbnMgdG8gYSByYXcgc3RyaW5nLgoKICAgIEV4YW1wbGU6CiAgICAtIHN0cmluZ19zdWJzdGl0dXRpb24oIkhlbGxvISIsIE5vbmUpIC0+ICJIZWxsbyEiCiAgICAtIHN0cmluZ19zdWJzdGl0dXRpb24oIkhlbGxvICR7TkFNRX0hIiwgeyJOQU1FIjogIkFpcmZsb3cifSkgLT4gIkhlbGxvIEFpcmZsb3chIgogICAgIiIiCiAgICBpZiByYXdfc3RyaW5nIGFuZCBsZW4oc3Vic3RpdHV0aW9uX21hcCkgPiAwOgogICAgICAgIHRwbCA9IFRlbXBsYXRlKHJhd19zdHJpbmcpCiAgICAgICAgcmV0dXJuIHRwbC5zYWZlX3N1YnN0aXR1dGUoc3Vic3RpdHV0aW9uX21hcCkKICAgIGVsc2U6CiAgICAgICAgcmV0dXJuIHJhd19zdHJpbmcKCgpkZWYgdGVtcGxhdGVfbXRpbWUodGVtcGxhdGVfbmFtZTogc3RyKSAtPiBmbG9hdDoKICAgICIiIgogICAgUmV0dXJuIHRoZSBtb2RpZmljYXRpb24tdGltZSBvZiB0aGUgZmlsZSBzdG9yaW5nIGB0ZW1wbGF0ZV9uYW1lYAogICAgIiIiCiAgICBmaWxlX3BhdGggPSBmIntDT05GX19URU1QTEFURVNfUEFUSH0ve3RlbXBsYXRlX25hbWV9IgogICAgcmV0dXJuIG9zLnN0YXQoZmlsZV9wYXRoKS5zdF9tdGltZQoKCmRlZiB0ZW1wbGF0ZV92YWx1ZSh0ZW1wbGF0ZV9uYW1lOiBzdHIpIC0+IHN0cjoKICAgICIiIgogICAgUmV0dXJuIHRoZSBjb250ZW50cyBvZiB0aGUgZmlsZSBzdG9yaW5nIGB0ZW1wbGF0ZV9uYW1lYAogICAgIiIiCiAgICBmaWxlX3BhdGggPSBmIntDT05GX19URU1QTEFURVNfUEFUSH0ve3RlbXBsYXRlX25hbWV9IgogICAgd2l0aCBvcGVuKGZpbGVfcGF0aCwgInIiKSBhcyBmOgogICAgICAgIHJldHVybiBmLnJlYWQoKQoKCmRlZiByZWZyZXNoX3RlbXBsYXRlX2NhY2hlKHRlbXBsYXRlX25hbWVzOiBMaXN0W3N0cl0sCiAgICAgICAgICAgICAgICAgICAgICAgICAgIHRlbXBsYXRlX210aW1lX2NhY2hlOiBEaWN0W3N0ciwgZmxvYXRdLAogICAgICAgICAgICAgICAgICAgICAgICAgICB0ZW1wbGF0ZV92YWx1ZV9jYWNoZTogRGljdFtzdHIsIHN0cl0pIC0+IExpc3Rbc3RyXToKICAgICIiIgogICAgUmVmcmVzaCB0aGUgcHJvdmlkZWQgZGljdGlvbmFyeSBjYWNoZXMgb2YgdGVtcGxhdGUgdmFsdWVzICYgbXRpbWVzLgoKICAgIDpwYXJhbSB0ZW1wbGF0ZV9uYW1lczogdGhlIG5hbWVzIG9mIGFsbCB0ZW1wbGF0ZXMgdG8gcmVmcmVzaAogICAgOnBhcmFtIHRlbXBsYXRlX210aW1lX2NhY2hlOiB0aGUgZGljdGlvbmFyeSBjYWNoZSBvZiB0ZW1wbGF0ZSBmaWxlIG1vZGlmaWNhdGlvbi10aW1lcwogICAgOnBhcmFtIHRlbXBsYXRlX3ZhbHVlX2NhY2hlOiB0aGUgZGljdGlvbmFyeSBjYWNoZSBvZiB0ZW1wbGF0ZSB2YWx1ZXMKICAgIDpyZXR1cm46IHRoZSBuYW1lcyBvZiB0ZW1wbGF0ZXMgd2hpY2ggY2hhbmdlZAogICAgIiIiCiAgICBjaGFuZ2VkX3RlbXBsYXRlcyA9IFtdCiAgICBmb3IgdGVtcGxhdGVfbmFtZSBpbiB0ZW1wbGF0ZV9uYW1lczoKICAgICAgICBvbGRfbXRpbWUgPSB0ZW1wbGF0ZV9tdGltZV9jYWNoZS5nZXQodGVtcGxhdGVfbmFtZSwgTm9uZSkKICAgICAgICBuZXdfbXRpbWUgPSB0ZW1wbGF0ZV9tdGltZSh0ZW1wbGF0ZV9uYW1lKQogICAgICAgICMgZmlyc3QsIGNoZWNrIGlmIHRoZSBmaWxlcyB3ZXJlIG1vZGlmaWVkCiAgICAgICAgaWYgb2xkX210aW1lICE9IG5ld19tdGltZToKICAgICAgICAgICAgb2xkX3ZhbHVlID0gdGVtcGxhdGVfdmFsdWVfY2FjaGUuZ2V0KHRlbXBsYXRlX25hbWUsIE5vbmUpCiAgICAgICAgICAgIG5ld192YWx1ZSA9IHRlbXBsYXRlX3ZhbHVlKHRlbXBsYXRlX25hbWUpCiAgICAgICAgICAgICMgc2Vjb25kLCBjaGVjayBpZiB0aGUgdmFsdWUgYWN0dWFsbHkgY2hhbmdlZAogICAgICAgICAgICBpZiBvbGRfdmFsdWUgIT0gbmV3X3ZhbHVlOgogICAgICAgICAgICAgICAgdGVtcGxhdGVfdmFsdWVfY2FjaGVbdGVtcGxhdGVfbmFtZV0gPSBuZXdfdmFsdWUKICAgICAgICAgICAgICAgIGNoYW5nZWRfdGVtcGxhdGVzICs9IFt0ZW1wbGF0ZV9uYW1lXQogICAgICAgICAgICB0ZW1wbGF0ZV9tdGltZV9jYWNoZVt0ZW1wbGF0ZV9uYW1lXSA9IG5ld19tdGltZQogICAgcmV0dXJuIGNoYW5nZWRfdGVtcGxhdGVzCgoKZGVmIG1haW4oc3luY19mb3JldmVyOiBib29sKToKICAgICMgaW5pdGlhbCBzeW5jIG9mIHRlbXBsYXRlIGNhY2hlCiAgICByZWZyZXNoX3RlbXBsYXRlX2NhY2hlKAogICAgICAgIHRlbXBsYXRlX25hbWVzPVZBUl9fVEVNUExBVEVfTkFNRVMsCiAgICAgICAgdGVtcGxhdGVfbXRpbWVfY2FjaGU9VkFSX19URU1QTEFURV9NVElNRV9DQUNIRSwKICAgICAgICB0ZW1wbGF0ZV92YWx1ZV9jYWNoZT1WQVJfX1RFTVBMQVRFX1ZBTFVFX0NBQ0hFCiAgICApCgogICAgIyBpbml0aWFsIHN5bmMgb2Ygb2JqZWN0cyBpbnRvIEFpcmZsb3cgREIKICAgIHN5bmNfd2l0aF9haXJmbG93KCkKCiAgICBpZiBzeW5jX2ZvcmV2ZXI6CiAgICAgICAgIyBkZWZpbmUgdmFyaWFibGVzIHVzZWQgdG8gdHJhY2sgaG93IGxvbmcgc2luY2UgbGFzdCByZWZyZXNoL3N5bmMKICAgICAgICB0ZW1wbGF0ZXNfc3luY19lcG9jaCA9IHRpbWUudGltZSgpCiAgICAgICAgb2JqZWN0c19zeW5jX2Vwb2NoID0gdGltZS50aW1lKCkKCiAgICAgICAgIyBtYWluIGxvb3AKICAgICAgICB3aGlsZSBUcnVlOgogICAgICAgICAgICAjIG1vbml0b3IgZm9yIHRlbXBsYXRlIHNlY3JldC9jb25maWdtYXAgdXBkYXRlcwogICAgICAgICAgICBpZiAodGltZS50aW1lKCkgLSB0ZW1wbGF0ZXNfc3luY19lcG9jaCkgPiBDT05GX19URU1QTEFURVNfU1lOQ19JTlRFUlZBTDoKICAgICAgICAgICAgICAgIGxvZ2dpbmcuZGVidWcoZiJ0ZW1wbGF0ZSBzeW5jIGludGVydmFsIHJlYWNoZWQsIHJlLXN5bmNpbmcgYWxsIHRlbXBsYXRlcy4uLiIpCiAgICAgICAgICAgICAgICBjaGFuZ2VkX3RlbXBsYXRlcyA9IHJlZnJlc2hfdGVtcGxhdGVfY2FjaGUoCiAgICAgICAgICAgICAgICAgICAgdGVtcGxhdGVfbmFtZXM9VkFSX19URU1QTEFURV9OQU1FUywKICAgICAgICAgICAgICAgICAgICB0ZW1wbGF0ZV9tdGltZV9jYWNoZT1WQVJfX1RFTVBMQVRFX01USU1FX0NBQ0hFLAogICAgICAgICAgICAgICAgICAgIHRlbXBsYXRlX3ZhbHVlX2NhY2hlPVZBUl9fVEVNUExBVEVfVkFMVUVfQ0FDSEUKICAgICAgICAgICAgICAgICkKICAgICAgICAgICAgICAgIHRlbXBsYXRlc19zeW5jX2Vwb2NoID0gdGltZS50aW1lKCkKICAgICAgICAgICAgICAgIGlmIGNoYW5nZWRfdGVtcGxhdGVzOgogICAgICAgICAgICAgICAgICAgIGxvZ2dpbmcuaW5mbyhmInRlbXBsYXRlIHZhbHVlcyBoYXZlIGNoYW5nZWQ6IFt7JywnLmpvaW4oY2hhbmdlZF90ZW1wbGF0ZXMpfV0iKQogICAgICAgICAgICAgICAgICAgIHN5bmNfd2l0aF9haXJmbG93KCkKICAgICAgICAgICAgICAgICAgICBvYmplY3RzX3N5bmNfZXBvY2ggPSB0aW1lLnRpbWUoKQoKICAgICAgICAgICAgIyBtb25pdG9yIGZvciBleHRlcm5hbCBjaGFuZ2VzIHRvIG9iamVjdHMgKGxpa2UgZnJvbSBVSSkKICAgICAgICAgICAgaWYgKHRpbWUudGltZSgpIC0gb2JqZWN0c19zeW5jX2Vwb2NoKSA+IENPTkZfX09CSkVDVFNfU1lOQ19JTlRFUlZBTDoKICAgICAgICAgICAgICAgIGxvZ2dpbmcuZGVidWcoZiJzeW5jIGludGVydmFsIHJlYWNoZWQsIHJlLXN5bmNpbmcgYWxsIG9iamVjdHMuLi4iKQogICAgICAgICAgICAgICAgc3luY193aXRoX2FpcmZsb3coKQogICAgICAgICAgICAgICAgb2JqZWN0c19zeW5jX2Vwb2NoID0gdGltZS50aW1lKCkKCiAgICAgICAgICAgICMgZW5zdXJlIHdlIGRvbnQgbG9vcCB0b28gZmFzdAogICAgICAgICAgICB0aW1lLnNsZWVwKDAuNSkKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKIyMjIyBFTkQ6IEdMT0JBTCBDT0RFICMjIyMKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKCgojIyMjIyMjIyMjIyMjCiMjIEltcG9ydHMgIyMKIyMjIyMjIyMjIyMjIwppbXBvcnQgc3lzCmZyb20gd2Vya3pldWcuc2VjdXJpdHkgaW1wb3J0IGNoZWNrX3Bhc3N3b3JkX2hhc2gsIGdlbmVyYXRlX3Bhc3N3b3JkX2hhc2gKaW1wb3J0IGFpcmZsb3cud3d3LmFwcCBhcyB3d3dfYXBwCmZsYXNrX2FwcCA9IHd3d19hcHAuY3JlYXRlX2FwcCgpCmZsYXNrX2FwcGJ1aWxkZXIgPSBmbGFza19hcHAuYXBwYnVpbGRlcgoKIyBhaXJmbG93IG1vdmVzIHRoZSBVc2VyIGFuZCBSb2xlIG1vZGVscyBhcm91bmQgaW4gZGlmZmVyZW50IHZlcnNpb25zCnRyeToKICAjIHNpbmNlIDIuNy4wCiAgZnJvbSBhaXJmbG93LmF1dGgubWFuYWdlcnMuZmFiLm1vZGVscyBpbXBvcnQgVXNlciwgUm9sZQpleGNlcHQgTW9kdWxlTm90Rm91bmRFcnJvcjoKICB0cnk6CiAgICAjIGZyb20gMi4zLjAgdG8gMi42LjMKICAgIGZyb20gYWlyZmxvdy53d3cuZmFiX3NlY3VyaXR5LnNxbGEubW9kZWxzIGltcG9ydCBVc2VyLCBSb2xlCiAgZXhjZXB0IE1vZHVsZU5vdEZvdW5kRXJyb3I6CiAgICAjIGJlZm9yZSAyLjMuMAogICAgZnJvbSBmbGFza19hcHBidWlsZGVyLnNlY3VyaXR5LnNxbGEubW9kZWxzIGltcG9ydCBVc2VyLCBSb2xlCgoKIyMjIyMjIyMjIyMjIwojIyBDbGFzc2VzICMjCiMjIyMjIyMjIyMjIyMKY2xhc3MgVXNlcldyYXBwZXIob2JqZWN0KToKICAgIGRlZiBfX2luaXRfXygKICAgICAgICAgICAgc2VsZiwKICAgICAgICAgICAgdXNlcm5hbWU6IHN0ciwKICAgICAgICAgICAgZmlyc3RfbmFtZTogT3B0aW9uYWxbc3RyXSA9IE5vbmUsCiAgICAgICAgICAgIGxhc3RfbmFtZTogT3B0aW9uYWxbc3RyXSA9IE5vbmUsCiAgICAgICAgICAgIGVtYWlsOiBPcHRpb25hbFtzdHJdID0gTm9uZSwKICAgICAgICAgICAgcm9sZXM6IE9wdGlvbmFsW0xpc3Rbc3RyXV0gPSBOb25lLAogICAgICAgICAgICBwYXNzd29yZDogT3B0aW9uYWxbc3RyXSA9IE5vbmUKICAgICk6CiAgICAgICAgc2VsZi51c2VybmFtZSA9IHVzZXJuYW1lCiAgICAgICAgc2VsZi5fZmlyc3RfbmFtZSA9IGZpcnN0X25hbWUKICAgICAgICBzZWxmLl9sYXN0X25hbWUgPSBsYXN0X25hbWUKICAgICAgICBzZWxmLl9lbWFpbCA9IGVtYWlsCiAgICAgICAgc2VsZi5yb2xlcyA9IHJvbGVzCiAgICAgICAgc2VsZi5fcGFzc3dvcmQgPSBwYXNzd29yZAoKICAgIEBwcm9wZXJ0eQogICAgZGVmIGZpcnN0X25hbWUoc2VsZikgLT4gc3RyOgogICAgICAgIHJldHVybiBzdHJpbmdfc3Vic3RpdHV0aW9uKHNlbGYuX2ZpcnN0X25hbWUsIFZBUl9fVEVNUExBVEVfVkFMVUVfQ0FDSEUpCgogICAgQHByb3BlcnR5CiAgICBkZWYgbGFzdF9uYW1lKHNlbGYpIC0+IHN0cjoKICAgICAgICByZXR1cm4gc3RyaW5nX3N1YnN0aXR1dGlvbihzZWxmLl9sYXN0X25hbWUsIFZBUl9fVEVNUExBVEVfVkFMVUVfQ0FDSEUpCgogICAgQHByb3BlcnR5CiAgICBkZWYgZW1haWwoc2VsZikgLT4gc3RyOgogICAgICAgIHJldHVybiBzdHJpbmdfc3Vic3RpdHV0aW9uKHNlbGYuX2VtYWlsLCBWQVJfX1RFTVBMQVRFX1ZBTFVFX0NBQ0hFKQoKICAgIEBwcm9wZXJ0eQogICAgZGVmIHBhc3N3b3JkKHNlbGYpIC0+IHN0cjoKICAgICAgICByZXR1cm4gc3RyaW5nX3N1YnN0aXR1dGlvbihzZWxmLl9wYXNzd29yZCwgVkFSX19URU1QTEFURV9WQUxVRV9DQUNIRSkKCiAgICBkZWYgYXNfZGljdChzZWxmKSAtPiBEaWN0W3N0ciwgc3RyXToKICAgICAgICByZXR1cm4gewogICAgICAgICAgICAidXNlcm5hbWUiOiBzZWxmLnVzZXJuYW1lLAogICAgICAgICAgICAiZmlyc3RfbmFtZSI6IHNlbGYuZmlyc3RfbmFtZSwKICAgICAgICAgICAgImxhc3RfbmFtZSI6IHNlbGYubGFzdF9uYW1lLAogICAgICAgICAgICAiZW1haWwiOiBzZWxmLmVtYWlsLAogICAgICAgICAgICAicm9sZXMiOiBbZmluZF9yb2xlKHJvbGVfbmFtZT1yb2xlX25hbWUpIGZvciByb2xlX25hbWUgaW4gc2VsZi5yb2xlc10sCiAgICAgICAgICAgICJwYXNzd29yZCI6IHNlbGYucGFzc3dvcmQKICAgICAgICB9CgoKIyMjIyMjIyMjIyMjIyMjCiMjIFZhcmlhYmxlcyAjIwojIyMjIyMjIyMjIyMjIyMKVkFSX19URU1QTEFURV9OQU1FUyA9IFsKXQpWQVJfX1RFTVBMQVRFX01USU1FX0NBQ0hFID0ge30KVkFSX19URU1QTEFURV9WQUxVRV9DQUNIRSA9IHt9ClZBUl9fVVNFUl9XUkFQUEVSUyA9IHsKICAiYWRtaW4iOiBVc2VyV3JhcHBlcigKICAgIHVzZXJuYW1lPSJhZG1pbiIsCiAgICBmaXJzdF9uYW1lPSJhZG1pbiIsCiAgICBsYXN0X25hbWU9ImFkbWluIiwKICAgIGVtYWlsPSJhZG1pbkBleGFtcGxlLmNvbSIsCiAgICByb2xlcz1bICAgICAgICAiQWRtaW4iLAogICAgXSwKICAgIHBhc3N3b3JkPSJhZG1pbiIsCiAgKSwKfQoKCiMjIyMjIyMjIyMjIyMjIwojIyBGdW5jdGlvbnMgIyMKIyMjIyMjIyMjIyMjIyMjCmRlZiBmaW5kX3JvbGUocm9sZV9uYW1lOiBzdHIpIC0+IFJvbGU6CiAgICAiIiIKICAgIEdldCB0aGUgRkFCIFJvbGUgbW9kZWwgYXNzb2NpYXRlZCB3aXRoIGEgYHJvbGVfbmFtZWAuCiAgICAiIiIKICAgIGZvdW5kX3JvbGUgPSBmbGFza19hcHBidWlsZGVyLnNtLmZpbmRfcm9sZShyb2xlX25hbWUpCiAgICBpZiBmb3VuZF9yb2xlOgogICAgICAgIHJldHVybiBmb3VuZF9yb2xlCiAgICBlbHNlOgogICAgICAgIHZhbGlkX3JvbGVzID0gZmxhc2tfYXBwYnVpbGRlci5zbS5nZXRfYWxsX3JvbGVzKCkKICAgICAgICBsb2dnaW5nLmVycm9yKGYiRmFpbGVkIHRvIGZpbmQgcm9sZT1ge3JvbGVfbmFtZX1gLCB2YWxpZCByb2xlcyBhcmU6IHt2YWxpZF9yb2xlc30iKQogICAgICAgIHN5cy5leGl0KDEpCgoKZGVmIGNvbXBhcmVfcm9sZV9saXN0cyhyb2xlX2xpc3RfMTogTGlzdFtSb2xlXSwgcm9sZV9saXN0XzI6IExpc3RbUm9sZV0pIC0+IGJvb2w6CiAgICAiIiIKICAgIENoZWNrIGlmIHR3byBsaXN0cyBvZiBGQUIgUm9sZXMgY29udGFpbiB0aGUgc2FtZSByb2xlcyAoaWdub3JlcyBkdXBsaWNhdGVzIGFuZCBvcmRlcikuCiAgICAiIiIKICAgIG5hbWVfc2V0XzEgPSBzZXQocm9sZS5uYW1lIGZvciByb2xlIGluIHJvbGVfbGlzdF8xKQogICAgbmFtZV9zZXRfMiA9IHNldChyb2xlLm5hbWUgZm9yIHJvbGUgaW4gcm9sZV9saXN0XzIpCiAgICByZXR1cm4gbmFtZV9zZXRfMSA9PSBuYW1lX3NldF8yCgoKCmRlZiBjb21wYXJlX3VzZXJzKHVzZXJfZGljdDogRGljdCwgdXNlcl9tb2RlbDogVXNlcikgLT4gYm9vbDoKICAgICIiIgogICAgQ2hlY2sgaWYgdXNlciBpbmZvIChzdG9yZWQgaW4gZGljdCkgaXMgaWRlbnRpY2FsIHRvIGEgRkFCIFVzZXIgbW9kZWwuCiAgICAiIiIKICAgIHJldHVybiAoCiAgICAgICAgICAgIHVzZXJfZGljdFsidXNlcm5hbWUiXSA9PSB1c2VyX21vZGVsLnVzZXJuYW1lCiAgICAgICAgICAgIGFuZCB1c2VyX2RpY3RbImZpcnN0X25hbWUiXSA9PSB1c2VyX21vZGVsLmZpcnN0X25hbWUKICAgICAgICAgICAgYW5kIHVzZXJfZGljdFsibGFzdF9uYW1lIl0gPT0gdXNlcl9tb2RlbC5sYXN0X25hbWUKICAgICAgICAgICAgYW5kIHVzZXJfZGljdFsiZW1haWwiXSA9PSB1c2VyX21vZGVsLmVtYWlsCiAgICAgICAgICAgIGFuZCBjb21wYXJlX3JvbGVfbGlzdHModXNlcl9kaWN0WyJyb2xlcyJdLCB1c2VyX21vZGVsLnJvbGVzKQogICAgICAgICAgICBhbmQgY2hlY2tfcGFzc3dvcmRfaGFzaChwd2hhc2g9dXNlcl9tb2RlbC5wYXNzd29yZCwgcGFzc3dvcmQ9dXNlcl9kaWN0WyJwYXNzd29yZCJdKQogICAgKQoKCmRlZiBzeW5jX3VzZXIodXNlcl93cmFwcGVyOiBVc2VyV3JhcHBlcikgLT4gTm9uZToKICAgICIiIgogICAgU3luYyB0aGUgVXNlciBkZWZpbmVkIGJ5IGEgcHJvdmlkZWQgVXNlcldyYXBwZXIgaW50byB0aGUgRkFCIERCLgogICAgIiIiCiAgICB1c2VybmFtZSA9IHVzZXJfd3JhcHBlci51c2VybmFtZQogICAgdV9uZXcgPSB1c2VyX3dyYXBwZXIuYXNfZGljdCgpCiAgICB1X29sZCA9IGZsYXNrX2FwcGJ1aWxkZXIuc20uZmluZF91c2VyKHVzZXJuYW1lPXVzZXJuYW1lKQoKICAgIGlmIG5vdCB1X29sZDoKICAgICAgICBsb2dnaW5nLmluZm8oZiJVc2VyPWB7dXNlcm5hbWV9YCBpcyBtaXNzaW5nLCBhZGRpbmcuLi4iKQogICAgICAgIGNyZWF0ZWRfdXNlciA9IGZsYXNrX2FwcGJ1aWxkZXIuc20uYWRkX3VzZXIoCiAgICAgICAgICAgIHVzZXJuYW1lPXVfbmV3WyJ1c2VybmFtZSJdLAogICAgICAgICAgICBmaXJzdF9uYW1lPXVfbmV3WyJmaXJzdF9uYW1lIl0sCiAgICAgICAgICAgIGxhc3RfbmFtZT11X25ld1sibGFzdF9uYW1lIl0sCiAgICAgICAgICAgIGVtYWlsPXVfbmV3WyJlbWFpbCJdLAogICAgICAgICAgICAjIGluIG9sZCB2ZXJzaW9ucyBvZiBmbGFza19hcHBidWlsZGVyIGBhZGRfdXNlcihyb2xlPWAgY2FuIG9ubHkgYWRkIGV4YWN0bHkgb25lIHJvbGUKICAgICAgICAgICAgIyAodW5jaGVja2VkIDAgaW5kZXggaXMgc2FmZSBiZWNhdXNlIHdlIHJlcXVpcmUgYXQgbGVhc3Qgb25lIHJvbGUgdXNpbmcgaGVsbSB2YWx1ZXMgdmFsaWRhdGlvbikKICAgICAgICAgICAgcm9sZT11X25ld1sicm9sZXMiXVswXSwKICAgICAgICAgICAgcGFzc3dvcmQ9dV9uZXdbInBhc3N3b3JkIl0KICAgICAgICApCiAgICAgICAgaWYgY3JlYXRlZF91c2VyOgogICAgICAgICAgICAjIGFkZCB0aGUgZnVsbCBsaXN0IG9mIHJvbGVzICh3ZSBvbmx5IGFkZGVkIHRoZSBmaXJzdCBvbmUgYWJvdmUpCiAgICAgICAgICAgIGNyZWF0ZWRfdXNlci5yb2xlcyA9IHVfbmV3WyJyb2xlcyJdCiAgICAgICAgICAgIGxvZ2dpbmcuaW5mbyhmIlVzZXI9YHt1c2VybmFtZX1gIHdhcyBzdWNjZXNzZnVsbHkgYWRkZWQuIikKICAgICAgICBlbHNlOgogICAgICAgICAgICBsb2dnaW5nLmVycm9yKGYiRmFpbGVkIHRvIGFkZCBVc2VyPWB7dXNlcm5hbWV9YCIpCiAgICAgICAgICAgIHN5cy5leGl0KDEpCiAgICBlbHNlOgogICAgICAgIGlmIGNvbXBhcmVfdXNlcnModV9uZXcsIHVfb2xkKToKICAgICAgICAgICAgcGFzcwogICAgICAgIGVsc2U6CiAgICAgICAgICAgIGxvZ2dpbmcuaW5mbyhmIlVzZXI9YHt1c2VybmFtZX1gIGV4aXN0cyBidXQgaGFzIGNoYW5nZWQsIHVwZGF0aW5nLi4uIikKICAgICAgICAgICAgdV9vbGQuZmlyc3RfbmFtZSA9IHVfbmV3WyJmaXJzdF9uYW1lIl0KICAgICAgICAgICAgdV9vbGQubGFzdF9uYW1lID0gdV9uZXdbImxhc3RfbmFtZSJdCiAgICAgICAgICAgIHVfb2xkLmVtYWlsID0gdV9uZXdbImVtYWlsIl0KICAgICAgICAgICAgdV9vbGQucm9sZXMgPSB1X25ld1sicm9sZXMiXQogICAgICAgICAgICB1X29sZC5wYXNzd29yZCA9IGdlbmVyYXRlX3Bhc3N3b3JkX2hhc2godV9uZXdbInBhc3N3b3JkIl0pCiAgICAgICAgICAgICMgc3RyYW5nZSBjaGVjayBmb3IgRmFsc2UgaXMgYmVjYXVzZSB1cGRhdGVfdXNlcigpIHJldHVybnMgTm9uZSBmb3Igc3VjY2VzcwogICAgICAgICAgICAjIGJ1dCBpbiBmdXR1cmUgbWlnaHQgcmV0dXJuIHRoZSBVc2VyIG1vZGVsCiAgICAgICAgICAgIGlmIG5vdCAoZmxhc2tfYXBwYnVpbGRlci5zbS51cGRhdGVfdXNlcih1X29sZCkgaXMgRmFsc2UpOgogICAgICAgICAgICAgICAgbG9nZ2luZy5pbmZvKGYiVXNlcj1ge3VzZXJuYW1lfWAgd2FzIHN1Y2Nlc3NmdWxseSB1cGRhdGVkLiIpCiAgICAgICAgICAgIGVsc2U6CiAgICAgICAgICAgICAgICBsb2dnaW5nLmVycm9yKGYiRmFpbGVkIHRvIHVwZGF0ZSBVc2VyPWB7dXNlcm5hbWV9YCIpCiAgICAgICAgICAgICAgICBzeXMuZXhpdCgxKQoKCmRlZiBzeW5jX2FsbF91c2Vycyh1c2VyX3dyYXBwZXJzOiBEaWN0W3N0ciwgVXNlcldyYXBwZXJdKSAtPiBOb25lOgogICAgIiIiCiAgICBTeW5jIGFsbCB1c2VycyBpbiBwcm92aWRlZCBgdXNlcl93cmFwcGVyc2AuCiAgICAiIiIKICAgIGxvZ2dpbmcuaW5mbygiQkVHSU46IGFpcmZsb3cgdXNlcnMgc3luYyIpCiAgICBmb3IgdXNlcl93cmFwcGVyIGluIHVzZXJfd3JhcHBlcnMudmFsdWVzKCk6CiAgICAgICAgc3luY191c2VyKHVzZXJfd3JhcHBlcikKICAgIGxvZ2dpbmcuaW5mbygiRU5EOiBhaXJmbG93IHVzZXJzIHN5bmMiKQoKICAgICMgZW5zdXJlcyB0aGFuIGFueSBTUUxBbGNoZW15IHNlc3Npb25zIGFyZSBjbG9zZWQgKHNvIHdlIGRvbid0IGhvbGQgYSBjb25uZWN0aW9uIHRvIHRoZSBkYXRhYmFzZSkKICAgIGZsYXNrX2FwcC5kb190ZWFyZG93bl9hcHBjb250ZXh0KCkKCgpkZWYgc3luY193aXRoX2FpcmZsb3coKSAtPiBOb25lOgogICAgIiIiCiAgICBQcmVmb3JtIGEgc3luYyBvZiBhbGwgb2JqZWN0cyB3aXRoIGFpcmZsb3cgKG5vdGUsIGBzeW5jX3dpdGhfYWlyZmxvdygpYCBpcyBjYWxsZWQgaW4gYG1haW4oKWAgdGVtcGxhdGUpLgogICAgIiIiCiAgICBzeW5jX2FsbF91c2Vycyh1c2VyX3dyYXBwZXJzPVZBUl9fVVNFUl9XUkFQUEVSUykKCgojIyMjIyMjIyMjIyMjIwojIyBSdW4gTWFpbiAjIwojIyMjIyMjIyMjIyMjIwptYWluKHN5bmNfZm9yZXZlcj1UcnVlKQ==
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: sync-users
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-sync-users
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  webserver_config.py: ZnJvbSBmbGFza19hcHBidWlsZGVyLnNlY3VyaXR5Lm1hbmFnZXIgaW1wb3J0IEFVVEhfREIKCiMgdXNlIGVtYmVkZGVkIERCIGZvciBhdXRoCkFVVEhfVFlQRSA9IEFVVEhfREIK
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-webserver-config
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: flower
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-flower
+  namespace: deeppharmgraph
+spec:
+  ports:
+  - name: flower
+    port: 5555
+    protocol: TCP
+    targetPort: 5555
+  selector:
+    app: airflow
+    component: flower
+    release: dpg-processing-airflow
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: pgbouncer
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-pgbouncer
+  namespace: deeppharmgraph
+spec:
+  ports:
+  - name: pgbouncer
+    port: 6432
+    protocol: TCP
+  selector:
+    app: airflow
+    component: pgbouncer
+    release: dpg-processing-airflow
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: web
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-web
+  namespace: deeppharmgraph
+spec:
+  ports:
+  - name: web
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: airflow
+    component: web
+    release: dpg-processing-airflow
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: worker
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-worker
+  namespace: deeppharmgraph
+spec:
+  clusterIP: None
+  ports:
+  - name: worker
+    port: 8793
+    protocol: TCP
+  selector:
+    app: airflow
+    component: worker
+    release: dpg-processing-airflow
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: db-migrations
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-db-migrations
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: db-migrations
+      release: dpg-processing-airflow
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        checksum/db-migrations-script: 37898f38b90abd06081105d992362ec9e0d0015123b69e758e59031a9e6ddfc9
+        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: db-migrations
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - python
+        - -u
+        - /mnt/scripts/db_migrations.py
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: db-migrations
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+        - mountPath: /mnt/scripts
+          name: scripts
+          readOnly: true
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+      - name: scripts
+        secret:
+          secretName: dpg-processing-airflow-db-migrations
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: flower
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-flower
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: flower
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: flower
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow celery flower
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - exec curl 'http://localhost:5555'
+          failureThreshold: 6
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: airflow-flower
+        ports:
+        - containerPort: 5555
+          name: flower
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - exec curl 'http://localhost:5555'
+          failureThreshold: 6
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: pgbouncer
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-pgbouncer
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: pgbouncer
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      annotations:
+        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-pgbouncer: 4e9f8069d3409019804aa33f690710e2b9e381ea88a829a848b20d8ee46fba38
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: pgbouncer
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - |-
+          /home/pgbouncer/config/gen_self_signed_cert.sh && \
+          /home/pgbouncer/config/gen_auth_file.sh && \
+          exec pgbouncer /home/pgbouncer/config/pgbouncer.ini
+        command:
+        - /usr/bin/dumb-init
+        - --rewrite=15:2
+        - --
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: ghcr.io/airflow-helm/pgbouncer:1.18.0-patch.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - psql $(eval $DATABASE_PSQL_CMD) --tuples-only --command="SELECT 1;"
+              | grep -q "1"
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          timeoutSeconds: 60
+        name: pgbouncer
+        ports:
+        - containerPort: 6432
+          name: pgbouncer
+          protocol: TCP
+        resources: {}
+        securityContext:
+          runAsGroup: 1001
+          runAsUser: 1001
+        startupProbe:
+          failureThreshold: 30
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          tcpSocket:
+            port: 6432
+          timeoutSeconds: 15
+        volumeMounts:
+        - mountPath: /home/pgbouncer/config
+          name: pgbouncer-config
+          readOnly: true
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      terminationGracePeriodSeconds: 120
+      tolerations: []
+      volumes:
+      - name: pgbouncer-config
+        secret:
+          items:
+          - key: gen_auth_file.sh
+            mode: 493
+            path: gen_auth_file.sh
+          - key: gen_self_signed_cert.sh
+            mode: 493
+            path: gen_self_signed_cert.sh
+          - key: pgbouncer.ini
+            path: pgbouncer.ini
+          secretName: dpg-processing-airflow-pgbouncer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: scheduler
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-scheduler
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: scheduler
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: scheduler
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow scheduler -n -1
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/dumb-init
+            - --
+            - /entrypoint
+            - python
+            - -Wignore
+            - -c
+            - |
+              import os
+              import sys
+
+              # suppress logs triggered from importing airflow packages
+              os.environ["AIRFLOW__LOGGING__LOGGING_LEVEL"] = "ERROR"
+
+              # shared imports
+              try:
+                  from airflow.jobs.job import Job
+              except ImportError:
+                  # `BaseJob` was renamed to `Job` in airflow 2.6.0
+                  from airflow.jobs.base_job import BaseJob as Job
+              from airflow.utils.db import create_session
+              from airflow.utils.net import get_hostname
+
+              # heartbeat check imports
+              try:
+                  from airflow.jobs.scheduler_job_runner import SchedulerJobRunner
+              except ImportError:
+                  # `SchedulerJob` is wrapped by `SchedulerJobRunner` since airflow 2.6.0
+                  from airflow.jobs.scheduler_job import SchedulerJob as SchedulerJobRunner
+
+              with create_session() as session:
+                  ########################
+                  # heartbeat check
+                  ########################
+                  # ensure the SchedulerJob with most recent heartbeat for this `hostname` is alive
+                  hostname = get_hostname()
+                  scheduler_job = session \
+                      .query(Job) \
+                      .filter_by(job_type=SchedulerJobRunner.job_type) \
+                      .filter_by(hostname=hostname) \
+                      .order_by(Job.latest_heartbeat.desc()) \
+                      .limit(1) \
+                      .first()
+                  if (scheduler_job is not None) and scheduler_job.is_alive():
+                      pass
+                  else:
+                      sys.exit(f"The SchedulerJob (id={scheduler_job.id}) for hostname '{hostname}' is not alive")
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 60
+        name: airflow-scheduler
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - |
+          set -euo pipefail
+
+          # break the infinite loop when we receive SIGINT or SIGTERM
+          trap "exit 0" SIGINT SIGTERM
+
+          while true; do
+            START_EPOCH=$(date --utc +%s)
+            echo "[$(date --utc +%FT%T.%3N)] deleting log files older than $RETENTION_MINUTES minutes..."
+
+            # delete all writable files ending in ".log" with modified-time older than $RETENTION_MINUTES
+            # NOTE: `-printf "."` prints a "." for each deleted file, which we count the bytes of with `wc -c`
+            DELETED_COUNT=$(
+              find "$LOG_PATH" \
+                -type f \
+                -name "*.log" \
+                -mmin +"$RETENTION_MINUTES" \
+                -writable \
+                -delete \
+                -printf "." \
+              | wc -c
+            )
+
+            END_EPOCH=$(date --utc +%s)
+            LOOP_DURATION=$((END_EPOCH - START_EPOCH))
+            echo "[$(date --utc +%FT%T.%3N)] deleted $DELETED_COUNT files in $LOOP_DURATION seconds"
+
+            SECONDS_TO_SLEEP=$((INTERVAL_SECONDS - LOOP_DURATION))
+            if (( SECONDS_TO_SLEEP > 0 )); then
+              echo "[$(date --utc +%FT%T.%3N)] waiting $SECONDS_TO_SLEEP seconds..."
+              sleep $SECONDS_TO_SLEEP
+            fi
+          done
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: LOG_PATH
+          value: /opt/airflow/logs
+        - name: RETENTION_MINUTES
+          value: "21600"
+        - name: INTERVAL_SECONDS
+          value: "900"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: log-cleanup
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: sync-users
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-sync-users
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: sync-users
+      release: dpg-processing-airflow
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        checksum/sync-users-script: 9733d90da42fbc9e6b1e60df36e22c87aa7c1114a86eb96bb2eae03de9a3b046
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: sync-users
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - python
+        - -u
+        - /mnt/scripts/sync_users.py
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: sync-airflow-users
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+        - mountPath: /mnt/scripts
+          name: scripts
+          readOnly: true
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+      - name: scripts
+        secret:
+          secretName: dpg-processing-airflow-sync-users
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: triggerer
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-triggerer
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: triggerer
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: triggerer
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow triggerer
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/dumb-init
+            - --
+            - /entrypoint
+            - python
+            - -Wignore
+            - -c
+            - |
+              import os
+              import sys
+
+              # suppress logs triggered from importing airflow packages
+              os.environ["AIRFLOW__LOGGING__LOGGING_LEVEL"] = "ERROR"
+
+              # shared imports
+              try:
+                  from airflow.jobs.job import Job
+              except ImportError:
+                  # `BaseJob` was renamed to `Job` in airflow 2.6.0
+                  from airflow.jobs.base_job import BaseJob as Job
+              from airflow.utils.db import create_session
+              from airflow.utils.net import get_hostname
+
+              # heartbeat check imports
+              try:
+                  from airflow.jobs.triggerer_job_runner import TriggererJobRunner
+              except ImportError:
+                  # `TriggererJob` is wrapped by `TriggererJobRunner` since airflow 2.6.0
+                  from airflow.jobs.triggerer_job import TriggererJob as TriggererJobRunner
+
+              with create_session() as session:
+                  # ensure the TriggererJob with most recent heartbeat for this `hostname` is alive
+                  hostname = get_hostname()
+                  triggerer_job = session \
+                      .query(Job) \
+                      .filter_by(job_type=TriggererJobRunner.job_type) \
+                      .filter_by(hostname=hostname) \
+                      .order_by(Job.latest_heartbeat.desc()) \
+                      .limit(1) \
+                      .first()
+                  if (triggerer_job is not None) and triggerer_job.is_alive():
+                      pass
+                  else:
+                      sys.exit(f"The TriggererJob (id={triggerer_job.id}) for hostname '{hostname}' is not alive")
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 60
+        name: airflow-triggerer
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: web
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-web
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: web
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config-webserver-config: 5ffd2744fac9da2f5fa161b3e3e4ea1d50d2e6ac5f630887e738ce7359403e64
+        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: web
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow webserver
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /health
+            port: web
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: airflow-web
+        ports:
+        - containerPort: 8080
+          name: web
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /health
+            port: web
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+        - mountPath: /opt/airflow/webserver_config.py
+          name: webserver-config
+          readOnly: true
+          subPath: webserver_config.py
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+      - name: webserver-config
+        secret:
+          defaultMode: 420
+          secretName: dpg-processing-airflow-webserver-config
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: worker
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-worker
+  namespace: deeppharmgraph
+spec:
+  podManagementPolicy: Parallel
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: worker
+      release: dpg-processing-airflow
+  serviceName: dpg-processing-airflow-worker
+  template:
+    metadata:
+      annotations:
+        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: worker
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow celery worker
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: DUMB_INIT_SETSID
+          value: "0"
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/dumb-init
+            - --
+            - /entrypoint
+            - python
+            - -Wignore
+            - -c
+            - |
+              import os
+              import sys
+              import subprocess
+              from celery import Celery
+              from celery.app.control import Inspect
+              from typing import List
+
+              def run_command(cmd: List[str]) -> str:
+                  process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+                  output, error = process.communicate()
+                  if error is not None:
+                      raise Exception(error)
+                  else:
+                      return output.decode(encoding="utf-8")
+
+              broker_url = run_command(["bash", "-c", "eval $AIRFLOW__CELERY__BROKER_URL_CMD"])
+              local_celery_host = f"celery@{os.environ['HOSTNAME']}"
+              app = Celery(broker=broker_url)
+
+              # ping the local celery worker to see if it's ok
+              i = Inspect(app=app, destination=[local_celery_host], timeout=5.0)
+              ping_responses = i.ping()
+              if local_celery_host not in ping_responses:
+                  sys.exit(f"celery worker '{local_celery_host}' did not respond to ping")
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 60
+        name: airflow-worker
+        ports:
+        - containerPort: 8793
+          name: wlog
+          protocol: TCP
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - |
+          set -euo pipefail
+
+          # break the infinite loop when we receive SIGINT or SIGTERM
+          trap "exit 0" SIGINT SIGTERM
+
+          while true; do
+            START_EPOCH=$(date --utc +%s)
+            echo "[$(date --utc +%FT%T.%3N)] deleting log files older than $RETENTION_MINUTES minutes..."
+
+            # delete all writable files ending in ".log" with modified-time older than $RETENTION_MINUTES
+            # NOTE: `-printf "."` prints a "." for each deleted file, which we count the bytes of with `wc -c`
+            DELETED_COUNT=$(
+              find "$LOG_PATH" \
+                -type f \
+                -name "*.log" \
+                -mmin +"$RETENTION_MINUTES" \
+                -writable \
+                -delete \
+                -printf "." \
+              | wc -c
+            )
+
+            END_EPOCH=$(date --utc +%s)
+            LOOP_DURATION=$((END_EPOCH - START_EPOCH))
+            echo "[$(date --utc +%FT%T.%3N)] deleted $DELETED_COUNT files in $LOOP_DURATION seconds"
+
+            SECONDS_TO_SLEEP=$((INTERVAL_SECONDS - LOOP_DURATION))
+            if (( SECONDS_TO_SLEEP > 0 )); then
+              echo "[$(date --utc +%FT%T.%3N)] waiting $SECONDS_TO_SLEEP seconds..."
+              sleep $SECONDS_TO_SLEEP
+            fi
+          done
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: LOG_PATH
+          value: /opt/airflow/logs
+        - name: RETENTION_MINUTES
+          value: "21600"
+        - name: INTERVAL_SECONDS
+          value: "900"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: log-cleanup
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      terminationGracePeriodSeconds: 60
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+  updateStrategy:
+    type: RollingUpdate
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: airflow-env-secret
+  namespace: deeppharmgraph
+spec:
+  encryptedData:
+    AIRFLOW__CORE__FERNET_KEY: AgBCW9GpP5QZWRpyerJ0fFeee5fSaXdQKXcp+Q8/NSpi2xZz8Rtt+Ku4B8mF+oMw0wlbvDz5yQPj1PQbAFBXhSZYjKbsHw6Z78GQ0hS7P+OZ1XzuBrEoIpiYEua/2fpQEpbxE64/zAhDgsgfTT0swCjJaNTy1xZfgi2I67wcjIeWblyQ3RCAB8C9xUn+g2gDI5Kpb6KNNcVhGAwiOASFaAK5OF/A6cRhJKZlTpt/FroIelrlI8dRxf6wjIGs6VU/Xp48bsrRTrAwWQrDGUVwpgifQtaf9Dw7Y/gA8RCn23guYU5u6ZkxGwA8a8DqBOkucJlsGQ5z5EERVHc7NlFmVFpOloeP29vnprrT+ZPHAjXPyNX8Q/c+iLOBX+XPTbRSIeGB30YVzVZ8M6lKKHhLdQg7q/mUY/A4MzY8lTZXJJVxEIsPhGuH+MNYsBAj+AZqTjD+F2KRLQmj68Df9KXoMoKDCQzAWqC3LxK1cMXAXS2atsw8Ej5kUZIJ5O9WssnAXc7L58fe/7MW3l+lokXyOgult32cKX/U8v4Dwqshn+q8IoCPmBIbw7xTYaG7MfXfLhZWF2h3+PnA6JY7ww3jpYV/K/c00uC/dD7kAm21FZoV5kzQ2dPXq+AGzcmhIqCIEak8ELK5Do5nA6SoUJhBApXfiPYC8sryoK9eVuvf5BHh0RME9EA/ES2+lTWUboUsI1jdCb/dCGjrQjlA845pLL6h4gbFMDyTT0qCnxxA8Y0IEG1eOt9hUbCJ/EpQ1g==
+    AIRFLOW__WEBSERVER__SECRET_KEY: AgB7G7PKEh+UpGGJQBvEZtegjjD5Rspg8odGEzjpZZV6FPGtWsdeN1O95JW7Wm7ynLms0La4ifIT/DrUx0T9ITmjJ3M/cBp6RiAgicEDAq9FxNocOiERwsT6HJHgHN9Na28y7/n0QdAy9ZKzj/4uREt/alRGSa/ot3nMjbYeuDqUiiZGokR9+VZ3ESyyPYetwlDCezts18KtSsrrO1OSRQBCsSeY9oMh0YUdC8XGhTAcsPAyndDP/guTVuQPzXCnQm0PJstYXZUj/I5dQ04A1pF2dK52KOHRBAm2QPtJTzZuSWDdGuAPaKZC6uUXfyEGTtuQN05uH2ZmVUfrt4eFS+oNylkWnIzlKFaYjdMB+7qkRZGMXyiTZ2ZZZkA57tcJxRQxW82Tf4avnHmBDOe6IfuH6F5hvoSbh6qdh7L597OkDOFyrC1Go55x9b3nEXG/doWz1tK61LUfzGK0ybcy/TUlzPqpv5lTpqtSz9NtG/dIz2gtOuhufwcpq82vNZravUni0/4douO/oxoVCdZPSmheOYlG48rRUR3fD4smvyXXBVdaiqbBk8ECZlu6z1EPSLq61bxsDT6fWH/CDJ2wsI3LIlX56HRYgZXCQQozjgx1o866/R9u9/S4k52eMQJyfhkR6bkgdRMpW8CapMvgp1Wgz/00hIN46WfcvOWn3mqtH/ADnu8h2f6OVAHvn0KVkQrmN+t6dSt0To5r3sYjraybgPiCFXQV9fu4skOaGk/v5w==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: airflow-env-secret
+      namespace: deeppharmgraph
+---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
