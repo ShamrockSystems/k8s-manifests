@@ -141,15 +141,6 @@ builds:
     cluster: in-cluster
     name: cloudnative-pg
   - timestamp: 1706693118
-    sourceHash: ff1a3ba3c5c9d8232ed5dadc748c0fbbb109bfca7b5834297153af0ce7777fcc
-    sourceHashType: sha256
-    sourcePath: cluster-metal/dpg-processing
-    buildHash: 02c44cfa2491f6e4785cc5c0cd69776610b6e68642e1439dc688bfda71203bc1
-    buildHashType: sha256
-    buildPath: builds/in-cluster/dpg-processing
-    cluster: in-cluster
-    name: dpg-processing
-  - timestamp: 1706693118
     sourceHash: a22ddd1b927f75881e56b26cd8ae073a6e4245fbf5cd27ffadb2039d24db09e7
     sourceHashType: sha256
     sourcePath: cluster-metal/argocd
@@ -185,3 +176,12 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
+  - timestamp: 1706694970
+    sourceHash: 30980736f965b947c2857409b76bb495401ac5b4b21beb5f3fcf26e9b38ad405
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-processing
+    buildHash: 7b5a09f4f534c39310300afc2aa0a49ddd28a4d709b9298f363222189db831db
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-processing
+    cluster: in-cluster
+    name: dpg-processing

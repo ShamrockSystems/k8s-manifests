@@ -6,10 +6,4 @@ namespace: deeppharmgraph
 resources:
   - ./httproute.yaml
 
-helmCharts:
-  - releaseName: dpg-processing-airflow
-    namespace: deeppharmgraph
-    name: airflow
-    repo: https://airflow.apache.org
-    version: 1.11.0
-    valuesFile: values.airflow.yaml
+helmCharts: []
