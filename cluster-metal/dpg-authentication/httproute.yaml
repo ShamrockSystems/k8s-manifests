@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 metadata:
-  name: http-dashboard
+  name: http-authentication
   namespace: deeppharmgraph
 spec:
   parentRefs:
@@ -16,7 +16,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - group: v1
+        - group: ''
           kind: Service
           name: dpg-authentication-keycloak
           port: 80

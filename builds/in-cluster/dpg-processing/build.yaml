@@ -359,7 +359,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  connection: cmVkaXM6Ly86MkNTcVA1U0NxMkBkcGctcHJvY2Vzc2luZy1haXJmbG93LXJlZGlzOjYzNzkvMA==
+  connection: cmVkaXM6Ly86dTVlRTh2b05sNEBkcGctcHJvY2Vzc2luZy1haXJmbG93LXJlZGlzOjYzNzkvMA==
 kind: Secret
 metadata:
   annotations:
@@ -378,7 +378,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  fernet-key: YzNjemRsUXllRWhDY0ZBNFRWZFpRV3htZWpVeWVIaEpjVzFLU0VwRGFEQT0=
+  fernet-key: ZEZCV1kwUnFRMDlQYWtwQ09HTnVSbWROYUVsUVZsaFRNVEpRU2pJd1QzZz0=
 kind: Secret
 metadata:
   annotations:
@@ -424,7 +424,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  password: MkNTcVA1U0NxMg==
+  password: dTVlRTh2b05sNA==
 kind: Secret
 metadata:
   annotations:
@@ -443,7 +443,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  webserver-secret-key: ZVZZelVXRkRibWM1V1ZkWVYwSjBiSEU1UlRWQ2VYVkNRMWhyTkRSM1ZFRT0=
+  webserver-secret-key: V0hOTFMwWndNRXR3TTNVNVJFdDFOVFp3WlhkTlEySTBWbE5uZW1KWGN6UT0=
 kind: Secret
 metadata:
   labels:
@@ -949,7 +949,7 @@ spec:
         checksum/metadata-secret: dad4ec6d9c48fb2745f5c1979e881d4150a6db4a17c131649643d407ce705a9d
         checksum/pgbouncer-config-secret: 1dae2adc757473469686d37449d076b0c82404f61413b58ae68b3c5e99527688
         checksum/webserver-config: 2f3fdfd294a37094d2abee43b2b09888a5c195ee03414996bf99a4681658af94
-        checksum/webserver-secret-key: ee657958bb694227e099493a6e4489a94cf03ab406b3888f9c6302b5ed5f4271
+        checksum/webserver-secret-key: 39a595e9c5077a1df72af4b7f764781578d52e68855ce6d153e56eb2697dabaa
       labels:
         component: webserver
         release: dpg-processing-airflow
@@ -1582,7 +1582,7 @@ spec:
         checksum/metadata-secret: dad4ec6d9c48fb2745f5c1979e881d4150a6db4a17c131649643d407ce705a9d
         checksum/pgbouncer-config-secret: 1dae2adc757473469686d37449d076b0c82404f61413b58ae68b3c5e99527688
         checksum/result-backend-secret: 98a68f230007cfa8f5d3792e1aff843a76b0686409e4a46ab2f092f6865a1b71
-        checksum/webserver-secret-key: 85a4370b026c8d34c0c45341e1103fe25b36993ef3dfd48f6064b8d524cfcdd5
+        checksum/webserver-secret-key: aea66a1eb66fa1499bcbd03e8e8849a1378428a99361920da53004f2fdd26649
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
         component: worker
@@ -1986,12 +1986,17 @@ spec:
   hostnames:
   - dpg-processing.shamrock.systems
   parentRefs:
-  - name: http-gateway
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: http-gateway
     namespace: kube-system
   rules:
   - backendRefs:
-    - name: dpg-processing-airflow-webserver
+    - group: ""
+      kind: Service
+      name: dpg-processing-airflow-webserver
       port: 8080
+      weight: 1
     matches:
     - path:
         type: PathPrefix

@@ -5,7 +5,9 @@ metadata:
   namespace: deeppharmgraph
 spec:
   parentRefs:
-    - name: http-gateway
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: http-gateway
       namespace: kube-system
   hostnames: [dpg-processing.shamrock.systems]
   rules:
@@ -14,5 +16,8 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: dpg-processing-airflow-webserver
+        - group: ''
+          kind: Service
+          name: dpg-processing-airflow-webserver
           port: 8080
+          weight: 1

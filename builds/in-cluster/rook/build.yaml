@@ -23530,8 +23530,11 @@ spec:
     namespace: kube-system
   rules:
   - backendRefs:
-    - name: rook-ceph-mgr-dashboard
+    - group: ""
+      kind: Service
+      name: rook-ceph-mgr-dashboard
       port: 7000
+      weight: 1
     matches:
     - path:
         type: PathPrefix
@@ -23552,7 +23555,7 @@ spec:
     namespace: kube-system
   rules:
   - backendRefs:
-    - group: v1
+    - group: ""
       kind: Service
       name: rook-ceph-rgw-object-erasure
       port: 80
