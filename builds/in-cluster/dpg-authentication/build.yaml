@@ -99,33 +99,12 @@ spec:
         type: PathPrefix
         value: /
 ---
-apiVersion: postgres-operator.crunchydata.com/v1beta1
-kind: PostgresCluster
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
-  name: keycloakdb
+  name: keycloak-postgres
   namespace: deeppharmgraph
 spec:
-  backups:
-    pgbackrest:
-      configuration:
-      - secret:
-          name: pgo-backrest-repo-config
-      global:
-        repo1-path: /pgbackrest/postgres-operator/hippo-s3/repo1
-      image: registry.developers.crunchydata.com/crunchydata/crunchy-pgbackrest:ubi8-2.47-2
-      repos:
-      - name: repo1
-        s3:
-          bucket: pgo
-          endpoint: s3-metal.shamrock.systems
-          region: default
-  image: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-15.5-0
-  instances:
-  - dataVolumeClaimSpec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-    replicas: 2
-  postgresVersion: 15
+  instances: 1
+  storage:
+    size: 16Gi

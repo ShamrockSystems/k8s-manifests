@@ -140,15 +140,6 @@ builds:
     buildPath: builds/in-cluster/pgo
     cluster: in-cluster
     name: pgo
-  - timestamp: 1706117073
-    sourceHash: 6d336b212881888d969b8e714038026ea1684152186ba9bc73cd4aebffab0269
-    sourceHashType: sha256
-    sourcePath: cluster-metal/dpg-authentication
-    buildHash: cfa15085fd7d7d95893a4a0c21083166ff32991758869b0da0276b4a842bbadd
-    buildHashType: sha256
-    buildPath: builds/in-cluster/dpg-authentication
-    cluster: in-cluster
-    name: dpg-authentication
   - timestamp: 1706118414
     sourceHash: d1306a5d69e64f0552b80eecb8899ee1b946fccb2c1df805df7be9ff20a3cdff
     sourceHashType: sha256
@@ -185,3 +176,12 @@ builds:
     buildPath: builds/in-cluster/cloudnative-pg
     cluster: in-cluster
     name: cloudnative-pg
+  - timestamp: 1706690820
+    sourceHash: 1b732843ca4e140c9b588c2e29b3bb4159c33b5d19415f61131e5c20cc917864
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-authentication
+    buildHash: 4deee825de5c34c8fe894d70b8875ff65e3cab57d1ac3ff7f0a0241d2f27f1e7
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-authentication
+    cluster: in-cluster
+    name: dpg-authentication
