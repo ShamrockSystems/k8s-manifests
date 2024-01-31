@@ -176,11 +176,11 @@ builds:
     buildPath: builds/in-cluster/argocd
     cluster: in-cluster
     name: argocd
-  - timestamp: 1706701944
-    sourceHash: 40eb131d1ee91b72ddcddfe528f3bb2381344730e438811f3ba9ad6b47f5fff4
+  - timestamp: 1706702180
+    sourceHash: f2b0394b76359ca89188c3227bf3010b33dbdc5b74c3b95e0b530b939353e53a
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-processing
-    buildHash: 3980eb9882af5fffdd6502c458618a7ca74a14f1ee21286712caead3c11d30c2
+    buildHash: 465f4081e170b4dde98a0e73c8003519ab537d4aed14634f073c50ae4540d38d
     buildHashType: sha256
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
