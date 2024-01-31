@@ -5,7 +5,9 @@ metadata:
   namespace: rook-ceph
 spec:
   parentRefs:
-    - name: http-gateway
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: http-gateway
       namespace: kube-system
   hostnames: [metal-ceph.shamrock.systems]
   rules:
@@ -24,7 +26,9 @@ metadata:
   namespace: rook-ceph
 spec:
   parentRefs:
-    - name: http-gateway
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: http-gateway
       namespace: kube-system
   hostnames: [s3-metal.shamrock.systems]
   rules:
@@ -33,5 +37,8 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: rook-ceph-rgw-object-erasure
+        - group: v1
+          kind: Service
+          name: rook-ceph-rgw-object-erasure
           port: 80
+          weight: 1

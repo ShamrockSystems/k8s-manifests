@@ -23,15 +23,6 @@ buildDir: ./builds
 
 # Build lock information containing relevant build state
 builds:
-  - timestamp: 1705509577
-    sourceHash: 00bc9136fbec031979d7720d0a3a95b2859b2299520e76e8bd686fa4ff6e450a
-    sourceHashType: sha256
-    sourcePath: cluster-metal/argocd
-    buildHash: 38cf1d3f3eaf9f85dd1685d41fe3d37b3f41705a78d708e3e92efea446e5cd5d
-    buildHashType: sha256
-    buildPath: builds/in-cluster/argocd
-    cluster: in-cluster
-    name: argocd
   - timestamp: 1705509603
     sourceHash: a9a5b74d0853d19ec0f52fd90fe5245e6640df09f32f045b3085d016248c0745
     sourceHashType: sha256
@@ -140,15 +131,6 @@ builds:
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
     name: dpg-processing
-  - timestamp: 1706118717
-    sourceHash: ec9c1c633de26f7e52eb73c529472982bae7ca06626464ba9907b12f31cdbf31
-    sourceHashType: sha256
-    sourcePath: cluster-metal/rook
-    buildHash: a47a184b2ec896aafc2f89ea5f02827503702a18db2d895b364909b40b14c05a
-    buildHashType: sha256
-    buildPath: builds/in-cluster/rook
-    cluster: in-cluster
-    name: rook
   - timestamp: 1706224264
     sourceHash: cc5c34690261f35c648e758aaaaeb8133e9d51136e292d7d85264d7f9ac4f6f7
     sourceHashType: sha256
@@ -167,11 +149,29 @@ builds:
     buildPath: builds/in-cluster/cloudnative-pg
     cluster: in-cluster
     name: cloudnative-pg
-  - timestamp: 1706691952
-    sourceHash: 7049d2efd41ce530a77992ca7516fd29cd1970226a904654cf0316b02929ab83
+  - timestamp: 1706692303
+    sourceHash: f15ffcd9ac5a82d43fafb9a9d51f3db085adb1e0f5a1725292cc1412f2f6ab6c
+    sourceHashType: sha256
+    sourcePath: cluster-metal/argocd
+    buildHash: 5fc120af99069bf18821786215dcdd8af53f9704c24d309521756ce43d5bf563
+    buildHashType: sha256
+    buildPath: builds/in-cluster/argocd
+    cluster: in-cluster
+    name: argocd
+  - timestamp: 1706692303
+    sourceHash: ffb5b91090d0c95d8a94aa7dbf304c0a9f978d8873c52f65559c94408a22e584
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rook
+    buildHash: 0d6cc16cd1a0dab79af5ef7938f9ac5d8cdd9be700f52e7026f48adc643fe6c3
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rook
+    cluster: in-cluster
+    name: rook
+  - timestamp: 1706692303
+    sourceHash: e83eeb39cd04bb93d23beff8b18ff63fbcaaedb77ec69dcb46cf2b0c2e22d5dd
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-authentication
-    buildHash: a0a3012d7df2989c5fd2281ca215a3adfc75ee9136cf14f350e005dd92520aed
+    buildHash: 65f7f2a6d57d8e94131aa6b78cf85d4e82485461088c96f8b17965b18f9b2d42
     buildHashType: sha256
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster

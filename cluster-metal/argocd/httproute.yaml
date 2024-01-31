@@ -5,7 +5,9 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: http-gateway
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: http-gateway
       namespace: kube-system
   hostnames: [metal-cd.shamrock.systems]
   rules:
@@ -14,5 +16,8 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: argocd-server
+        - group: v1
+          kind: Service
+          name: argocd-server
           port: 80
+          weight: 1

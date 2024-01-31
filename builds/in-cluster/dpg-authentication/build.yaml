@@ -88,12 +88,17 @@ spec:
   hostnames:
   - dpg-auth.forging.cc
   parentRefs:
-  - name: http-gateway
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: http-gateway
     namespace: kube-system
   rules:
   - backendRefs:
-    - name: dpg-authentication-keycloak
+    - group: v1
+      kind: Service
+      name: dpg-authentication-keycloak
       port: 80
+      weight: 1
     matches:
     - path:
         type: PathPrefix
