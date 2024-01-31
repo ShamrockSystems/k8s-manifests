@@ -6,6 +6,7 @@ namespace: deeppharmgraph
 resources:
   - ./sealedsecret.redis.yaml
   - ./sealedsecret.airflow.yaml
+  - ./configmap.yaml
   - ./redis.yaml
   - ./cluster.postgres.yaml
   - ./httproute.yaml

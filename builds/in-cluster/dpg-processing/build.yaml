@@ -74,6 +74,19 @@ subjects:
 ---
 apiVersion: v1
 data:
+  AUTH_KEYCLOAK_ACCESS_TOKEN_URL: https://dpg-auth.forging.cc/auth/realms/master/protocol/openid-connect/token
+  AUTH_KEYCLOAK_AIRFLOW_BASE_URL: https://dpg-processing.forging.cc/
+  AUTH_KEYCLOAK_API_BASE_URL: https://dpg-auth.forging.cc/auth/realms/master/protocol/openid-connect/
+  AUTH_KEYCLOAK_AUTHORIZE_URL: https://dpg-auth.forging.cc/auth/realms/master/protocol/openid-connect/auth
+  AUTH_KEYCLOAK_CLIENT_ID: application-airflow
+  AUTH_KEYCLOAK_SCOPE: openid
+kind: ConfigMap
+metadata:
+  name: airflow-env-configmap
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
   AIRFLOW__CELERY__BROKER_URL_CMD: YmFzaCAtYyAnZXZhbCAiJFJFRElTX0NPTk5FQ1RJT05fQ01EIic=
   AIRFLOW__CELERY__FLOWER_PORT: NTU1NQ==
   AIRFLOW__CELERY__RESULT_BACKEND_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX0NFTEVSWV9DTUQiJw==
@@ -146,7 +159,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  webserver_config.py: ZnJvbSBmbGFza19hcHBidWlsZGVyLnNlY3VyaXR5Lm1hbmFnZXIgaW1wb3J0IEFVVEhfREIKCiMgdXNlIGVtYmVkZGVkIERCIGZvciBhdXRoCkFVVEhfVFlQRSA9IEFVVEhfREIK
+  webserver_config.py: aW1wb3J0IG9zCmZyb20gZmxhc2tfYXBwYnVpbGRlci5zZWN1cml0eS5tYW5hZ2VyIGltcG9ydCBBVVRIX09BVVRICgpBVVRIX1RZUEUgPSBBVVRIX09BVVRICkFVVEhfUk9MRV9BRE1JTiA9ICdBZG1pbicKQVVUSF9ST0xFX1BVQkxJQyA9ICdQdWJsaWMnCkFVVEhfVVNFUl9SRUdJU1RSQVRJT04gPSBUcnVlCgpPQVVUSF9QUk9WSURFUlMgPSBbCiAgICB7CiAgICAgICAgJ25hbWUnOiAna2V5Y2xvYWsnLAogICAgICAgICdpY29uJzogJ2ZhLWtleScsCiAgICAgICAgJ3Rva2VuX2tleSc6ICdhY2Nlc3NfdG9rZW4nLAogICAgICAgICdyZW1vdGVfYXBwJzogewogICAgICAgICAgICAnYXBpX2Jhc2VfdXJsJzogb3MuZW52aXJvblsnQVVUSF9LRVlDTE9BS19BUElfQkFTRV9VUkwnXSwKICAgICAgICAgICAgJ2NsaWVudF9rd2FyZ3MnOiB7CiAgICAgICAgICAgICAgICAnc2NvcGUnOiBvcy5lbnZpcm9uWydBVVRIX0tFWUNMT0FLX1NDT1BFJ10KICAgICAgICAgICAgfSwKICAgICAgICAgICAgJ3JlcXVlc3RfdG9rZW5fdXJsJzogTm9uZSwKICAgICAgICAgICAgJ2FjY2Vzc190b2tlbl91cmwnOiBvcy5lbnZpcm9uWydBVVRIX0tFWUNMT0FLX0FDQ0VTU19UT0tFTl9VUkwnXSwKICAgICAgICAgICAgJ2F1dGhvcml6ZV91cmwnOiBvcy5lbnZpcm9uWydBVVRIX0tFWUNMT0FLX0FVVEhPUklaRV9VUkwnXSwKICAgICAgICAgICAgJ2NsaWVudF9pZCc6IG9zLmVudmlyb25bJ0FVVEhfS0VZQ0xPQUtfQ0xJRU5UX0lEJ10sCiAgICAgICAgICAgICdjbGllbnRfc2VjcmV0Jzogb3MuZW52aXJvblsnQVVUSF9LRVlDTE9BS19DTElFTlRfU0VDUkVUJ10sCiAgICAgICAgICAgICdhaXJmbG93X2Jhc2VfdXJsJzogb3MuZW52aXJvblsnQVVUSF9LRVlDTE9BS19BSVJGTE9XX0JBU0VfVVJMJ10KICAgICAgICB9CiAgICB9Cl0K
 kind: Secret
 metadata:
   labels:
@@ -318,6 +331,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -371,6 +419,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -468,6 +551,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -542,6 +660,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -590,6 +743,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -686,6 +874,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -815,6 +1038,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -955,6 +1213,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1005,6 +1298,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1053,6 +1381,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1147,6 +1510,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1247,6 +1645,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1295,6 +1728,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1343,7 +1811,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config-webserver-config: 5ffd2744fac9da2f5fa161b3e3e4ea1d50d2e6ac5f630887e738ce7359403e64
+        checksum/config-webserver-config: 59490425b9024efad69be458d650ed5cb3be47f2fcdec18d0d97ff4d3172f4cd
         checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
@@ -1390,6 +1858,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1466,6 +1969,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1514,6 +2052,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1609,6 +2182,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         - name: DUMB_INIT_SETSID
           value: "0"
         envFrom:
@@ -1740,6 +2348,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1790,6 +2433,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1838,6 +2516,41 @@ spec:
             secretKeyRef:
               key: AIRFLOW__WEBSERVER__SECRET_KEY
               name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1871,8 +2584,9 @@ metadata:
   namespace: deeppharmgraph
 spec:
   encryptedData:
-    AIRFLOW__CORE__FERNET_KEY: AgBCW9GpP5QZWRpyerJ0fFeee5fSaXdQKXcp+Q8/NSpi2xZz8Rtt+Ku4B8mF+oMw0wlbvDz5yQPj1PQbAFBXhSZYjKbsHw6Z78GQ0hS7P+OZ1XzuBrEoIpiYEua/2fpQEpbxE64/zAhDgsgfTT0swCjJaNTy1xZfgi2I67wcjIeWblyQ3RCAB8C9xUn+g2gDI5Kpb6KNNcVhGAwiOASFaAK5OF/A6cRhJKZlTpt/FroIelrlI8dRxf6wjIGs6VU/Xp48bsrRTrAwWQrDGUVwpgifQtaf9Dw7Y/gA8RCn23guYU5u6ZkxGwA8a8DqBOkucJlsGQ5z5EERVHc7NlFmVFpOloeP29vnprrT+ZPHAjXPyNX8Q/c+iLOBX+XPTbRSIeGB30YVzVZ8M6lKKHhLdQg7q/mUY/A4MzY8lTZXJJVxEIsPhGuH+MNYsBAj+AZqTjD+F2KRLQmj68Df9KXoMoKDCQzAWqC3LxK1cMXAXS2atsw8Ej5kUZIJ5O9WssnAXc7L58fe/7MW3l+lokXyOgult32cKX/U8v4Dwqshn+q8IoCPmBIbw7xTYaG7MfXfLhZWF2h3+PnA6JY7ww3jpYV/K/c00uC/dD7kAm21FZoV5kzQ2dPXq+AGzcmhIqCIEak8ELK5Do5nA6SoUJhBApXfiPYC8sryoK9eVuvf5BHh0RME9EA/ES2+lTWUboUsI1jdCb/dCGjrQjlA845pLL6h4gbFMDyTT0qCnxxA8Y0IEG1eOt9hUbCJ/EpQ1g==
-    AIRFLOW__WEBSERVER__SECRET_KEY: AgB7G7PKEh+UpGGJQBvEZtegjjD5Rspg8odGEzjpZZV6FPGtWsdeN1O95JW7Wm7ynLms0La4ifIT/DrUx0T9ITmjJ3M/cBp6RiAgicEDAq9FxNocOiERwsT6HJHgHN9Na28y7/n0QdAy9ZKzj/4uREt/alRGSa/ot3nMjbYeuDqUiiZGokR9+VZ3ESyyPYetwlDCezts18KtSsrrO1OSRQBCsSeY9oMh0YUdC8XGhTAcsPAyndDP/guTVuQPzXCnQm0PJstYXZUj/I5dQ04A1pF2dK52KOHRBAm2QPtJTzZuSWDdGuAPaKZC6uUXfyEGTtuQN05uH2ZmVUfrt4eFS+oNylkWnIzlKFaYjdMB+7qkRZGMXyiTZ2ZZZkA57tcJxRQxW82Tf4avnHmBDOe6IfuH6F5hvoSbh6qdh7L597OkDOFyrC1Go55x9b3nEXG/doWz1tK61LUfzGK0ybcy/TUlzPqpv5lTpqtSz9NtG/dIz2gtOuhufwcpq82vNZravUni0/4douO/oxoVCdZPSmheOYlG48rRUR3fD4smvyXXBVdaiqbBk8ECZlu6z1EPSLq61bxsDT6fWH/CDJ2wsI3LIlX56HRYgZXCQQozjgx1o866/R9u9/S4k52eMQJyfhkR6bkgdRMpW8CapMvgp1Wgz/00hIN46WfcvOWn3mqtH/ADnu8h2f6OVAHvn0KVkQrmN+t6dSt0To5r3sYjraybgPiCFXQV9fu4skOaGk/v5w==
+    AIRFLOW__CORE__FERNET_KEY: AgA2MFwi0R6qEXgSrQm/02qjjnv2hJLhVJyIH5+fzhccxn9eMJWUtp6ft1C/Hb/35D0O7nYxarl6jxGJ+bibD6vTEhqatDnJXG22fM7YMhuWn+AUQVOScW2h1cXMhyvvjy0KL4sneDbgnsmh+gqwDLbnRGKdTh8QvwEPrgKhEMwpcLGnvavzu/DLUAnsBthQQTc+igpRW1AK42SH5zra7IBGfSEs0u+2TTcw9F4bfVCadGGwgHPVHFl1lwR1PWzITPhWEUpybuvCcTcLNovvLdzUIhimAjAKsSVmtaxKgy7IpWrEkdkpd1QaIg64WRg9S60XEiu7A/vkUzyaFUTuU5c61N0q9M7inuSvgyKiBxNUGaYrpI7TtCbKsQffa5wxN3RABVW/SWEM4EREY5Mtiz+++qlMJrfRvdjpsYrwoI/3nFZiaEzThp9Evp+AKtw+31O8zNqpzs/b+fhQIZ0+9y3CqByMVBKgYHGB54SpYhHuQu8a2T8IeWlgMmHeblNfpiq8rNfcA47xtdCc6vr9yMG31FzIICrLxbK7HZAnbIVEdDiQFn5SplJzoEUgfJRogP/oPyLbPRGOWbdEOW+8csz4j1tLbIKN19rrWTUvxLfgmQ4k/NoRDXc0CjHKr6uZT5tqEL4PTXT3rwYfG+WpqxfjCekcws4dOKf4yzkX7pm9MMH/KZnDz2CJOrBv3LnWtpzLhwuN3pBQMH/dkOnnUv5Kjcj5eN5t07c5N+UJ9t06i/MlJqeowjuWVLbe0Q==
+    AIRFLOW__WEBSERVER__SECRET_KEY: AgBQiN6osCOPBiNd95G2ehLkcAWTfXXD68irNhuauv+y/riqwQEy4yXneZZu7qGZ7J/i/vLZNYZnPuNk3v/DlThZqoT8sivqvmoxCTn90mW0eEU+1TIKTyWgo+pwnqbLU630y55yPG6LfQH77saNANc+5B9E4ZUVpZfLz68cbxtMTMsdrCUdLKTZLXr7/TIufHRwoZBfGQu41jYu23jw5Jyy5zemQnhZASSnxQdTjjxUnKlryKT9F4qKbCuf02WKIfEpcwbhv+jVn8Ehn9oGRdsAyN/DaMDOhNGY/RXkHLzvIRtsf3HL/3/vDfOwb+9IRMg61PliUD2FV6KKaZdeHmH/AOe7iLZFMGAVQlp+4/Wg/OR3Q1pgTCRalIih50l8umPF+Xyc5/toanRbZjjd6Ent24jz8/lPqMl/0g26zj5CkPFFuWavUU+G90iq5mhc24lQokjzEnCEwznFjA+J+DQLMyAFYxY62TbRRBQJCREaCe+m6wzgWtFe0MmZHnzgE4dlFvH4cM4gpSN+XkdpdhJSQRHZyZQvZxiolFugSju60uh0yMXc/3tdBwUIO+WSFT1AE66/vUGXyL2QosD5G8yjrVK6cubYKxYXkLTM3xyalM8hQWKnbzQ78ywPCnN/Gm5Rysn5Dx9O3UsSEI5yIs4KTC2wqu6xvqIUbpwJGfHPWT3q5tFKuIfIdQrSZxFr7zJhHcIERHYUeTI2jFeWNbfyW6T+e6O0brHKdxcP8lLRIw==
+    AUTH_KEYCLOAK_CLIENT_SECRET: AgCMuunhoMKAlHD1lTl8L8TV5ZZ0lMVxLYHOtEdWU3GHaGYxp1ROB/Uy/Rn9a1TnaC1XpvUG696PM7bV4yVLd3dbnwX3sALUXAF2iWlPKNyRT9WFZTE55t4wsMSf+en6Uccg9XsxnwljH0Wn6FFk+EAcmxzy4h++fnOZS5v7lEO/LFZ0uawNuANpunU8upRgKMKYQn9QPoQz3KlcW8jePEOjTkkWlz7gYJHahN04ymi7bOnhX6f+m4o/pBKskLEf7asRfzpcB+qgy7ddpUWKJwlHB8EhpqMa/hsJ/hyvURSM+NZlXPwnFlhGUVs2uRibJWSpe+JUrqnioxPLupYdDK8Sv6zi0mthJkgXIf4/6FzhJfa/Gw+khLtqcD/aUPuc131EspIM+KWkB2olEVDCByfwLoVQ9DrdQu5HiJgXtfcdA3+X02tqNFwTY7WX6L/tCW6EV3lWxACCcdh7z3tjB6vZ8k5uGHudXk4c9woMHg+yej2L+BlCglH13oiSZeZFcqrXfMRhiV67jshHbUWDjJT/spUia38UA/hDkMyIjcVkihq1GoWjzFOoAYFluqz/aG52533LyycxQa+g0oqwGr82I+9n7bftOMOBFr6w6HT7EA2aLXB8G/o2Z/Fh0Va8terEzeU0vSKgT6h8r6lfGbEzoA5BBhHzpBNkhXCcxF3NFLgpfE/CYTcZB3ZNTWf+wGeiBhtXcftyBPQMJFBc8cONEPMjFV2GbbMNgHxhwbTVmg==
   template:
     metadata:
       creationTimestamp: null

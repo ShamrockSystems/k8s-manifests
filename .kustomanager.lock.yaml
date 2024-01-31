@@ -167,15 +167,6 @@ builds:
     buildPath: builds/in-cluster/redis-operator
     cluster: in-cluster
     name: redis-operator
-  - timestamp: 1706702180
-    sourceHash: f2b0394b76359ca89188c3227bf3010b33dbdc5b74c3b95e0b530b939353e53a
-    sourceHashType: sha256
-    sourcePath: cluster-metal/dpg-processing
-    buildHash: 465f4081e170b4dde98a0e73c8003519ab537d4aed14634f073c50ae4540d38d
-    buildHashType: sha256
-    buildPath: builds/in-cluster/dpg-processing
-    cluster: in-cluster
-    name: dpg-processing
   - timestamp: 1706705512
     sourceHash: e19eaaefc8f74c19bf5e932739118e99949b6a1caddef76d8dfcd5edb469dac8
     sourceHashType: sha256
@@ -185,3 +176,12 @@ builds:
     buildPath: builds/in-cluster/argocd
     cluster: in-cluster
     name: argocd
+  - timestamp: 1706711230
+    sourceHash: 4b6cccbaf21a9928e87eed068176fbf3236218f480ec31a35f03b3af0588ffa5
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-processing
+    buildHash: 237cd9e9e4642c1ee6533c8c2e87721e517fe28bc95619c258f4dd49fed443da
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-processing
+    cluster: in-cluster
+    name: dpg-processing

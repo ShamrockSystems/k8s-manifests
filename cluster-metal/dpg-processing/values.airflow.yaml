@@ -234,6 +234,41 @@ airflow:
         secretKeyRef:
           name: airflow-env-secret
           key: AIRFLOW__WEBSERVER__SECRET_KEY
+    - name: AUTH_KEYCLOAK_API_BASE_URL
+      valueFrom:
+        configMapKeyRef:
+          name: airflow-env-configmap
+          key: AUTH_KEYCLOAK_API_BASE_URL
+    - name: AUTH_KEYCLOAK_SCOPE
+      valueFrom:
+        configMapKeyRef:
+          name: airflow-env-configmap
+          key: AUTH_KEYCLOAK_SCOPE
+    - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+      valueFrom:
+        configMapKeyRef:
+          name: airflow-env-configmap
+          key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+    - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+      valueFrom:
+        configMapKeyRef:
+          name: airflow-env-configmap
+          key: AUTH_KEYCLOAK_AUTHORIZE_URL
+    - name: AUTH_KEYCLOAK_CLIENT_ID
+      valueFrom:
+        configMapKeyRef:
+          name: airflow-env-configmap
+          key: AUTH_KEYCLOAK_CLIENT_ID
+    - name: AUTH_KEYCLOAK_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: airflow-env-secret
+          key: AUTH_KEYCLOAK_CLIENT_SECRET
+    - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+      valueFrom:
+        configMapKeyRef:
+          name: airflow-env-configmap
+          key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
 
   ## extra containers for the airflow Pods
   ## - spec for Container:
@@ -704,138 +739,165 @@ web:
     ##     # use embedded DB for auth
     ##     AUTH_TYPE = AUTH_DB
     ##
-    stringOverride: ""
+    stringOverride: |
+      import os
+      from flask_appbuilder.security.manager import AUTH_OAUTH
 
-    ## the name of a Secret containing a `webserver_config.py` key
-    ##
-    existingSecret: ""
+      AUTH_TYPE = AUTH_OAUTH
+      AUTH_ROLE_ADMIN = 'Admin'
+      AUTH_ROLE_PUBLIC = 'Public'
+      AUTH_USER_REGISTRATION = True
 
-  ## the number of web Pods to run
-  ## - if you set this >1 we recommend defining a `web.podDisruptionBudget`
+      OAUTH_PROVIDERS = [
+          {
+              'name': 'keycloak',
+              'icon': 'fa-key',
+              'token_key': 'access_token',
+              'remote_app': {
+                  'api_base_url': os.environ['AUTH_KEYCLOAK_API_BASE_URL'],
+                  'client_kwargs': {
+                      'scope': os.environ['AUTH_KEYCLOAK_SCOPE']
+                  },
+                  'request_token_url': None,
+                  'access_token_url': os.environ['AUTH_KEYCLOAK_ACCESS_TOKEN_URL'],
+                  'authorize_url': os.environ['AUTH_KEYCLOAK_AUTHORIZE_URL'],
+                  'client_id': os.environ['AUTH_KEYCLOAK_CLIENT_ID'],
+                  'client_secret': os.environ['AUTH_KEYCLOAK_CLIENT_SECRET'],
+                  'airflow_base_url': os.environ['AUTH_KEYCLOAK_AIRFLOW_BASE_URL']
+              }
+          }
+      ]
+
+## the name of a Secret containing a `webserver_config.py` key
+##
+existingSecret: ""
+
+## the number of web Pods to run
+## - if you set this >1 we recommend defining a `web.podDisruptionBudget`
+##
+replicas: 1
+
+## resource requests/limits for the web Pod
+## - spec for ResourceRequirements:
+##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#resourcerequirements-v1-core
+##
+resources: {}
+
+## the nodeSelector configs for the web Pods
+## - docs for nodeSelector:
+##   https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+##
+nodeSelector: {}
+
+## the affinity configs for the web Pods
+## - spec for Affinity:
+##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#affinity-v1-core
+##
+affinity: {}
+
+## the toleration configs for the web Pods
+## - spec for Toleration:
+##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#toleration-v1-core
+##
+tolerations: []
+
+## the security context for the web Pods
+## - spec for PodSecurityContext:
+##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#podsecuritycontext-v1-core
+##
+securityContext: {}
+
+## labels for the web Deployment
+##
+labels: {}
+
+## Pod labels for the web Deployment
+##
+podLabels: {}
+
+## annotations for the web Deployment
+##
+annotations: {}
+
+## Pod annotations for the web Deployment
+##
+podAnnotations: {}
+
+## if we add the annotation: "cluster-autoscaler.kubernetes.io/safe-to-evict" = "true"
+##
+safeToEvict: true
+
+## configs for the PodDisruptionBudget of the web Deployment
+##
+podDisruptionBudget:
+  ## if a PodDisruptionBudget resource is created for the web Deployment
   ##
-  replicas: 1
+  enabled: false
 
-  ## resource requests/limits for the web Pod
-  ## - spec for ResourceRequirements:
-  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#resourcerequirements-v1-core
+  ## the `apiVersion` to use for PodDisruptionBudget resources
+  ## - for Kubernetes 1.21 and later: "policy/v1"
+  ## - for Kubernetes 1.20 and before: "policy/v1beta1"
   ##
-  resources: {}
+  apiVersion: policy/v1
 
-  ## the nodeSelector configs for the web Pods
-  ## - docs for nodeSelector:
-  ##   https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+  ## the maximum unavailable pods/percentage for the web Deployment
   ##
-  nodeSelector: {}
+  maxUnavailable: ""
 
-  ## the affinity configs for the web Pods
-  ## - spec for Affinity:
-  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#affinity-v1-core
+  ## the minimum available pods/percentage for the web Deployment
   ##
-  affinity: {}
+  minAvailable: ""
 
-  ## the toleration configs for the web Pods
-  ## - spec for Toleration:
-  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#toleration-v1-core
-  ##
-  tolerations: []
-
-  ## the security context for the web Pods
-  ## - spec for PodSecurityContext:
-  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#podsecuritycontext-v1-core
-  ##
-  securityContext: {}
-
-  ## labels for the web Deployment
-  ##
-  labels: {}
-
-  ## Pod labels for the web Deployment
-  ##
-  podLabels: {}
-
-  ## annotations for the web Deployment
-  ##
+## configs for the Service of the web Pods
+##
+service:
   annotations: {}
+  sessionAffinity: "None"
+  sessionAffinityConfig: {}
+  type: ClusterIP
+  externalPort: 8080
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  nodePort:
+    http: ""
 
-  ## Pod annotations for the web Deployment
-  ##
-  podAnnotations: {}
+## configs for the web Pods' readiness probe
+##
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
 
-  ## if we add the annotation: "cluster-autoscaler.kubernetes.io/safe-to-evict" = "true"
-  ##
-  safeToEvict: true
+## configs for the web Pods' liveness probe
+##
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
 
-  ## configs for the PodDisruptionBudget of the web Deployment
-  ##
-  podDisruptionBudget:
-    ## if a PodDisruptionBudget resource is created for the web Deployment
-    ##
-    enabled: false
+## extra pip packages to install in the web Pods
+##
+## ____ EXAMPLE _______________
+##   extraPipPackages:
+##     - "SomeProject==1.0.0"
+##
+extraPipPackages: []
 
-    ## the `apiVersion` to use for PodDisruptionBudget resources
-    ## - for Kubernetes 1.21 and later: "policy/v1"
-    ## - for Kubernetes 1.20 and before: "policy/v1beta1"
-    ##
-    apiVersion: policy/v1
+## extra VolumeMounts for the web Pods
+## - spec for VolumeMount:
+##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#volumemount-v1-core
+##
+extraVolumeMounts: []
 
-    ## the maximum unavailable pods/percentage for the web Deployment
-    ##
-    maxUnavailable: ""
-
-    ## the minimum available pods/percentage for the web Deployment
-    ##
-    minAvailable: ""
-
-  ## configs for the Service of the web Pods
-  ##
-  service:
-    annotations: {}
-    sessionAffinity: "None"
-    sessionAffinityConfig: {}
-    type: ClusterIP
-    externalPort: 8080
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    nodePort:
-      http: ""
-
-  ## configs for the web Pods' readiness probe
-  ##
-  readinessProbe:
-    enabled: true
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-
-  ## configs for the web Pods' liveness probe
-  ##
-  livenessProbe:
-    enabled: true
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-
-  ## extra pip packages to install in the web Pods
-  ##
-  ## ____ EXAMPLE _______________
-  ##   extraPipPackages:
-  ##     - "SomeProject==1.0.0"
-  ##
-  extraPipPackages: []
-
-  ## extra VolumeMounts for the web Pods
-  ## - spec for VolumeMount:
-  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#volumemount-v1-core
-  ##
-  extraVolumeMounts: []
-
-  ## extra Volumes for the web Pods
-  ## - spec for Volume:
-  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#volume-v1-core
-  ##
-  extraVolumes: []
+## extra Volumes for the web Pods
+## - spec for Volume:
+##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#volume-v1-core
+##
+extraVolumes: []
 
 ###################################
 ## COMPONENT | Airflow Workers
