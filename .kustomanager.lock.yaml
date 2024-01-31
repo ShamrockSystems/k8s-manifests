@@ -158,15 +158,6 @@ builds:
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster
     name: dpg-authentication
-  - timestamp: 1706694665
-    sourceHash: cac35af77e6cd4d67e88485d91696f9b05887c2e3890abd47fe0e6ee75be0078
-    sourceHashType: sha256
-    sourcePath: cluster-metal/redis-operator
-    buildHash: 73f267e948b37462721a52515702361d0b44f36952c8c1b35196e1d436b8cbd6
-    buildHashType: sha256
-    buildPath: builds/in-cluster/redis-operator
-    cluster: in-cluster
-    name: redis-operator
   - timestamp: 1706694873
     sourceHash: fe56fa352fe0dd6df512dad8bbed494eb62d425cd3144d65d9eab467e0e036c8
     sourceHashType: sha256
@@ -185,3 +176,12 @@ builds:
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
     name: dpg-processing
+  - timestamp: 1706696252
+    sourceHash: 66e6f481e4319ff1b7cd24e1396f46247314e20942c362258fec8c6bcdf555d9
+    sourceHashType: sha256
+    sourcePath: cluster-metal/redis-operator
+    buildHash: 8bc6bab9cfda19af4e9316b684563d7680e49f8562a62b9520ebf3aa76bdfc82
+    buildHashType: sha256
+    buildPath: builds/in-cluster/redis-operator
+    cluster: in-cluster
+    name: redis-operator
