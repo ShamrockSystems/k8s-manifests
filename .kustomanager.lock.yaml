@@ -176,11 +176,11 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
-  - timestamp: 1706695683
-    sourceHash: a6f4d1bfb8ae3e2f9c1757bd8309c44f66402dde71afed464d85d07d1b419a79
+  - timestamp: 1706695921
+    sourceHash: cb7dd97a083eb22e0197b8474418e035fbd5c0614c6d003eb57590eb79941348
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-processing
-    buildHash: 4bc5e932516f0523b0092fcd1f29a71455f81f2e8704d7332309d74cacb3be2d
+    buildHash: 964317d3072afc1012286e8139cb07042dcf7a4798d3c244ab67ba7f7fd77cdd
     buildHashType: sha256
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
