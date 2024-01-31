@@ -2,7 +2,4 @@ apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
   name: ot-operators
-  namespace: olm
-spec:
-  targetNamespaces:
-    - ot-operators
+  namespace: ot-operators
