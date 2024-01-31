@@ -167,15 +167,6 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
-  - timestamp: 1706696647
-    sourceHash: 3dc93f11344a6615682471d7d7de669ea52636349ae9151e338bdfcd5931653e
-    sourceHashType: sha256
-    sourcePath: cluster-metal/dpg-processing
-    buildHash: dd72c28ab6df865b03899446e53ef523069eb90dc4ea2e7e6e9713c6048df477
-    buildHashType: sha256
-    buildPath: builds/in-cluster/dpg-processing
-    cluster: in-cluster
-    name: dpg-processing
   - timestamp: 1706698757
     sourceHash: 7d9c7031bc9d552c2a47d57fbe8c74b4248a7828f3284a243e99164cbc38f223
     sourceHashType: sha256
@@ -185,3 +176,12 @@ builds:
     buildPath: builds/in-cluster/redis-operator
     cluster: in-cluster
     name: redis-operator
+  - timestamp: 1706699131
+    sourceHash: bd82242611eea372dc4d1189c3cdf8a39576736ec584270dfbb810cd645573ac
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-processing
+    buildHash: 64819281a7399d9e80fb51b87a519686d58b29e1c5b50dab1d5d7d823ea2390b
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-processing
+    cluster: in-cluster
+    name: dpg-processing

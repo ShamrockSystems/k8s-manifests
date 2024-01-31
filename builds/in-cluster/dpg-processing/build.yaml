@@ -64,7 +64,7 @@ spec:
     fsGroup: 1000
     runAsUser: 1000
   redisExporter:
-    enabled: false
+    enabled: true
     image: quay.io/opstree/redis-exporter:v1.44.0
   storage:
     volumeClaimTemplate:

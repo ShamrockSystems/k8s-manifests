@@ -18,7 +18,7 @@ spec:
           requests:
             storage: 2Gi
   redisExporter:
-    enabled: false
+    enabled: true
     image: quay.io/opstree/redis-exporter:v1.44.0
   podSecurityContext:
     runAsUser: 1000
