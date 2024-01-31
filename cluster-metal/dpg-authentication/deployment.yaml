@@ -16,30 +16,28 @@ spec:
     spec:
       containers:
         - image: quay.io/keycloak/keycloak:23.0
-          args:
-            - start
-            - --hostname=dpg-auth.forging.cc
-            - --proxy=edge
+          args: ["start"]
           name: keycloak
           env:
-            - name: DB_VENDOR
-              value: "postgres"
-            - name: DB_ADDR
-              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: host}}
-            - name: DB_PORT
-              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: port}}
-            - name: DB_DATABASE
-              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: dbname}}
-            - name: DB_USER
-              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: user}}
-            - name: DB_PASSWORD
-              valueFrom: {secretKeyRef: {name: keycloak-postgres-app, key: password}}
             - name: KEYCLOAK_ADMIN
               value: "admin"
             - name: KEYCLOAK_ADMIN_PASSWORD
               value: "initial"
+            - name: KC_HOSTNAME
+              value: "dpg-auth.forging.cc"
             - name: KC_PROXY
               value: "edge"
+            - name: KC_DB
+              value: "postgres"
+            - name: KC_DB_URL
+              valueFrom:
+                {secretKeyRef: {name: keycloak-postgres-app, key: jdbc-uri}}
+            - name: KC_DB_USERNAME
+              valueFrom:
+                {secretKeyRef: {name: keycloak-postgres-app, key: username}}
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                {secretKeyRef: {name: keycloak-postgres-app, key: password}}
           ports:
             - name: http
               containerPort: 8080
