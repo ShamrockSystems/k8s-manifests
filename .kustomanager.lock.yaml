@@ -176,3 +176,12 @@ builds:
     buildPath: builds/in-cluster/prometheus-operator
     cluster: in-cluster
     name: prometheus-operator
+  - timestamp: 1706690270
+    sourceHash: ca88f03f0903fee9de57ed256c6ae0eb86e23880fc6b5b493837d01791b5d196
+    sourceHashType: sha256
+    sourcePath: cluster-metal/cloudnative-pg
+    buildHash: c32f7fea4e23f1342404b4efced4b18f61b438276829b0283f539e5c6fb28acc
+    buildHashType: sha256
+    buildPath: builds/in-cluster/cloudnative-pg
+    cluster: in-cluster
+    name: cloudnative-pg
