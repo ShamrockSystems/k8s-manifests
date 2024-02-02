@@ -5,6 +5,7 @@ resources:
   - ./namespace.yaml
   - ./sealedsecret.csrf.yaml
   - ./sealedsecret.key-holder.yaml
+  - ./httproute.yaml
 
 namespace: kubernetes-dashboard
 helmCharts:

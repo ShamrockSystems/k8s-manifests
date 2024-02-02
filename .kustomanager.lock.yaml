@@ -185,11 +185,11 @@ builds:
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
     name: dpg-processing
-  - timestamp: 1706843197
-    sourceHash: 9045f0752a2b75a8c0bc8b60ec11b7bc512f87804bed37b708cc049c2fdf68b1
+  - timestamp: 1706852457
+    sourceHash: eb8d0911f025164e00a239d36c09369fc8cb58349ec3bbe64bd3a28acce46d90
     sourceHashType: sha256
     sourcePath: cluster-metal/kubernetes-dashboard
-    buildHash: ad4a033c7e8034f0725b79b39312a8ac1a1246f9e140804b98efa5fcd1a087cd
+    buildHash: b447430608b70ecda52066c29f6a140d0ef36ee881e01f6bcfa082a552e5430a
     buildHashType: sha256
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
