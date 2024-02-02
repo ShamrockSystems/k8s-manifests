@@ -1,0 +1,141 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: grafana-env-secret
+  namespace: grafana
+spec:
+  encryptedData:
+    GF_AUTH_AZUREAD_CLIENT_SECRET: AgDIlf43BFCUewx+MP75OxT4vkqknzci6SqcGLEKb3LnFfSfQeNi0ep7QkC3Zsl+aRN7tQrcdWqQy+LAYh1sMzLnete1N6cyzdN0nvuj66YchMbRSYvLH/+Ugd1wH8oIM0fY3fBIC/X0CZfjZK2r5C8l/SIrO9OYCbboaddTP/zjCh+3K75Quxi4bsFmLZIs+ItiZz0HmcSCMXqciLGydfvouB5NVOTJ9ffQINHCWlTZAk2HQNVfsqahPAfC2L+aDwKcfEcddfY5ubWE1dWWXK6pjKkO2rUASyl1UTBPyaopnKel0BMLWRs6TET2cqoq9R9YTF8/cEqQLNKhXLl1SkQzfo3Lgli3bzyHX75dH3fIdCm93Hk9s1JFUY+gRRAk0NXQl4GauNyjHDf1aME496hhtD8dSxB0mAxTlqRVV8tKJJ3NXRW4c6jTtv6s1NHlvbCpuEkNeaEzwllQtzqnCJsCK9fuRayARLfScv97PMcvALA1EW7DRx8TaSzzenUPWxjM5FTlBJ7XFDYQEOP66XFqonXJS280QhEJA2QFaoOg4q17/mDT5U8MyajqjMAZxBSGmswytfbLCbYnAiegKwgPSojRrU5hOyqkiLMk3oZ7QPHNhZyXJHZzhZQx+GJ8xC0o6qTGgVxpvtU1YNS/ilepZ7mY2bTD9vzP2rVRIFGw50vWt97d1qxwgV6KjaWufK5bC/1FymskPgA+heILffZQUGBglSC1zOLX5/oVm+a20uCSAh+PrbKu
+  template:
+    metadata:
+      creationTimestamp: null
+      name: grafana-env-secret
+      namespace: grafana
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: http-grafana
+  namespace: grafana
+spec:
+  hostnames:
+  - metal-grafana.shamrock.systems
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: http-gateway
+    namespace: kube-system
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: grafana-service
+      port: 3000
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  labels:
+    dashboards: grafana
+  name: grafana
+  namespace: grafana
+spec:
+  config:
+    auth:
+      disable_login_form: "true"
+    auth.azuread:
+      allow_assign_grafana_admin: "true"
+      allow_sign_up: "true"
+      allowed_domains: shamrock.systems
+      allowed_organizations: 7380c786-e737-424b-b1ff-fa4e2ff85ef4
+      auth_url: https://login.microsoftonline.com/7380c786-e737-424b-b1ff-fa4e2ff85ef4/oauth2/v2.0/authorize
+      auto_login: "true"
+      client_id: b84a17ad-61ca-48a0-a17a-2950bd3f3889
+      enabled: "true"
+      name: Azure AD
+      role_attribute_strict: "false"
+      scopes: openid email profile
+      skip_org_role_sync: "false"
+      token_url: https://login.microsoftonline.com/7380c786-e737-424b-b1ff-fa4e2ff85ef4/oauth2/v2.0/token
+      use_pkce: "true"
+    database:
+      type: postgres
+    log:
+      mode: console
+    remote_cache:
+      connstr: addr=grafana-redis-standalone:6379,db=0,ssl=false
+      type: redis
+    security:
+      disable_initial_admin_creation: "true"
+    server:
+      root_url: https://metal-grafana.shamrock.systems/
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+          - env:
+            - name: GF_DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: host
+                  name: grafana-postgres-app
+            - name: GF_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: dbname
+                  name: grafana-postgres-app
+            - name: GF_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  key: user
+                  name: grafana-postgres-app
+            - name: GF_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: grafana-postgres-app
+            envFrom:
+            - secretRef:
+                name: grafana-env-secret
+            name: grafana
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: grafana-postgres
+  namespace: grafana
+spec:
+  instances: 1
+  storage:
+    size: 16Gi
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: Redis
+metadata:
+  name: grafana-redis-standalone
+  namespace: grafana
+spec:
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v7.0.12
+    imagePullPolicy: IfNotPresent
+  podSecurityContext:
+    fsGroup: 1000
+    runAsUser: 1000
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.44.0
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

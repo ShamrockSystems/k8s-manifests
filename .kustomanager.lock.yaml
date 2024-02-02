@@ -203,3 +203,12 @@ builds:
     buildPath: builds/in-cluster/grafana-operator
     cluster: in-cluster
     name: grafana-operator
+  - timestamp: 1706863303
+    sourceHash: 84f23201e9d3f43e5722e3d8e862f0fb2900686d761d822dd44ebc7007c40cf0
+    sourceHashType: sha256
+    sourcePath: cluster-metal/grafana
+    buildHash: 8b2189469395230dda16565f87e583e386710dd02bc7244588c55c3c99323aee
+    buildHashType: sha256
+    buildPath: builds/in-cluster/grafana
+    cluster: in-cluster
+    name: grafana

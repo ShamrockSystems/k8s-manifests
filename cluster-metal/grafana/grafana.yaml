@@ -1,0 +1,67 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana
+  namespace: grafana
+  labels:
+    dashboards: grafana
+spec:
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: grafana
+              env:
+                - name: GF_DATABASE_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-postgres-app
+                      key: host
+                - name: GF_DATABASE_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-postgres-app
+                      key: dbname
+                - name: GF_DATABASE_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-postgres-app
+                      key: user
+                - name: GF_DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-postgres-app
+                      key: password
+              envFrom:
+                - secretRef:
+                    name: grafana-env-secret
+  config:
+    log:
+      mode: console
+    server:
+      root_url: https://metal-grafana.shamrock.systems/
+    security:
+      disable_initial_admin_creation: "true"
+    database:
+      type: postgres
+    remote_cache:
+      type: redis
+      connstr: addr=grafana-redis-standalone:6379,db=0,ssl=false
+    auth:
+      disable_login_form: "true"
+    auth.azuread:
+      name: Azure AD
+      enabled: "true"
+      allow_sign_up: "true"
+      auto_login: "true"
+      client_id: b84a17ad-61ca-48a0-a17a-2950bd3f3889
+      scopes: openid email profile
+      auth_url: https://login.microsoftonline.com/7380c786-e737-424b-b1ff-fa4e2ff85ef4/oauth2/v2.0/authorize
+      token_url: https://login.microsoftonline.com/7380c786-e737-424b-b1ff-fa4e2ff85ef4/oauth2/v2.0/token
+      allowed_domains: shamrock.systems
+      allowed_organizations: 7380c786-e737-424b-b1ff-fa4e2ff85ef4
+      role_attribute_strict: "false"
+      allow_assign_grafana_admin: "true"
+      skip_org_role_sync: "false"
+      use_pkce: "true"
