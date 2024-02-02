@@ -140,24 +140,6 @@ builds:
     buildPath: builds/in-cluster/cloudnative-pg
     cluster: in-cluster
     name: cloudnative-pg
-  - timestamp: 1706694066
-    sourceHash: 706b22fe711796b691821e810abb9bc9d45d7d03d46de9fb49edaadc702fdfbb
-    sourceHashType: sha256
-    sourcePath: cluster-metal/dpg-authentication
-    buildHash: 0d12d89f43d70e5846cc0e34167ec24c0f00212df1e3c77c4be4b1c8e2f5eabe
-    buildHashType: sha256
-    buildPath: builds/in-cluster/dpg-authentication
-    cluster: in-cluster
-    name: dpg-authentication
-  - timestamp: 1706694873
-    sourceHash: fe56fa352fe0dd6df512dad8bbed494eb62d425cd3144d65d9eab467e0e036c8
-    sourceHashType: sha256
-    sourcePath: cluster-metal/rook
-    buildHash: a9d5ed4ff2816706b0dc223eb86637c4003a59cf1418ba454d277b002103ea02
-    buildHashType: sha256
-    buildPath: builds/in-cluster/rook
-    cluster: in-cluster
-    name: rook
   - timestamp: 1706698757
     sourceHash: 7d9c7031bc9d552c2a47d57fbe8c74b4248a7828f3284a243e99164cbc38f223
     sourceHashType: sha256
@@ -167,15 +149,6 @@ builds:
     buildPath: builds/in-cluster/redis-operator
     cluster: in-cluster
     name: redis-operator
-  - timestamp: 1706705512
-    sourceHash: e19eaaefc8f74c19bf5e932739118e99949b6a1caddef76d8dfcd5edb469dac8
-    sourceHashType: sha256
-    sourcePath: cluster-metal/argocd
-    buildHash: 62f16f0f03e2e724135fd8d0170d6aa91a68f3c1a89fe2ffdfa26ee2e64231fe
-    buildHashType: sha256
-    buildPath: builds/in-cluster/argocd
-    cluster: in-cluster
-    name: argocd
   - timestamp: 1706734576
     sourceHash: 21d9306804a861712c453f8c2809307df7ea9f94b1ba129c78b9a70fa8facda7
     sourceHashType: sha256
@@ -212,3 +185,30 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
+  - timestamp: 1706863540
+    sourceHash: 2d4e9ad01ad209265028d48b990a0b9a63e3d653467692426379a64705cef128
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-authentication
+    buildHash: 0d12d89f43d70e5846cc0e34167ec24c0f00212df1e3c77c4be4b1c8e2f5eabe
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-authentication
+    cluster: in-cluster
+    name: dpg-authentication
+  - timestamp: 1706863540
+    sourceHash: 75dfcf6d930b8dc7e46db85785ced61d270b2c3c434268ebc66e52fee446665f
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rook
+    buildHash: a9d5ed4ff2816706b0dc223eb86637c4003a59cf1418ba454d277b002103ea02
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rook
+    cluster: in-cluster
+    name: rook
+  - timestamp: 1706863540
+    sourceHash: 2206d5347b386bb8a4800bfce86e88ba170cc3a38fe2db794be32da68107ba28
+    sourceHashType: sha256
+    sourcePath: cluster-metal/argocd
+    buildHash: 62f16f0f03e2e724135fd8d0170d6aa91a68f3c1a89fe2ffdfa26ee2e64231fe
+    buildHashType: sha256
+    buildPath: builds/in-cluster/argocd
+    cluster: in-cluster
+    name: argocd

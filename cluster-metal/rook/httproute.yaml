@@ -16,7 +16,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - group: ''
+        - group: ""
           kind: Service
           name: rook-ceph-mgr-dashboard
           port: 7000
@@ -40,7 +40,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - group: ''
+        - group: ""
           kind: Service
           name: rook-ceph-rgw-object-erasure
           port: 80

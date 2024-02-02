@@ -16,7 +16,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - group: ''
+        - group: ""
           kind: Service
           name: dpg-authentication-keycloak
           port: 80
