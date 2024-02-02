@@ -194,3 +194,12 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
+  - timestamp: 1706857237
+    sourceHash: c7bf3e760c8e441da45a322161959adc5e038f50a28fed0c16c8ed62f5126f85
+    sourceHashType: sha256
+    sourcePath: cluster-metal/grafana-operator
+    buildHash: 026b2b23cbfb324e50f66c6fbed827ee866814f4a0e3b995cc58454fb1ab57f6
+    buildHashType: sha256
+    buildPath: builds/in-cluster/grafana-operator
+    cluster: in-cluster
+    name: grafana-operator
