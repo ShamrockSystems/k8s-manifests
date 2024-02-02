@@ -18,3 +18,9 @@ helmCharts:
 
 patches:
   - path: ./overlays/secret.keep.yaml
+  - target:
+      kind: Secret
+      name: kubernetes-dashboard-csrf
+    patch: |-
+      - op: remove
+        path: /data
