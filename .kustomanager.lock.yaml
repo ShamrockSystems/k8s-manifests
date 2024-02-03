@@ -195,15 +195,6 @@ builds:
     cluster: in-cluster
     name: dpg-authentication
   - timestamp: 1706863540
-    sourceHash: 75dfcf6d930b8dc7e46db85785ced61d270b2c3c434268ebc66e52fee446665f
-    sourceHashType: sha256
-    sourcePath: cluster-metal/rook
-    buildHash: a9d5ed4ff2816706b0dc223eb86637c4003a59cf1418ba454d277b002103ea02
-    buildHashType: sha256
-    buildPath: builds/in-cluster/rook
-    cluster: in-cluster
-    name: rook
-  - timestamp: 1706863540
     sourceHash: 2206d5347b386bb8a4800bfce86e88ba170cc3a38fe2db794be32da68107ba28
     sourceHashType: sha256
     sourcePath: cluster-metal/argocd
@@ -212,3 +203,12 @@ builds:
     buildPath: builds/in-cluster/argocd
     cluster: in-cluster
     name: argocd
+  - timestamp: 1706951202
+    sourceHash: 9c92c475a9d8b882466ce223e483ef2211e5ac18ae8f938d557673f3494003e1
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rook
+    buildHash: 3593e2a457b4065ff2e58db565ae3bdcb1d95088e2293fdbee215daf2b066623
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rook
+    cluster: in-cluster
+    name: rook

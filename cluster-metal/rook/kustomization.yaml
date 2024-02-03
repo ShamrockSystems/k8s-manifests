@@ -11,7 +11,7 @@ resources:
   - ./storage-replicated/
   - ./storage-erasure/
   - ./storage-filesystem/
-  - ./cephobjectstore.yaml
+  - ./storage-object/
   - ./httproute.yaml
 
 patches:
