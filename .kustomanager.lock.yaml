@@ -212,3 +212,12 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
+  - timestamp: 1706951854
+    sourceHash: 81b7a947ff0154b14b58b856a04857da0e2ac442a45c0afea20c8db7ff94f61a
+    sourceHashType: sha256
+    sourcePath: cluster-metal/grafana-loki
+    buildHash: 632c89c42e03c33defbe79c9702df3360bbdb594787b436296da6bf0aaefea35
+    buildHashType: sha256
+    buildPath: builds/in-cluster/grafana-loki
+    cluster: in-cluster
+    name: grafana-loki
