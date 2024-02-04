@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kustomanager
+  namespace: argocd
+spec:
+  destination:
+    name: in-cluster
+  project: kustomanager
+  source:
+    repoURL: https://github.com/ShamrockSystems/k8s-manifests.git
+    targetRevision: HEAD
+    path: applicationsets
+  syncPolicy:
+    syncOptions:
+      - ServerSideApply=true
