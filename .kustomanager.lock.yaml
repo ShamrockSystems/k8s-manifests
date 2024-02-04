@@ -221,3 +221,12 @@ builds:
     buildPath: builds/in-cluster/grafana-loki
     cluster: in-cluster
     name: grafana-loki
+  - timestamp: 1707005656
+    sourceHash: c64ec258fe25a51bbcf378f4d740c0f3890aac3f85793f94e9a680577c2ee60e
+    sourceHashType: sha256
+    sourcePath: cluster-metal/whoami
+    buildHash: 38dd131f47f61b1d81bb861f5364154ebc5dc3fcc62cfb52b58283f5f634e350
+    buildHashType: sha256
+    buildPath: builds/in-cluster/whoami
+    cluster: in-cluster
+    name: whoami
