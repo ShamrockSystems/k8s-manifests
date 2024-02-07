@@ -75,9 +75,9 @@ spec:
     spec:
       containers:
       - args:
+        - serve
         - --location
         - /data
-        - serve
         - --bind
         - 0.0.0.0:7878
         image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
@@ -133,17 +133,26 @@ spec:
         volumeMounts:
         - mountPath: /ontology
           name: oxigraph-ontology
-      - args:
-        - --location
-        - /data
-        - load
-        - --file
-        - /ontology/repository/foaf.rdf
-        - --graph
-        - http://xmlns.com/foaf/0.1/
+      - command:
+        - sh
+        - -c
+        - cp /bin/busybox /busybox
+        image: docker.io/busybox:latest
+        name: busybox-copy
+        volumeMounts:
+        - mountPath: /busybox
+          name: busybox
+      - command:
+        - /busybox/busybox
+        - sh
+        - -c
+        - ONTOLOGY_DIR="/ontology/repository" /ontology/repository/init-load.sh --location
+          /data
         image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
         name: oxigraph-load-ontology
         volumeMounts:
+        - mountPath: /busybox
+          name: busybox
         - mountPath: /ontology
           name: oxigraph-ontology
         - mountPath: /data
@@ -155,6 +164,8 @@ spec:
       - name: oxigraph-ontology
         persistentVolumeClaim:
           claimName: oxigraph-ontology-pvc
+      - emptyDir: {}
+        name: busybox
 ---
 apiVersion: apps/v1
 kind: Deployment

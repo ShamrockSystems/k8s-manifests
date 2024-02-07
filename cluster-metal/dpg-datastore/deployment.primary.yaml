@@ -23,6 +23,8 @@ spec:
         - name: oxigraph-ontology
           persistentVolumeClaim:
             claimName: oxigraph-ontology-pvc
+        - name: busybox
+          emptyDir: {}
       initContainers:
         - name: git-ontology
           image: docker.io/bitnami/git
@@ -69,17 +71,22 @@ spec:
           volumeMounts:
             - mountPath: /ontology
               name: oxigraph-ontology
+        - name: busybox-copy
+          image: docker.io/busybox:latest
+          command: ['sh', '-c', 'cp /bin/busybox /busybox']
+          volumeMounts:
+            - name: busybox
+              mountPath: /busybox
         - name: oxigraph-load-ontology
           image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
-          args:
-            - --location
-            - /data
-            - load
-            - --file
-            - /ontology/repository/foaf.rdf
-            - --graph
-            - http://xmlns.com/foaf/0.1/
+          command:
+            - /busybox/busybox
+            - sh
+            - -c
+            - ONTOLOGY_DIR="/ontology/repository" /ontology/repository/init-load.sh --location /data
           volumeMounts:
+            - mountPath: /busybox
+              name: busybox
             - mountPath: /ontology
               name: oxigraph-ontology
             - mountPath: /data
@@ -88,9 +95,9 @@ spec:
         - name: oxigraph
           image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
           args:
+            - serve
             - --location
             - /data
-            - serve
             - --bind
             - 0.0.0.0:7878
           ports:
