@@ -20,7 +20,7 @@ spec:
             claimName: oxigraph-primary-pvc
       containers:
         - name: oxigraph
-          image: ghcr.io/oxigraph/oxigraph:v0.3.22
+          image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
           args:
             - serve-secondary
             - --primary-location

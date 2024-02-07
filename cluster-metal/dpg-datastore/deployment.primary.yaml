@@ -70,7 +70,7 @@ spec:
             - mountPath: /ontology
               name: oxigraph-ontology
         - name: oxigraph-load-ontology
-          image: ghcr.io/oxigraph/oxigraph:v0.3.22
+          image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
           args:
             - --location
             - /data
@@ -86,7 +86,7 @@ spec:
               name: oxigraph-data
       containers:
         - name: oxigraph
-          image: ghcr.io/oxigraph/oxigraph:v0.3.22
+          image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
           args:
             - --location
             - /data
