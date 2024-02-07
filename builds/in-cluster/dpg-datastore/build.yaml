@@ -31,6 +31,19 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: oxigraph-ontology-pvc
+  namespace: deeppharmgraph
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: filesystem-erasure
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
   name: oxigraph-primary-pvc
   namespace: deeppharmgraph
 spec:
@@ -74,10 +87,72 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: oxigraph-data
+      initContainers:
+      - command:
+        - bash
+        - -c
+        - |
+          # Define the remote repository URL, the local directory, and the branch name
+          REMOTE_REPO_URL="https://github.com/GreenCappuccino/dpg-datastore-ontology.git"
+          LOCAL_DIR="/ontology/repository"
+          BRANCH_NAME="forging.cc"
+
+          # Check if the local directory exists
+          if [ -d "$LOCAL_DIR" ]; then
+            # Move into the local directory
+            cd "$LOCAL_DIR"
+
+            # Check if the directory is a git repository
+            if git rev-parse --git-dir > /dev/null 2>&1; then
+              # Fetch all branches from the remote repository
+              git fetch --all
+
+              # Check if the specified branch exists in the remote
+              if git show-ref --verify --quiet refs/remotes/origin/$BRANCH_NAME; then
+                # Forcefully reset the local copy to match the specified remote branch
+                echo "Branch '$BRANCH_NAME' found. Forcefully pulling changes..."
+                git checkout $BRANCH_NAME
+                git reset --hard origin/$BRANCH_NAME
+              else
+                echo "Branch '$BRANCH_NAME' not found in the remote repository."
+                exit 1
+              fi
+            else
+              echo "Directory is not a git repository. Removing it and attempting to clone..."
+              cd ..
+              rm -rf "$LOCAL_DIR"
+              git clone --branch $BRANCH_NAME --single-branch --depth 1 "$REMOTE_REPO_URL" "$LOCAL_DIR"
+            fi
+          else
+            # Perform a shallow clone with the specified branch
+            echo "Local directory does not exist. Attempting to clone repository..."
+            git clone --branch $BRANCH_NAME --single-branch --depth 1 "$REMOTE_REPO_URL" "$LOCAL_DIR"
+          fi
+        image: docker.io/bitnami/git
+        name: git-ontology
+        volumeMounts:
+        - mountPath: /ontology
+          name: oxigraph-ontology
+      - args:
+        - load
+        - --location
+        - /data
+        - --file
+        - /ontology/repository/foaf.rdf
+        image: ghcr.io/oxigraph/oxigraph:v0.3.22
+        name: oxigraph-load-ontology
+        volumeMounts:
+        - mountPath: /ontology
+          name: oxigraph-ontology
+        - mountPath: /data
+          name: oxigraph-data
       volumes:
       - name: oxigraph-data
         persistentVolumeClaim:
           claimName: oxigraph-primary-pvc
+      - name: oxigraph-ontology
+        persistentVolumeClaim:
+          claimName: oxigraph-ontology-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -239,11 +239,11 @@ builds:
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
     name: dpg-processing
-  - timestamp: 1707306456
-    sourceHash: 00785bf2c2f63cd7e7624f1c9ffcd9f596df303186ef7e077dbc7fc00a8f3e65
+  - timestamp: 1707310851
+    sourceHash: 4922fbdceff9151b75894c779cd49335be881b9b8a553d891dc111354c7d03b7
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-datastore
-    buildHash: e06f043ef3e80e75b74d2a7e080e4e4177e24af91b2f485c695c5d1f98986e15
+    buildHash: 83682b8363c0fe9936a5385bb5e7ebc2a311a8621fcb67125afeeb3fd9d82818
     buildHashType: sha256
     buildPath: builds/in-cluster/dpg-datastore
     cluster: in-cluster
