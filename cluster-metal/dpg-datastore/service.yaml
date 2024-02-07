@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dpg-datastore-primary
+  namespace: deeppharmgraph
+spec:
+  type: ClusterIP
+  selector:
+    app: oxigraph-primary
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 7878
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dpg-datastore-secondary
+  namespace: deeppharmgraph
+spec:
+  type: ClusterIP
+  selector:
+    app: oxigraph-secondary
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 7878

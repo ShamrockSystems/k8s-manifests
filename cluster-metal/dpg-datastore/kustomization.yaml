@@ -6,3 +6,5 @@ resources:
   - ./persistentvolumeclaim.yaml
   - ./deployment.primary.yaml
   - ./deployment.secondary.yaml
+  - ./service.yaml
+  - ./httproute.yaml
