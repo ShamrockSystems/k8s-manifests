@@ -230,11 +230,11 @@ builds:
     buildPath: builds/in-cluster/rabbitmq-cluster-operator
     cluster: in-cluster
     name: rabbitmq-cluster-operator
-  - timestamp: 1707297293
-    sourceHash: 28c5f454cf39d19c7aa82203a22ce9e8eb0319486b5d8263ab8c1fda113ad287
+  - timestamp: 1707297614
+    sourceHash: 888cd36c4e3436c4c7446657dc3bf08637e01c23c5b6f7590217e3341c77f949
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-datastore
-    buildHash: 2506be69a63fdc163c496cb8acda0b9c4db9b767ef6517bae974b55047bc00a0
+    buildHash: 21032c1d5dab5c62b3fd8f4fa918861733b1faebbce08b69d4a71d9696fd813a
     buildHashType: sha256
     buildPath: builds/in-cluster/dpg-datastore
     cluster: in-cluster

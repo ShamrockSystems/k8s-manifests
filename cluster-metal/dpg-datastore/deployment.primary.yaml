@@ -5,6 +5,8 @@ metadata:
   labels:
     app: oxigraph-primary
 spec:
+  strategy:
+    type: Recreate
   replicas: 1
   selector:
     matchLabels:

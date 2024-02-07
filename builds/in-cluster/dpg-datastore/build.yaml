@@ -53,6 +53,8 @@ spec:
   selector:
     matchLabels:
       app: oxigraph-primary
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
