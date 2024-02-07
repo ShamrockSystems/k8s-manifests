@@ -8,7 +8,9 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 logger = logging.getLogger("builder")
 
 j2_env = Environment(
-    loader=PackageLoader("kustomanager"), autoescape=select_autoescape()
+    loader=PackageLoader("kustomanager"),
+    autoescape=select_autoescape(),
+    keep_trailing_newline=True,
 )
 
 
