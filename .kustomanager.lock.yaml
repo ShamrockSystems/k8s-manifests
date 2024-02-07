@@ -221,15 +221,6 @@ builds:
     buildPath: builds/in-cluster/rabbitmq-cluster-operator
     cluster: in-cluster
     name: rabbitmq-cluster-operator
-  - timestamp: 1707297614
-    sourceHash: 888cd36c4e3436c4c7446657dc3bf08637e01c23c5b6f7590217e3341c77f949
-    sourceHashType: sha256
-    sourcePath: cluster-metal/dpg-datastore
-    buildHash: 21032c1d5dab5c62b3fd8f4fa918861733b1faebbce08b69d4a71d9696fd813a
-    buildHashType: sha256
-    buildPath: builds/in-cluster/dpg-datastore
-    cluster: in-cluster
-    name: dpg-datastore
   - timestamp: 1707300701
     sourceHash: d122c11416d615d2e8aec6525057d72aa8d6879afeb896aee0d2b8def2ea79db
     sourceHashType: sha256
@@ -248,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
     name: dpg-processing
+  - timestamp: 1707306456
+    sourceHash: 00785bf2c2f63cd7e7624f1c9ffcd9f596df303186ef7e077dbc7fc00a8f3e65
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-datastore
+    buildHash: e06f043ef3e80e75b74d2a7e080e4e4177e24af91b2f485c695c5d1f98986e15
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-datastore
+    cluster: in-cluster
+    name: dpg-datastore

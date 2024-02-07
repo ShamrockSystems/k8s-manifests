@@ -132,7 +132,7 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: dpg-datastore
+      name: dpg-datastore-secondary
       port: 80
       weight: 1
     matches:
