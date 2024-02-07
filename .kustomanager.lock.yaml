@@ -239,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/dpg-datastore
     cluster: in-cluster
     name: dpg-datastore
+  - timestamp: 1707300701
+    sourceHash: d122c11416d615d2e8aec6525057d72aa8d6879afeb896aee0d2b8def2ea79db
+    sourceHashType: sha256
+    sourcePath: cluster-metal/kured
+    buildHash: e25540f5ea34e3ffaf9eaee33b3cd62878e99fe403f251a9da0efcb0c475a7f5
+    buildHashType: sha256
+    buildPath: builds/in-cluster/kured
+    cluster: in-cluster
+    name: kured
