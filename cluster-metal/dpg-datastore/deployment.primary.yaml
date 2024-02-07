@@ -72,11 +72,13 @@ spec:
         - name: oxigraph-load-ontology
           image: ghcr.io/oxigraph/oxigraph:v0.3.22
           args:
-            - load
             - --location
             - /data
+            - load
             - --file
             - /ontology/repository/foaf.rdf
+            - --graph
+            - http://xmlns.com/foaf/0.1/
           volumeMounts:
             - mountPath: /ontology
               name: oxigraph-ontology
