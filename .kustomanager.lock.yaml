@@ -230,3 +230,12 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
+  - timestamp: 1707294837
+    sourceHash: db4694f4c00288e5592c7ca926c294c070af5a18322a01f87bcc61977dab9a48
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rabbitmq-cluster-operator
+    buildHash: 348ff63e4efd1818d9d2e85ee25bc1bf0536dab9443737135b94684da68e2696
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rabbitmq-cluster-operator
+    cluster: in-cluster
+    name: rabbitmq-cluster-operator
