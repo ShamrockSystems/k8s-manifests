@@ -239,11 +239,11 @@ builds:
     buildPath: builds/in-cluster/kube-prometheus
     cluster: in-cluster
     name: kube-prometheus
-  - timestamp: 1707471301
-    sourceHash: a0baa7ef70efa8c7cbefdd5d3f36f57344eaf0e62c697713b868160a740f0b21
+  - timestamp: 1707471351
+    sourceHash: 2fffef2632eb2c378d965579ba2b630c6f00c73adb16220323605adf835492e8
     sourceHashType: sha256
     sourcePath: cluster-metal/grafana
-    buildHash: 582e6831c98a3323cd9dc6128da8ff4527a69ac0c6f9ac2cc068819efc578dac
+    buildHash: d01fc8b8d9e94a97f3d74574ec4802d44bf6652594f436190e86e24472dda0c8
     buildHashType: sha256
     buildPath: builds/in-cluster/grafana
     cluster: in-cluster
