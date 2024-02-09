@@ -185,15 +185,6 @@ builds:
     buildPath: builds/in-cluster/whoami
     cluster: in-cluster
     name: whoami
-  - timestamp: 1707289255
-    sourceHash: 09c0bf217d109fc690d5aa45d0ed16dc72be47f43ffb9b7608ab47409c110a5b
-    sourceHashType: sha256
-    sourcePath: cluster-metal/rook
-    buildHash: 34407d814f69f84ee540e64ff880b494eaf5f50f7e699a52f44ec8289b39d6fc
-    buildHashType: sha256
-    buildPath: builds/in-cluster/rook
-    cluster: in-cluster
-    name: rook
   - timestamp: 1707294837
     sourceHash: db4694f4c00288e5592c7ca926c294c070af5a18322a01f87bcc61977dab9a48
     sourceHashType: sha256
@@ -248,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/kube-prometheus
     cluster: in-cluster
     name: kube-prometheus
+  - timestamp: 1707493448
+    sourceHash: 5d88c679e788a6749de8f0ab15b2f6765c5113e2f78afd35c044b501f8567e3d
+    sourceHashType: sha256
+    sourcePath: cluster-metal/rook
+    buildHash: 96c9bc5cb0ba37b9993fcaba92a7a6e8a0cd85c18d8963dc9332694862c9f16f
+    buildHashType: sha256
+    buildPath: builds/in-cluster/rook
+    cluster: in-cluster
+    name: rook

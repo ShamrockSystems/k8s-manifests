@@ -18092,6 +18092,45 @@ spec:
         type: PathPrefix
         value: /
 ---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ceph-cluster
+  namespace: grafana
+spec:
+  grafanaCom:
+    id: 2842
+    revision: 17
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ceph-osd-single
+  namespace: grafana
+spec:
+  grafanaCom:
+    id: 5336
+    revision: 9
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ceph-pools
+  namespace: grafana
+spec:
+  grafanaCom:
+    id: 5342
+    revision: 9
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+---
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
@@ -18111,3 +18150,44 @@ spec:
         "range_start": "10.83.67.64"
       }
     }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    team: rook
+  name: rook-ceph-exporter
+  namespace: rook-ceph
+spec:
+  endpoints:
+  - interval: 5s
+    path: /metrics
+    port: ceph-exporter-http-metrics
+  namespaceSelector:
+    matchNames:
+    - rook-ceph
+  selector:
+    matchLabels:
+      app: rook-ceph-exporter
+      ceph_daemon_id: exporter
+      rook_cluster: rook-ceph
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    team: rook
+  name: rook-ceph-mgr
+  namespace: rook-ceph
+spec:
+  endpoints:
+  - interval: 5s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - rook-ceph
+  selector:
+    matchLabels:
+      app: rook-ceph-mgr
+      rook_cluster: rook-ceph
