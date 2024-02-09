@@ -8,3 +8,4 @@ resources:
   - ./grafana.yaml
   - ./httproute.yaml
   - ./grafanadatasource.prometheus.yaml
+  - ./grafanadashboard.overview.yaml
