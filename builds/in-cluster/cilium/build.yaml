@@ -15373,6 +15373,45 @@ metadata:
 spec:
   controllerName: io.cilium/gateway-controller
 ---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: grafanadashboard-cm-cilium-dashboard
+  namespace: grafana
+spec:
+  configMapRef:
+    key: cilium-dashboard.json
+    name: cilium-dashboard
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: grafanadashboard-cm-cilium-operator-dashboard
+  namespace: grafana
+spec:
+  configMapRef:
+    key: cilium-operator-dashboard.json
+    name: cilium-operator-dashboard
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: grafanadashboard-cm-hubble-dashboard
+  namespace: grafana
+spec:
+  configMapRef:
+    key: hubble-dashboard.json
+    name: hubble-dashboard
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:

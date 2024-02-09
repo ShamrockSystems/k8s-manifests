@@ -239,11 +239,11 @@ builds:
     buildPath: builds/in-cluster/kube-prometheus
     cluster: in-cluster
     name: kube-prometheus
-  - timestamp: 1707496060
-    sourceHash: a5a324f19fda10f3b8b52a24b9d88654024c4931be5555e0da34d29066b43737
+  - timestamp: 1707496863
+    sourceHash: 9125a237520aa363aa898b85e5141ce22cf2d8b7ff803c9da550509fc8ba1c11
     sourceHashType: sha256
     sourcePath: cluster-metal/cilium
-    buildHash: d56d11eebc50fcf6127a35778666e437106b49072e29323e749307f7ce97a649
+    buildHash: 2c5093812f202759ec6c3f9533568db283ad831bfa63cbdf2aed2b89542c2be6
     buildHashType: sha256
     buildPath: builds/in-cluster/cilium
     cluster: in-cluster

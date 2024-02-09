@@ -5,6 +5,7 @@ resources:
   - ./ciliumloadbalancerpool.yaml
   - ./certificate.yaml
   - ./gateway.yaml
+  - ./grafanadashboard.yaml
 
 helmCharts:
   - releaseName: cilium
