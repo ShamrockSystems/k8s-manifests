@@ -80984,6 +80984,7 @@ spec:
   resources:
     requests:
       memory: 400Mi
+  retention: 60d
   ruleNamespaceSelector: {}
   ruleSelector: {}
   securityContext:
@@ -80993,6 +80994,17 @@ spec:
   serviceAccountName: prometheus-k8s
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}
+  storage:
+    volumeClaimTemplate:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 32Gi
+        storageClassName: block-replicated
   version: 2.46.0
 ---
 apiVersion: monitoring.coreos.com/v1

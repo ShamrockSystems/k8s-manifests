@@ -16,7 +16,25 @@ local kp = (import 'kube-prometheus/main.libsonnet') +
       namespace:: grafanaNamespace,
     },
   },
-
+  // Setup Prometheus PVC
+  prometheus+:: {
+    prometheus+: {
+      spec+: {
+        retention: '60d',
+        storage: {
+          volumeClaimTemplate: {
+            apiVersion: 'v1',
+            kind: 'PersistentVolumeClaim',
+            spec: {
+              accessModes: ['ReadWriteOnce'],
+              resources: { requests: { storage: '32Gi' } },
+              storageClassName: 'block-replicated',
+            },
+          },
+        },
+      },
+    },
+  },
   // Disable all grafana-related objects apart from dashboards
   grafana+:: {
     deployment:: {},

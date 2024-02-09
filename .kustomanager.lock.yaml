@@ -239,11 +239,11 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
-  - timestamp: 1707493973
-    sourceHash: 8ae0e6f018c98ca6d152e7fbd470bfc8198aa19c186a76e688e18975f4fa56e0
+  - timestamp: 1707495115
+    sourceHash: b0d71b5018582937c8fd5b3f2dc3e66cd662b05450089cb704a388e38ef5b21b
     sourceHashType: sha256
     sourcePath: cluster-metal/kube-prometheus
-    buildHash: dc153f7886246a3ae650aa268eb4db61a4de84ea7cf69977d2fd0b25935269e5
+    buildHash: 99f69db66bf64b111a774a5a0ce0e4387888f8f484d2bc7ee412997bf17ee870
     buildHashType: sha256
     buildPath: builds/in-cluster/kube-prometheus
     cluster: in-cluster
