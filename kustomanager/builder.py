@@ -30,7 +30,11 @@ def build_from_source(kustomization_directory: Path, target_directory: Path):
 
 
 def invoke_kustomize(
-    path: Path, command: str = "kustomize", enable_helm: bool = True
+    path: Path,
+    command: str = "kustomize",
+    enable_helm: bool = True,
+    enable_alpha_plugins: bool = True,
+    enable_network: bool = True,
 ) -> str:
     args: list[str] = []
     args.append(command)
@@ -38,6 +42,10 @@ def invoke_kustomize(
     args.append(path.absolute().as_posix())
     if enable_helm:
         args.append("--enable-helm")
+    if enable_alpha_plugins:
+        args.append("--enable-alpha-plugins")
+    if enable_network:
+        args.append("--network")
     logger.debug(f"Running {args}")
     result = subprocess.run(
         args,

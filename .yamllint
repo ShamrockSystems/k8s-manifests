@@ -2,6 +2,7 @@
 extends: default
 
 ignore:
+  - /.github
   - /builds
 
 yaml-files:
