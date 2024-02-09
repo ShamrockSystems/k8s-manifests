@@ -113,15 +113,6 @@ builds:
     buildPath: builds/in-cluster/olm
     cluster: in-cluster
     name: olm
-  - timestamp: 1706224264
-    sourceHash: cc5c34690261f35c648e758aaaaeb8133e9d51136e292d7d85264d7f9ac4f6f7
-    sourceHashType: sha256
-    sourcePath: cluster-metal/prometheus-operator
-    buildHash: a4de69bb3cb30a9d3b50d416b7812a85701cb285b1f4c08f68060dfaf65faa5c
-    buildHashType: sha256
-    buildPath: builds/in-cluster/prometheus-operator
-    cluster: in-cluster
-    name: prometheus-operator
   - timestamp: 1706690270
     sourceHash: ca88f03f0903fee9de57ed256c6ae0eb86e23880fc6b5b493837d01791b5d196
     sourceHashType: sha256
@@ -149,15 +140,6 @@ builds:
     buildPath: builds/in-cluster/grafana-operator
     cluster: in-cluster
     name: grafana-operator
-  - timestamp: 1706863303
-    sourceHash: 84f23201e9d3f43e5722e3d8e862f0fb2900686d761d822dd44ebc7007c40cf0
-    sourceHashType: sha256
-    sourcePath: cluster-metal/grafana
-    buildHash: 8b2189469395230dda16565f87e583e386710dd02bc7244588c55c3c99323aee
-    buildHashType: sha256
-    buildPath: builds/in-cluster/grafana
-    cluster: in-cluster
-    name: grafana
   - timestamp: 1706863463
     sourceHash: ea3fd786228c52a04c725bf1d867abcbfdad66ae2ac48aea0fbb0f2b74f69359
     sourceHashType: sha256
@@ -248,3 +230,21 @@ builds:
     buildPath: builds/in-cluster/dpg-datastore
     cluster: in-cluster
     name: dpg-datastore
+  - timestamp: 1707467283
+    sourceHash: 84f23201e9d3f43e5722e3d8e862f0fb2900686d761d822dd44ebc7007c40cf0
+    sourceHashType: sha256
+    sourcePath: cluster-metal/grafana
+    buildHash: 1fd694a3f2da02149163c955d383f64b782853b2a11512833c63edecbc577113
+    buildHashType: sha256
+    buildPath: builds/in-cluster/grafana
+    cluster: in-cluster
+    name: grafana
+  - timestamp: 1707467726
+    sourceHash: 37aa4ac2473ccef74b76882a4f5f4f2207af4ad9f623fb268c6acf3ad63ec6c7
+    sourceHashType: sha256
+    sourcePath: cluster-metal/kube-prometheus
+    buildHash: 73db642c90834deb0f58b1d8730f93944084d1010ebb5ee2b9357c841b52887c
+    buildHashType: sha256
+    buildPath: builds/in-cluster/kube-prometheus
+    cluster: in-cluster
+    name: kube-prometheus

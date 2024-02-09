@@ -1,0 +1,15 @@
+apiVersion: kustomize.shamrock.systems/v1alpha1
+kind: GithubCollectorGenerator
+metadata:
+  name: kube-prometheus-generator
+  annotations:
+    # language=YAML
+    config.kubernetes.io/function: |
+      container:
+        image: ghcr.io/shamrocksystems/githubcollectorgenerator:latest
+        network: true
+spec:
+  organization: prometheus-operator
+  repository: kube-prometheus
+  ref: release-0.13
+  path: manifests
