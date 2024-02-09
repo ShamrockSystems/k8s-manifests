@@ -230,15 +230,6 @@ builds:
     buildPath: builds/in-cluster/grafana
     cluster: in-cluster
     name: grafana
-  - timestamp: 1707491918
-    sourceHash: 4a90775324f8fbf40fd1ab0efe296f84c10f789b6770e3cbd40f4383e5e7a7c7
-    sourceHashType: sha256
-    sourcePath: cluster-metal/kube-prometheus
-    buildHash: c2dd3ea7fa52ac72df06fb36a42e2dfa70f5b94929936705f0e66d68fb168b1d
-    buildHashType: sha256
-    buildPath: builds/in-cluster/kube-prometheus
-    cluster: in-cluster
-    name: kube-prometheus
   - timestamp: 1707493448
     sourceHash: 5d88c679e788a6749de8f0ab15b2f6765c5113e2f78afd35c044b501f8567e3d
     sourceHashType: sha256
@@ -248,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
+  - timestamp: 1707493973
+    sourceHash: 8ae0e6f018c98ca6d152e7fbd470bfc8198aa19c186a76e688e18975f4fa56e0
+    sourceHashType: sha256
+    sourcePath: cluster-metal/kube-prometheus
+    buildHash: dc153f7886246a3ae650aa268eb4db61a4de84ea7cf69977d2fd0b25935269e5
+    buildHashType: sha256
+    buildPath: builds/in-cluster/kube-prometheus
+    cluster: in-cluster
+    name: kube-prometheus
