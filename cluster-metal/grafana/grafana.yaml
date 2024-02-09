@@ -41,8 +41,6 @@ spec:
       mode: console
     server:
       root_url: https://metal-grafana.shamrock.systems/
-    security:
-      disable_initial_admin_creation: "true"
     database:
       type: postgres
     remote_cache:

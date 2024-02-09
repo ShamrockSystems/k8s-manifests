@@ -71,8 +71,6 @@ spec:
     remote_cache:
       connstr: addr=grafana-redis-standalone:6379,db=0,ssl=false
       type: redis
-    security:
-      disable_initial_admin_creation: "true"
     server:
       root_url: https://metal-grafana.shamrock.systems/
   deployment:
@@ -105,6 +103,21 @@ spec:
             - secretRef:
                 name: grafana-env-secret
             name: grafana
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: grafanadatasource-prometheus-k8s
+  namespace: grafana
+spec:
+  datasource:
+    access: proxy
+    name: prometheus-k8s
+    type: prometheus
+    url: http://prometheus-k8s.monitoring.svc:9090
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster

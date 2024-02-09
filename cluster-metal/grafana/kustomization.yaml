@@ -7,3 +7,4 @@ resources:
   - ./redis.yaml
   - ./grafana.yaml
   - ./httproute.yaml
+  - ./grafanadatasource.prometheus.yaml

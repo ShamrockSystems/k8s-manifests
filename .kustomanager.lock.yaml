@@ -230,15 +230,6 @@ builds:
     buildPath: builds/in-cluster/dpg-datastore
     cluster: in-cluster
     name: dpg-datastore
-  - timestamp: 1707467283
-    sourceHash: 84f23201e9d3f43e5722e3d8e862f0fb2900686d761d822dd44ebc7007c40cf0
-    sourceHashType: sha256
-    sourcePath: cluster-metal/grafana
-    buildHash: 1fd694a3f2da02149163c955d383f64b782853b2a11512833c63edecbc577113
-    buildHashType: sha256
-    buildPath: builds/in-cluster/grafana
-    cluster: in-cluster
-    name: grafana
   - timestamp: 1707467726
     sourceHash: 37aa4ac2473ccef74b76882a4f5f4f2207af4ad9f623fb268c6acf3ad63ec6c7
     sourceHashType: sha256
@@ -248,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/kube-prometheus
     cluster: in-cluster
     name: kube-prometheus
+  - timestamp: 1707470404
+    sourceHash: 093fb7ccc9cd05f5992ded0069b224c2a1a9b405632dbef67b67a05f0c2b7611
+    sourceHashType: sha256
+    sourcePath: cluster-metal/grafana
+    buildHash: f92476ece2cd13265a0234b74a449b058ecc9ddc1cbca3238e8fe02a4523634a
+    buildHashType: sha256
+    buildPath: builds/in-cluster/grafana
+    cluster: in-cluster
+    name: grafana
