@@ -32,15 +32,6 @@ builds:
     buildPath: builds/in-cluster/cert-manager
     cluster: in-cluster
     name: cert-manager
-  - timestamp: 1705509607
-    sourceHash: 0ba9a0e62754c0dec1e279a65727496a9ef56247d981e06c03560651df096217
-    sourceHashType: sha256
-    sourcePath: cluster-metal/cilium
-    buildHash: cd1772cd9a8d46356d72ccd19978846944bf3e9e8f1ea8af413b2583a3daebca
-    buildHashType: sha256
-    buildPath: builds/in-cluster/cilium
-    cluster: in-cluster
-    name: cilium
   - timestamp: 1705509611
     sourceHash: 910fba04e99536e03e79a53aa61d5c130947911309921222902847569ac4059a
     sourceHashType: sha256
@@ -248,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/kube-prometheus
     cluster: in-cluster
     name: kube-prometheus
+  - timestamp: 1707496060
+    sourceHash: a5a324f19fda10f3b8b52a24b9d88654024c4931be5555e0da34d29066b43737
+    sourceHashType: sha256
+    sourcePath: cluster-metal/cilium
+    buildHash: d56d11eebc50fcf6127a35778666e437106b49072e29323e749307f7ce97a649
+    buildHashType: sha256
+    buildPath: builds/in-cluster/cilium
+    cluster: in-cluster
+    name: cilium
