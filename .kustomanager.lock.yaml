@@ -230,15 +230,6 @@ builds:
     buildPath: builds/in-cluster/dpg-datastore
     cluster: in-cluster
     name: dpg-datastore
-  - timestamp: 1707486316
-    sourceHash: 852d39f29020b424a7d411fa6cf98aca6ba3f2d88f8bf52b24ea6f8e40361a79
-    sourceHashType: sha256
-    sourcePath: cluster-metal/kube-prometheus
-    buildHash: c2dd3ea7fa52ac72df06fb36a42e2dfa70f5b94929936705f0e66d68fb168b1d
-    buildHashType: sha256
-    buildPath: builds/in-cluster/kube-prometheus
-    cluster: in-cluster
-    name: kube-prometheus
   - timestamp: 1707486470
     sourceHash: 173161240d6e38ab402234f949d3a8decce3cf5aa38988fe90207f4dc0053cd5
     sourceHashType: sha256
@@ -248,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/grafana
     cluster: in-cluster
     name: grafana
+  - timestamp: 1707491918
+    sourceHash: 4a90775324f8fbf40fd1ab0efe296f84c10f789b6770e3cbd40f4383e5e7a7c7
+    sourceHashType: sha256
+    sourcePath: cluster-metal/kube-prometheus
+    buildHash: c2dd3ea7fa52ac72df06fb36a42e2dfa70f5b94929936705f0e66d68fb168b1d
+    buildHashType: sha256
+    buildPath: builds/in-cluster/kube-prometheus
+    cluster: in-cluster
+    name: kube-prometheus

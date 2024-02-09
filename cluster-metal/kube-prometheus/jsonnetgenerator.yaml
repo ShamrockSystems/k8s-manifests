@@ -8,7 +8,7 @@ metadata:
       container:
         image: ghcr.io/shamrocksystems/jsonnetgenerator:latest
         mounts:
-          - src: jsonnet
+          - src: ./jsonnet
             dst: /jsonnet
             type: bind
             rw: true

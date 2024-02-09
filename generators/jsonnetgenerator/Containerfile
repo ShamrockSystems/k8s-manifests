@@ -20,6 +20,6 @@ COPY --chmod=755 --from=get /yq /usr/bin/yq
 COPY --chmod=755 --from=get /jb /usr/bin/jb
 COPY --chmod=755 --from=get /jsonnet /usr/bin/jsonnet
 COPY --chmod=755 --from=get /jsonnet-deps /usr/bin/jsonnet-deps
-COPY --chmod=755 --chown=1001:1001 entrypoint.sh /entrypoint.sh
+COPY --chmod=755 entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "" ]
