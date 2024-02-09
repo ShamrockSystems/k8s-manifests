@@ -1,0 +1,19 @@
+apiVersion: kustomize.shamrock.systems/v1alpha1
+kind: JsonnetGenerator
+metadata:
+  name: kube-prometheus-generator
+  annotations:
+    # language=YAML
+    config.kubernetes.io/function: |
+      container:
+        image: ghcr.io/shamrocksystems/jsonnetgenerator:latest
+        mounts:
+          - src: jsonnet
+            dst: /jsonnet
+            type: bind
+            rw: true
+        network: true
+spec:
+  projectDir: /jsonnet
+  projectFile: config.jsonnet
+  useJsonnetBundler: true

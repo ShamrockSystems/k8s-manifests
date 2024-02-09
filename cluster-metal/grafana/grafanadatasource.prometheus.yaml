@@ -8,7 +8,7 @@ spec:
     matchLabels:
       dashboards: "grafana"
   datasource:
-    name: prometheus-k8s
+    name: prometheus
     type: prometheus
     access: proxy
     url: http://prometheus-k8s.monitoring.svc:9090

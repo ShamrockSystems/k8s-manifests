@@ -2,16 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 generators:
-  - ./githubcollectorgenerator.yaml
-  - ./githubcollectorgenerator.setup.yaml
+  - jsonnetgenerator.yaml
 
 patches:
-  - target:
-      labelSelector: "app.kubernetes.io/component=grafana"
-    patch: |-
-      - op: add
-        path: /metadata/annotations/config.kubernetes.io~1local-config
-        value: "true"
   - target:
       kind: NetworkPolicy
       name: prometheus-k8s
