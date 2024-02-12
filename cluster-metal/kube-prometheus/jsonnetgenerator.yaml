@@ -13,6 +13,7 @@ metadata:
             type: bind
             rw: true
         network: true
+    config.kubernetes.io/local-config: "true"
 spec:
   projectDir: /jsonnet
   projectFile: config.jsonnet
