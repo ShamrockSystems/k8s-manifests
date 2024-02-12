@@ -18027,7 +18027,8 @@ spec:
     placement: null
     port: 80
     resources: null
-    sslCertificateRef: null
+    securePort: 443
+    sslCertificateRef: object-erasure-selfsigned
   healthCheck:
     readinessProbe:
       disabled: false
@@ -18041,6 +18042,36 @@ spec:
       requireSafeReplicaSize: true
       size: 2
   preservePoolsOnDelete: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: object-erasure-selfsigned
+  namespace: rook-ceph
+spec:
+  commonName: rook-ceph-rgw-object-erasure.rook-ceph.svc.cluster.local
+  dnsNames:
+  - rook-ceph-rgw-object-erasure.rook-ceph.svc.cluster.local
+  - rook-ceph-rgw-object-erasure.rook-ceph.svc
+  - rook-ceph-rgw-object-erasure.rook-ceph
+  - rook-ceph-rgw-object-erasure
+  duration: 2160h0m0s
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: selfsigned
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  renewBefore: 360h0m0s
+  secretName: object-erasure-selfsigned
+  subject:
+    organizations:
+    - Shamrock Systems LLC
+  usages:
+  - server auth
+  - client auth
 ---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
