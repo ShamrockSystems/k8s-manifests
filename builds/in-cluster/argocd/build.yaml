@@ -21134,18 +21134,6 @@ metadata:
 type: Opaque
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  annotations:
-    sealedsecrets.bitnami.com/managed: "true"
-  labels:
-    app.kubernetes.io/name: argocd-secret
-    app.kubernetes.io/part-of: argocd
-  name: argocd-secret
-  namespace: argocd
-type: Opaque
----
-apiVersion: v1
 kind: Service
 metadata:
   labels:

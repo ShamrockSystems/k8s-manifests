@@ -131,15 +131,6 @@ builds:
     buildPath: builds/in-cluster/grafana-operator
     cluster: in-cluster
     name: grafana-operator
-  - timestamp: 1706863463
-    sourceHash: ea3fd786228c52a04c725bf1d867abcbfdad66ae2ac48aea0fbb0f2b74f69359
-    sourceHashType: sha256
-    sourcePath: cluster-metal/kubernetes-dashboard
-    buildHash: 487d7e6296fa97d8f2180b3bf6e54b3bdaf9b9f14c918be08a5fef6e26f1249f
-    buildHashType: sha256
-    buildPath: builds/in-cluster/kubernetes-dashboard
-    cluster: in-cluster
-    name: kubernetes-dashboard
   - timestamp: 1706863540
     sourceHash: 2d4e9ad01ad209265028d48b990a0b9a63e3d653467692426379a64705cef128
     sourceHashType: sha256
@@ -230,15 +221,6 @@ builds:
     buildPath: builds/in-cluster/grafana-loki
     cluster: in-cluster
     name: grafana-loki
-  - timestamp: 1707780258
-    sourceHash: 569bac0fbc005eb1c6606d0df3c8f98e80c830294a0fd52167db20ba9ce75f4a
-    sourceHashType: sha256
-    sourcePath: cluster-metal/argocd
-    buildHash: 49308f4295424ccebd9d3e13aeb6dcff0e24e5d6613335ddbc2059fd39252846
-    buildHashType: sha256
-    buildPath: builds/in-cluster/argocd
-    cluster: in-cluster
-    name: argocd
   - timestamp: 1707780631
     sourceHash: 156839e040185285e9079fa98ebac7e1ac7157a0dc24144f6fe21980b55137e1
     sourceHashType: sha256
@@ -248,3 +230,21 @@ builds:
     buildPath: builds/in-cluster/kube-prometheus
     cluster: in-cluster
     name: kube-prometheus
+  - timestamp: 1707780806
+    sourceHash: 4c83eddd27fdc6ddd121f9fc2c8208f177fecb3eaf074c95347c9c7a5352060c
+    sourceHashType: sha256
+    sourcePath: cluster-metal/argocd
+    buildHash: d34dbbbb068a45282c37b1269ef50484d4bb69d5bc659eaa73aa51adea71f6d6
+    buildHashType: sha256
+    buildPath: builds/in-cluster/argocd
+    cluster: in-cluster
+    name: argocd
+  - timestamp: 1707780870
+    sourceHash: 59d2ee53394d46eaa2e20cd18bcdd66ca4b0dddaae35ae62acfa1c8e4b59365c
+    sourceHashType: sha256
+    sourcePath: cluster-metal/kubernetes-dashboard
+    buildHash: cb03b0998b474ff357b049c820cd105029336373691270066e7b20d29642fd6c
+    buildHashType: sha256
+    buildPath: builds/in-cluster/kubernetes-dashboard
+    cluster: in-cluster
+    name: kubernetes-dashboard
