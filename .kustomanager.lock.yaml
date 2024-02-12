@@ -149,15 +149,6 @@ builds:
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster
     name: dpg-authentication
-  - timestamp: 1706863540
-    sourceHash: 2206d5347b386bb8a4800bfce86e88ba170cc3a38fe2db794be32da68107ba28
-    sourceHashType: sha256
-    sourcePath: cluster-metal/argocd
-    buildHash: 62f16f0f03e2e724135fd8d0170d6aa91a68f3c1a89fe2ffdfa26ee2e64231fe
-    buildHashType: sha256
-    buildPath: builds/in-cluster/argocd
-    cluster: in-cluster
-    name: argocd
   - timestamp: 1707005656
     sourceHash: c64ec258fe25a51bbcf378f4d740c0f3890aac3f85793f94e9a680577c2ee60e
     sourceHashType: sha256
@@ -248,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/grafana-loki
     cluster: in-cluster
     name: grafana-loki
+  - timestamp: 1707780258
+    sourceHash: 569bac0fbc005eb1c6606d0df3c8f98e80c830294a0fd52167db20ba9ce75f4a
+    sourceHashType: sha256
+    sourcePath: cluster-metal/argocd
+    buildHash: 49308f4295424ccebd9d3e13aeb6dcff0e24e5d6613335ddbc2059fd39252846
+    buildHashType: sha256
+    buildPath: builds/in-cluster/argocd
+    cluster: in-cluster
+    name: argocd
