@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: marin3r-catalog
+  namespace: marin3r-system
+spec:
+  sourceType: grpc
+  image: quay.io/3scale/marin3r-catalog:latest
+  displayName: MARIN3R Catalog
+  publisher: Red Hat

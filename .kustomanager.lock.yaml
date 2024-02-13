@@ -230,15 +230,6 @@ builds:
     buildPath: builds/in-cluster/argocd
     cluster: in-cluster
     name: argocd
-  - timestamp: 1707780870
-    sourceHash: 59d2ee53394d46eaa2e20cd18bcdd66ca4b0dddaae35ae62acfa1c8e4b59365c
-    sourceHashType: sha256
-    sourcePath: cluster-metal/kubernetes-dashboard
-    buildHash: cb03b0998b474ff357b049c820cd105029336373691270066e7b20d29642fd6c
-    buildHashType: sha256
-    buildPath: builds/in-cluster/kubernetes-dashboard
-    cluster: in-cluster
-    name: kubernetes-dashboard
   - timestamp: 1707789387
     sourceHash: 841e6668c5e40151e63e2dc29217124c0cf2afc0104c71e49b6a6e08eb7ffb59
     sourceHashType: sha256
@@ -248,3 +239,21 @@ builds:
     buildPath: builds/in-cluster/grafana-loki
     cluster: in-cluster
     name: grafana-loki
+  - timestamp: 1707839767
+    sourceHash: ee586020cbb57fe2ea8d29f2aa99cbeb023b2e5aba1f679ff29d18166fbc1a18
+    sourceHashType: sha256
+    sourcePath: cluster-metal/kubernetes-dashboard
+    buildHash: cb03b0998b474ff357b049c820cd105029336373691270066e7b20d29642fd6c
+    buildHashType: sha256
+    buildPath: builds/in-cluster/kubernetes-dashboard
+    cluster: in-cluster
+    name: kubernetes-dashboard
+  - timestamp: 1707846231
+    sourceHash: c0f79783bcf08605916e3ce93a9764904f2ca7faa5599671210ec17e084d2de8
+    sourceHashType: sha256
+    sourcePath: cluster-metal/marin3r
+    buildHash: 1df5177371807ac28f5cb7ff6c8138bfad6727873b86f7b117fb501f0300ad39
+    buildHashType: sha256
+    buildPath: builds/in-cluster/marin3r
+    cluster: in-cluster
+    name: marin3r
