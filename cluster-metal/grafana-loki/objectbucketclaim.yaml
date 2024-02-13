@@ -1,15 +1,34 @@
 apiVersion: objectbucket.io/v1alpha1
 kind: ObjectBucketClaim
 metadata:
-  name: grafana-loki-bucket
-  namespace: grafana
+  name: loki-chunks
+  namespace: loki
 spec:
   # To create a new bucket specify either `bucketName` or
   # `generateBucketName` here. Both cannot be used. To access
   # an existing bucket the bucket name needs to be defined in
   # the StorageClass referenced here, and both `bucketName` and
   # `generateBucketName` must be omitted in the OBC.
-  bucketName: grafana-loki
+  bucketName: loki-chunks
+  #generateBucketName: ceph-bkt
+  storageClassName: object-erasure-delete
+  #additionalConfig:
+  # To set for quota for OBC
+  #maxObjects: "1000"
+  #maxSize: "2G"
+---
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: loki-ruler
+  namespace: loki
+spec:
+  # To create a new bucket specify either `bucketName` or
+  # `generateBucketName` here. Both cannot be used. To access
+  # an existing bucket the bucket name needs to be defined in
+  # the StorageClass referenced here, and both `bucketName` and
+  # `generateBucketName` must be omitted in the OBC.
+  bucketName: loki-ruler
   #generateBucketName: ceph-bkt
   storageClassName: object-erasure-delete
   #additionalConfig:

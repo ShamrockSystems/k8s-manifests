@@ -124,7 +124,10 @@ loki:
     common:
     {{- toYaml .Values.loki.commonConfig | nindent 2}}
       storage:
-      {{- include "loki.commonStorageConfig" . | nindent 4}}
+      {{- $lokiCommonStorageConfig := include "loki.commonStorageConfig" .  | fromYaml }}
+      {{- $additionalCommonStorageConfig := dict "s3" (dict "endpoint" "${LOKI_COMMON_STORAGE_S3_ENDPOINT}" "region" "${LOKI_COMMON_STORAGE_S3_REGION}" "access_key_id" "${LOKI_COMMON_STORAGE_S3_ACCESS_KEY_ID}" "secret_access_key" "${LOKI_COMMON_STORAGE_S3_SECRET_ACCESS_KEY}") }}
+      {{- $mergedCommonStorageConfig := merge $additionalCommonStorageConfig $lokiCommonStorageConfig }}
+      {{- toYaml $mergedCommonStorageConfig | nindent 4 }}
     {{- end}}
 
     {{- with .Values.loki.limits_config }}
@@ -168,7 +171,10 @@ loki:
             period: 24h
     {{- end }}
 
-    {{ include "loki.rulerConfig" . }}
+    {{- $lokiRulerConfig := include "loki.rulerConfig" . | fromYaml }}
+    {{- $additionalRulerConfig := dict "ruler" ( dict "storage" (dict "s3" (dict "endpoint" "${LOKI_RULER_STORAGE_S3_ENDPOINT}" "region" "${LOKI_RULER_STORAGE_S3_REGION}" "access_key_id" "${LOKI_RULER_STORAGE_S3_ACCESS_KEY_ID}" "secret_access_key" "${LOKI_RULER_STORAGE_S3_SECRET_ACCESS_KEY}"))) }}
+    {{- $mergedRulerConfig := merge $additionalRulerConfig $lokiRulerConfig }}
+    {{- toYaml $mergedRulerConfig | nindent 0}}
 
     {{- if or .Values.tableManager.retention_deletes_enabled .Values.tableManager.retention_period }}
     table_manager:
@@ -271,19 +277,19 @@ loki:
   # -- Storage config. Providing this will automatically populate all necessary storage configs in the templated config.
   storage:
     bucketNames:
-      chunks: chunks
-      ruler: ruler
-      admin: admin
+      chunks: loki-chunks
+      ruler: loki-ruler
+      # admin: admin # Only required in Loki Enterprise
     type: s3
     s3:
-      s3: null
+      # s3: null
       endpoint: null
       region: null
       secretAccessKey: null
       accessKeyId: null
       signatureVersion: null
-      s3ForcePathStyle: false
-      insecure: false
+      s3ForcePathStyle: true
+      insecure: true
       http_config: {}
       # -- Check https://grafana.com/docs/loki/latest/configure/#s3_storage_config for more info on how to provide a backoff_config
       backoff_config: {}
@@ -543,7 +549,7 @@ rbac:
   namespaced: false
 # -- Section for configuring optional Helm test
 test:
-  enabled: true
+  enabled: false
   # -- Address of the prometheus server to query for the test
   prometheusAddress: "http://prometheus:9090"
   # -- Number of times to retry the test before failing
@@ -571,7 +577,7 @@ monitoring:
     # -- If enabled, create configmap with dashboards for monitoring Loki
     enabled: true
     # -- Alternative namespace to create dashboards ConfigMap in
-    namespace: null
+    namespace: grafana
     # -- Additional annotations for the dashboards ConfigMap
     annotations: {}
     # -- Labels for the dashboards ConfigMap
@@ -649,7 +655,7 @@ monitoring:
   # It will create custom resources for GrafanaAgent, LogsInstance, and PodLogs to configure
   # scrape configs to scrape its own logs with the labels expected by the included dashboards.
   selfMonitoring:
-    enabled: true
+    enabled: false
     # -- Tenant to use for self monitoring
     tenant:
       # -- Name of the tenant
@@ -662,7 +668,7 @@ monitoring:
       # -- Controls whether to install the Grafana Agent Operator and its CRDs.
       # Note that helm will not install CRDs if this flag is enabled during an upgrade.
       # In that case install the CRDs manually from https://github.com/grafana/agent/tree/main/production/operator/crds
-      installOperator: true
+      installOperator: false
       # -- Grafana Agent annotations
       annotations: {}
       # -- Additional Grafana Agent labels
@@ -695,7 +701,7 @@ monitoring:
   # The Loki canary pushes logs to and queries from this loki installation to test
   # that it's working correctly
   lokiCanary:
-    enabled: true
+    enabled: false
     # -- The name of the label to look for at loki when doing the checks.
     labelname: pod
     # -- Additional annotations for the `loki-canary` Daemonset
@@ -743,7 +749,7 @@ monitoring:
 # Configuration for the write pod(s)
 write:
   # -- Number of replicas for the write
-  replicas: 3
+  replicas: 2
   autoscaling:
     # -- Enable autoscaling for the write.
     enabled: false
@@ -794,9 +800,35 @@ write:
   # -- Comma-separated list of Loki modules to load for the write
   targetModule: "write"
   # -- Additional CLI args for the write
-  extraArgs: []
+  extraArgs:
+    - "-config.expand-env=true"
+    - "-print-config-stderr"
+  #    - "-common.storage.s3.endpoint=${LOKI_COMMON_STORAGE_S3_ENDPOINT}"
+  #    - "-common.storage.s3.region=${LOKI_COMMON_STORAGE_S3_REGION}"
+  #    - "-common.storage.s3.access-key-id=${LOKI_COMMON_STORAGE_S3_ACCESS_KEY_ID}"
+  #    - "-common.storage.s3.secret-access-key=${LOKI_COMMON_STORAGE_S3_SECRET_ACCESS_KEY}"
+  #    - "-ruler.storage.s3.endpoint=${LOKI_RULER_STORAGE_S3_ENDPOINT}"
+  #    - "-ruler.storage.s3.region=${LOKI_RULER_STORAGE_S3_REGION}"
+  #    - "-ruler.storage.s3.access-key-id=${LOKI_RULER_STORAGE_S3_ACCESS_KEY_ID}"
+  #    - "-ruler.storage.s3.secret-access-key=${LOKI_RULER_STORAGE_S3_SECRET_ACCESS_KEY}"
   # -- Environment variables to add to the write pods
-  extraEnv: []
+  extraEnv:
+    - name: LOKI_COMMON_STORAGE_S3_ENDPOINT
+      valueFrom: {configMapKeyRef: {name: loki-chunks, key: BUCKET_HOST}}
+    - name: LOKI_COMMON_STORAGE_S3_REGION
+      valueFrom: {configMapKeyRef: {name: loki-chunks, key: BUCKET_REGION}}
+    - name: LOKI_COMMON_STORAGE_S3_ACCESS_KEY_ID
+      valueFrom: {secretKeyRef: {name: loki-chunks, key: AWS_ACCESS_KEY_ID}}
+    - name: LOKI_COMMON_STORAGE_S3_SECRET_ACCESS_KEY
+      valueFrom: {secretKeyRef: {name: loki-chunks, key: AWS_SECRET_ACCESS_KEY}}
+    - name: LOKI_RULER_STORAGE_S3_ENDPOINT
+      valueFrom: {configMapKeyRef: {name: loki-ruler, key: BUCKET_HOST}}
+    - name: LOKI_RULER_STORAGE_S3_REGION
+      valueFrom: {configMapKeyRef: {name: loki-ruler, key: BUCKET_REGION}}
+    - name: LOKI_RULER_STORAGE_S3_ACCESS_KEY_ID
+      valueFrom: {secretKeyRef: {name: loki-ruler, key: AWS_ACCESS_KEY_ID}}
+    - name: LOKI_RULER_STORAGE_S3_SECRET_ACCESS_KEY
+      valueFrom: {secretKeyRef: {name: loki-ruler, key: AWS_SECRET_ACCESS_KEY}}
   # -- Environment variables from secrets or configmaps to add to the write pods
   extraEnvFrom: []
   # -- Lifecycle for the write container
@@ -930,7 +962,7 @@ tableManager:
 # Configuration for the read pod(s)
 read:
   # -- Number of replicas for the read
-  replicas: 3
+  replicas: 2
   autoscaling:
     # -- Enable autoscaling for the read, this is only used if `queryIndex.enabled: true`
     enabled: false
@@ -985,9 +1017,35 @@ read:
   # run two targets, false will run 3 targets.
   legacyReadTarget: false
   # -- Additional CLI args for the read
-  extraArgs: []
+  extraArgs:
+    - "-config.expand-env=true"
+    - "-print-config-stderr"
+  #    - "-common.storage.s3.endpoint=${LOKI_COMMON_STORAGE_S3_ENDPOINT}"
+  #    - "-common.storage.s3.region=${LOKI_COMMON_STORAGE_S3_REGION}"
+  #    - "-common.storage.s3.access-key-id=${LOKI_COMMON_STORAGE_S3_ACCESS_KEY_ID}"
+  #    - "-common.storage.s3.secret-access-key=${LOKI_COMMON_STORAGE_S3_SECRET_ACCESS_KEY}"
+  #    - "-ruler.storage.s3.endpoint=${LOKI_RULER_STORAGE_S3_ENDPOINT}"
+  #    - "-ruler.storage.s3.region=${LOKI_RULER_STORAGE_S3_REGION}"
+  #    - "-ruler.storage.s3.access-key-id=${LOKI_RULER_STORAGE_S3_ACCESS_KEY_ID}"
+  #    - "-ruler.storage.s3.secret-access-key=${LOKI_RULER_STORAGE_S3_SECRET_ACCESS_KEY}"
   # -- Environment variables to add to the read pods
-  extraEnv: []
+  extraEnv:
+    - name: LOKI_COMMON_STORAGE_S3_ENDPOINT
+      valueFrom: {configMapKeyRef: {name: loki-chunks, key: BUCKET_HOST}}
+    - name: LOKI_COMMON_STORAGE_S3_REGION
+      valueFrom: {configMapKeyRef: {name: loki-chunks, key: BUCKET_REGION}}
+    - name: LOKI_COMMON_STORAGE_S3_ACCESS_KEY_ID
+      valueFrom: {secretKeyRef: {name: loki-chunks, key: AWS_ACCESS_KEY_ID}}
+    - name: LOKI_COMMON_STORAGE_S3_SECRET_ACCESS_KEY
+      valueFrom: {secretKeyRef: {name: loki-chunks, key: AWS_SECRET_ACCESS_KEY}}
+    - name: LOKI_RULER_STORAGE_S3_ENDPOINT
+      valueFrom: {configMapKeyRef: {name: loki-ruler, key: BUCKET_HOST}}
+    - name: LOKI_RULER_STORAGE_S3_REGION
+      valueFrom: {configMapKeyRef: {name: loki-ruler, key: BUCKET_REGION}}
+    - name: LOKI_RULER_STORAGE_S3_ACCESS_KEY_ID
+      valueFrom: {secretKeyRef: {name: loki-ruler, key: AWS_ACCESS_KEY_ID}}
+    - name: LOKI_RULER_STORAGE_S3_SECRET_ACCESS_KEY
+      valueFrom: {secretKeyRef: {name: loki-ruler, key: AWS_SECRET_ACCESS_KEY}}
   # -- Environment variables from secrets or configmaps to add to the read pods
   extraEnvFrom: []
   # -- Lifecycle for the read container
@@ -1035,7 +1093,7 @@ read:
 # Configuration for the backend pod(s)
 backend:
   # -- Number of replicas for the backend
-  replicas: 3
+  replicas: 2
   autoscaling:
     # -- Enable autoscaling for the backend.
     enabled: false
@@ -1086,9 +1144,35 @@ backend:
   # -- Comma-separated list of Loki modules to load for the read
   targetModule: "backend"
   # -- Additional CLI args for the backend
-  extraArgs: []
+  extraArgs:
+    - "-config.expand-env=true"
+    - "-print-config-stderr"
+  #    - "-common.storage.s3.endpoint=${LOKI_COMMON_STORAGE_S3_ENDPOINT}"
+  #    - "-common.storage.s3.region=${LOKI_COMMON_STORAGE_S3_REGION}"
+  #    - "-common.storage.s3.access-key-id=${LOKI_COMMON_STORAGE_S3_ACCESS_KEY_ID}"
+  #    - "-common.storage.s3.secret-access-key=${LOKI_COMMON_STORAGE_S3_SECRET_ACCESS_KEY}"
+  #    - "-ruler.storage.s3.endpoint=${LOKI_RULER_STORAGE_S3_ENDPOINT}"
+  #    - "-ruler.storage.s3.region=${LOKI_RULER_STORAGE_S3_REGION}"
+  #    - "-ruler.storage.s3.access-key-id=${LOKI_RULER_STORAGE_S3_ACCESS_KEY_ID}"
+  #    - "-ruler.storage.s3.secret-access-key=${LOKI_RULER_STORAGE_S3_SECRET_ACCESS_KEY}"
   # -- Environment variables to add to the backend pods
-  extraEnv: []
+  extraEnv:
+    - name: LOKI_COMMON_STORAGE_S3_ENDPOINT
+      valueFrom: {configMapKeyRef: {name: loki-chunks, key: BUCKET_HOST}}
+    - name: LOKI_COMMON_STORAGE_S3_REGION
+      valueFrom: {configMapKeyRef: {name: loki-chunks, key: BUCKET_REGION}}
+    - name: LOKI_COMMON_STORAGE_S3_ACCESS_KEY_ID
+      valueFrom: {secretKeyRef: {name: loki-chunks, key: AWS_ACCESS_KEY_ID}}
+    - name: LOKI_COMMON_STORAGE_S3_SECRET_ACCESS_KEY
+      valueFrom: {secretKeyRef: {name: loki-chunks, key: AWS_SECRET_ACCESS_KEY}}
+    - name: LOKI_RULER_STORAGE_S3_ENDPOINT
+      valueFrom: {configMapKeyRef: {name: loki-ruler, key: BUCKET_HOST}}
+    - name: LOKI_RULER_STORAGE_S3_REGION
+      valueFrom: {configMapKeyRef: {name: loki-ruler, key: BUCKET_REGION}}
+    - name: LOKI_RULER_STORAGE_S3_ACCESS_KEY_ID
+      valueFrom: {secretKeyRef: {name: loki-ruler, key: AWS_ACCESS_KEY_ID}}
+    - name: LOKI_RULER_STORAGE_S3_SECRET_ACCESS_KEY
+      valueFrom: {secretKeyRef: {name: loki-ruler, key: AWS_SECRET_ACCESS_KEY}}
   # -- Environment variables from secrets or configmaps to add to the backend pods
   extraEnvFrom: []
   # -- Init containers to add to the backend pods
@@ -1491,20 +1575,29 @@ networkPolicy:
   ingress:
     # -- Specifies the Pods which are allowed to access the http port.
     # As this is cross-namespace communication, you also need the namespaceSelector.
-    podSelector: {}
+    podSelector:
+      matchLabels:
+        app: grafana
     # -- Specifies the namespaces which are allowed to access the http port
-    namespaceSelector: {}
+    namespaceSelector:
+      matchLabels:
+        app.kubernetes.io/instance: in-cluster-grafana-operator
   alertmanager:
     # -- Specify the alertmanager port used for alerting
     port: 9093
     # -- Specifies the alertmanager Pods.
     # As this is cross-namespace communication, you also need the namespaceSelector.
-    podSelector: {}
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: alertmanager
     # -- Specifies the namespace the alertmanager is running in
-    namespaceSelector: {}
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: monitoring
   externalStorage:
     # -- Specify the port used for external storage, e.g. AWS S3
-    ports: []
+    ports:
+      - 443
     # -- Specifies specific network CIDRs you want to limit access to
     cidrs: []
   discovery:

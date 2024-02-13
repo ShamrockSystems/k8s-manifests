@@ -212,15 +212,6 @@ builds:
     buildPath: builds/in-cluster/rook
     cluster: in-cluster
     name: rook
-  - timestamp: 1707780081
-    sourceHash: 81b7a947ff0154b14b58b856a04857da0e2ac442a45c0afea20c8db7ff94f61a
-    sourceHashType: sha256
-    sourcePath: cluster-metal/grafana-loki
-    buildHash: e8dc2ebf4d3743edc9de6d5b4cf61bfdc92445ac71d586671d73361644e77672
-    buildHashType: sha256
-    buildPath: builds/in-cluster/grafana-loki
-    cluster: in-cluster
-    name: grafana-loki
   - timestamp: 1707780631
     sourceHash: 156839e040185285e9079fa98ebac7e1ac7157a0dc24144f6fe21980b55137e1
     sourceHashType: sha256
@@ -248,3 +239,12 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
+  - timestamp: 1707789387
+    sourceHash: 841e6668c5e40151e63e2dc29217124c0cf2afc0104c71e49b6a6e08eb7ffb59
+    sourceHashType: sha256
+    sourcePath: cluster-metal/grafana-loki
+    buildHash: 66a438a59ff8b20ceeae7d922608d606df7f4435a66a9e2310637e02e42b4740
+    buildHashType: sha256
+    buildPath: builds/in-cluster/grafana-loki
+    cluster: in-cluster
+    name: grafana-loki
