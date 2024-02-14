@@ -1473,7 +1473,7 @@ dags:
   gitSync:
     ## if the git-sync sidecar container is enabled
     ##
-    enabled: false
+    enabled: true
 
     ## the git-sync container image
     ##
@@ -1500,17 +1500,17 @@ dags:
     ##   # ssh git repo
     ##   repo: "git@github.com:USERNAME/REPOSITORY.git"
     ##
-    repo: ""
+    repo: "https://github.com/DeepPharmGraph/dpg-processing-dags"
 
     ## the sub-path within your repo where dags are located
     ## - only dags under this path within your repo will be seen by airflow,
     ##   (note, the full repo will still be cloned)
     ##
-    repoSubPath: ""
+    repoSubPath: "dags"
 
     ## the git branch to check out
     ##
-    branch: master
+    branch: forging.cc
 
     ## the git revision (tag or hash) to check out
     ##

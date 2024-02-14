@@ -93,7 +93,7 @@ data:
   AIRFLOW__CELERY__FLOWER_PORT: NTU1NQ==
   AIRFLOW__CELERY__RESULT_BACKEND_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX0NFTEVSWV9DTUQiJw==
   AIRFLOW__CELERY__WORKER_LOG_SERVER_PORT: ODc5Mw==
-  AIRFLOW__CORE__DAGS_FOLDER: L29wdC9haXJmbG93L2RhZ3M=
+  AIRFLOW__CORE__DAGS_FOLDER: L29wdC9haXJmbG93L2RhZ3MvcmVwby9kYWdz
   AIRFLOW__CORE__EXECUTOR: Q2VsZXJ5RXhlY3V0b3I=
   AIRFLOW__CORE__SQL_ALCHEMY_CONN_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX1NRTEFMQ0hFTVlfQ01EIic=
   AIRFLOW__DATABASE__SQL_ALCHEMY_CONN_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX1NRTEFMQ0hFTVlfQ01EIic=
@@ -101,6 +101,7 @@ data:
   AIRFLOW__LOGGING__DAG_PROCESSOR_MANAGER_LOG_LOCATION: L29wdC9haXJmbG93L2xvZ3MvZGFnX3Byb2Nlc3Nvcl9tYW5hZ2VyL2RhZ19wcm9jZXNzb3JfbWFuYWdlci5sb2c=
   AIRFLOW__LOGGING__WORKER_LOG_SERVER_PORT: ODc5Mw==
   AIRFLOW__SCHEDULER__CHILD_PROCESS_LOG_DIRECTORY: L29wdC9haXJmbG93L2xvZ3Mvc2NoZWR1bGVy
+  AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: NjA=
   AIRFLOW__TRIGGERER__DEFAULT_CAPACITY: MTAwMA==
   AIRFLOW__WEBSERVER__WEB_SERVER_PORT: ODA4MA==
   DATABASE_CELERY_CMD: ZWNobyAtbiAiZGIrcG9zdGdyZXNxbDovLyQoZXZhbCAkREFUQUJBU0VfVVNFUl9DTUQpOiQoZXZhbCAkREFUQUJBU0VfUEFTU1dPUkRfQ01EKUAke0RBVEFCQVNFX0hPU1R9OiR7REFUQUJBU0VfUE9SVH0vJHtEQVRBQkFTRV9EQn0ke0RBVEFCQVNFX1BST1BFUlRJRVN9Ig==
@@ -287,7 +288,7 @@ spec:
     metadata:
       annotations:
         checksum/db-migrations-script: 37898f38b90abd06081105d992362ec9e0d0015123b69e758e59031a9e6ddfc9
-        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-config-envs: c3ba22643dbfc9fdfadea42287541e640d988cee8b48658676cc1632e7b0806f
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -389,12 +390,236 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
         - mountPath: /mnt/scripts
           name: scripts
           readOnly: true
+      - env:
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-sync
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       initContainers:
+      - env:
+        - name: GIT_SYNC_ONE_TIME
+          value: "true"
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-clone
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       - args:
         - bash
         - -c
@@ -486,6 +711,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -495,6 +722,8 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - emptyDir: {}
+        name: dags-data
       - emptyDir: {}
         name: logs-data
       - name: scripts
@@ -527,7 +756,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-config-envs: c3ba22643dbfc9fdfadea42287541e640d988cee8b48658676cc1632e7b0806f
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -653,9 +882,233 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
+      - env:
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-sync
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       initContainers:
+      - env:
+        - name: GIT_SYNC_ONE_TIME
+          value: "true"
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-clone
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       - args:
         - bash
         - -c
@@ -747,6 +1200,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       - args:
@@ -840,6 +1295,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -849,6 +1306,8 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - emptyDir: {}
+        name: dags-data
       - emptyDir: {}
         name: logs-data
 ---
@@ -877,7 +1336,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-config-envs: c3ba22643dbfc9fdfadea42287541e640d988cee8b48658676cc1632e7b0806f
         checksum/secret-pgbouncer: 4e9f8069d3409019804aa33f690710e2b9e381ea88a829a848b20d8ee46fba38
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -1054,7 +1513,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-config-envs: c3ba22643dbfc9fdfadea42287541e640d988cee8b48658676cc1632e7b0806f
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -1209,8 +1668,120 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
+      - env:
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-sync
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       - args:
         - bash
         - -c
@@ -1344,6 +1915,118 @@ spec:
         - mountPath: /opt/airflow/logs
           name: logs-data
       initContainers:
+      - env:
+        - name: GIT_SYNC_ONE_TIME
+          value: "true"
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-clone
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       - args:
         - bash
         - -c
@@ -1435,6 +2118,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       - args:
@@ -1528,6 +2213,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -1537,6 +2224,8 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - emptyDir: {}
+        name: dags-data
       - emptyDir: {}
         name: logs-data
 ---
@@ -1566,7 +2255,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-config-envs: c3ba22643dbfc9fdfadea42287541e640d988cee8b48658676cc1632e7b0806f
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -1718,9 +2407,233 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
+      - env:
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-sync
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       initContainers:
+      - env:
+        - name: GIT_SYNC_ONE_TIME
+          value: "true"
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-clone
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       - args:
         - bash
         - -c
@@ -1812,6 +2725,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       - args:
@@ -1905,6 +2820,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -1914,6 +2831,8 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - emptyDir: {}
+        name: dags-data
       - emptyDir: {}
         name: logs-data
 ---
@@ -1944,7 +2863,7 @@ spec:
     metadata:
       annotations:
         checksum/config-webserver-config: 2b7018696f13c6816c4d0db5fa43dd30b6b5d2157b98e463fbf30aeae65884b0
-        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-config-envs: c3ba22643dbfc9fdfadea42287541e640d988cee8b48658676cc1632e7b0806f
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -2068,13 +2987,237 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
         - mountPath: /opt/airflow/webserver_config.py
           name: webserver-config
           readOnly: true
           subPath: webserver_config.py
+      - env:
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-sync
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       initContainers:
+      - env:
+        - name: GIT_SYNC_ONE_TIME
+          value: "true"
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-clone
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       - args:
         - bash
         - -c
@@ -2166,6 +3309,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       - args:
@@ -2259,6 +3404,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -2268,6 +3415,8 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - emptyDir: {}
+        name: dags-data
       - emptyDir: {}
         name: logs-data
       - name: webserver-config
@@ -2298,7 +3447,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret-config-envs: 1286c5c053b27def37a6841219f4956bbb6ce8ac39eac2abe120d117df87dded
+        checksum/secret-config-envs: c3ba22643dbfc9fdfadea42287541e640d988cee8b48658676cc1632e7b0806f
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -2444,8 +3593,120 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
+      - env:
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-sync
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       - args:
         - bash
         - -c
@@ -2579,6 +3840,118 @@ spec:
         - mountPath: /opt/airflow/logs
           name: logs-data
       initContainers:
+      - env:
+        - name: GIT_SYNC_ONE_TIME
+          value: "true"
+        - name: GIT_SYNC_ROOT
+          value: /dags
+        - name: GIT_SYNC_DEST
+          value: repo
+        - name: GIT_SYNC_REPO
+          value: https://github.com/DeepPharmGraph/dpg-processing-dags
+        - name: GIT_SYNC_BRANCH
+          value: forging.cc
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_KNOWN_HOSTS
+          value: "false"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-redis-secret
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        imagePullPolicy: IfNotPresent
+        name: dags-git-clone
+        resources: {}
+        securityContext:
+          runAsGroup: 65533
+          runAsUser: 65533
+        volumeMounts:
+        - mountPath: /dags
+          name: dags-data
       - args:
         - bash
         - -c
@@ -2670,6 +4043,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       - args:
@@ -2763,6 +4138,8 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -2773,6 +4150,8 @@ spec:
       terminationGracePeriodSeconds: 60
       tolerations: []
       volumes:
+      - emptyDir: {}
+        name: dags-data
       - emptyDir: {}
         name: logs-data
   updateStrategy:
