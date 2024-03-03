@@ -257,3 +257,12 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
+  - timestamp: 1709508460
+    sourceHash: a6f5111ee47b78d988320c0801ab89e459d4971cd581d9b03ae481d23c8a6307
+    sourceHashType: sha256
+    sourcePath: cluster-metal/crossplane
+    buildHash: 983fa4a6f0ac1417a80f328f20523b5536eb5b868bd440263999e5be63603656
+    buildHashType: sha256
+    buildPath: builds/in-cluster/crossplane
+    cluster: in-cluster
+    name: crossplane
