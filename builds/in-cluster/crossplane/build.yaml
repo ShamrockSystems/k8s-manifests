@@ -943,3 +943,10 @@ spec:
           runAsGroup: 65532
           runAsUser: 65532
       serviceAccountName: rbac-manager
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-keycloak
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-keycloak:v0.11.0

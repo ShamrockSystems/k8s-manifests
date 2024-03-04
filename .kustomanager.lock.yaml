@@ -131,15 +131,6 @@ builds:
     buildPath: builds/in-cluster/grafana-operator
     cluster: in-cluster
     name: grafana-operator
-  - timestamp: 1706863540
-    sourceHash: 2d4e9ad01ad209265028d48b990a0b9a63e3d653467692426379a64705cef128
-    sourceHashType: sha256
-    sourcePath: cluster-metal/dpg-authentication
-    buildHash: 0d12d89f43d70e5846cc0e34167ec24c0f00212df1e3c77c4be4b1c8e2f5eabe
-    buildHashType: sha256
-    buildPath: builds/in-cluster/dpg-authentication
-    cluster: in-cluster
-    name: dpg-authentication
   - timestamp: 1707005656
     sourceHash: c64ec258fe25a51bbcf378f4d740c0f3890aac3f85793f94e9a680577c2ee60e
     sourceHashType: sha256
@@ -257,11 +248,20 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
-  - timestamp: 1709508460
-    sourceHash: a6f5111ee47b78d988320c0801ab89e459d4971cd581d9b03ae481d23c8a6307
+  - timestamp: 1709519241
+    sourceHash: 18cc529a4b7ccab3b2979bf030e6b55200b5b9d37c88713866549a8fbd577b01
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-authentication
+    buildHash: e36e1c51b0d24b8d7d9c11432bdc7010743f746476c1acc05062883516a65f68
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-authentication
+    cluster: in-cluster
+    name: dpg-authentication
+  - timestamp: 1709519241
+    sourceHash: 953dc870ecd5419dd16a8e6fbae596b12e1fa1d06731896d380663da19fa76fd
     sourceHashType: sha256
     sourcePath: cluster-metal/crossplane
-    buildHash: 983fa4a6f0ac1417a80f328f20523b5536eb5b868bd440263999e5be63603656
+    buildHash: 52f21dbaeb683fcd2d3d00568ed51e097fb4e8cc43419e8bd786437075d98f48
     buildHashType: sha256
     buildPath: builds/in-cluster/crossplane
     cluster: in-cluster

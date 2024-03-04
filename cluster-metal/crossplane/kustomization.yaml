@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
+  - ./provider.keycloak.yaml
 
 helmCharts:
   - name: crossplane
