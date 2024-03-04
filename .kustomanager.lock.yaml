@@ -203,15 +203,6 @@ builds:
     buildPath: builds/in-cluster/kube-prometheus
     cluster: in-cluster
     name: kube-prometheus
-  - timestamp: 1707780806
-    sourceHash: 4c83eddd27fdc6ddd121f9fc2c8208f177fecb3eaf074c95347c9c7a5352060c
-    sourceHashType: sha256
-    sourcePath: cluster-metal/argocd
-    buildHash: d34dbbbb068a45282c37b1269ef50484d4bb69d5bc659eaa73aa51adea71f6d6
-    buildHashType: sha256
-    buildPath: builds/in-cluster/argocd
-    cluster: in-cluster
-    name: argocd
   - timestamp: 1707789387
     sourceHash: 841e6668c5e40151e63e2dc29217124c0cf2afc0104c71e49b6a6e08eb7ffb59
     sourceHashType: sha256
@@ -249,15 +240,6 @@ builds:
     cluster: in-cluster
     name: kubernetes-dashboard
   - timestamp: 1709519241
-    sourceHash: 18cc529a4b7ccab3b2979bf030e6b55200b5b9d37c88713866549a8fbd577b01
-    sourceHashType: sha256
-    sourcePath: cluster-metal/dpg-authentication
-    buildHash: e36e1c51b0d24b8d7d9c11432bdc7010743f746476c1acc05062883516a65f68
-    buildHashType: sha256
-    buildPath: builds/in-cluster/dpg-authentication
-    cluster: in-cluster
-    name: dpg-authentication
-  - timestamp: 1709519241
     sourceHash: 953dc870ecd5419dd16a8e6fbae596b12e1fa1d06731896d380663da19fa76fd
     sourceHashType: sha256
     sourcePath: cluster-metal/crossplane
@@ -266,3 +248,21 @@ builds:
     buildPath: builds/in-cluster/crossplane
     cluster: in-cluster
     name: crossplane
+  - timestamp: 1709522345
+    sourceHash: a94df23c0711afc39bf446ef7dd71766056fa8f43281f8751be03b2ff6a0edb2
+    sourceHashType: sha256
+    sourcePath: cluster-metal/argocd
+    buildHash: ed8c7f7b10d9d54d2991376a532d5a88502df76da510619bb4c9cb4e33264dbd
+    buildHashType: sha256
+    buildPath: builds/in-cluster/argocd
+    cluster: in-cluster
+    name: argocd
+  - timestamp: 1709522345
+    sourceHash: 4fd5390d13c8d7aaf74703e636fbedd1546a20f31193d59953f3de87fa3c9e1e
+    sourceHashType: sha256
+    sourcePath: cluster-metal/dpg-authentication
+    buildHash: e36e1c51b0d24b8d7d9c11432bdc7010743f746476c1acc05062883516a65f68
+    buildHashType: sha256
+    buildPath: builds/in-cluster/dpg-authentication
+    cluster: in-cluster
+    name: dpg-authentication
