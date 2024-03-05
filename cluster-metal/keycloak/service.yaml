@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: dpg-authentication-keycloak
-  namespace: deeppharmgraph
+  name: keycloak
+  namespace: keycloak
 spec:
   type: ClusterIP
   selector:

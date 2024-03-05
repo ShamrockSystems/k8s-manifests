@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ./namespace.yaml
+  - ./sealedsecret.admin.yaml # Admin credentials
+  - ./sealedsecret.provider.yaml # Provider client secret
+  - ./configmap.yaml # keycloak-config-cli master realm
+  - ./cluster.postgres.yaml
+  - ./deployment.yaml
+  - ./service.yaml
+  - ./httproute.yaml
+  # Crossplane provider
+  - ./deploymentruntimeconfig.yaml
+  - ./providerconfig.yaml
+  - ./provider.yaml

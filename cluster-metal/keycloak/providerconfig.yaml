@@ -1,0 +1,9 @@
+apiVersion: keycloak.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: keycloak-config
+spec:
+  credentials:
+    env:
+      name: PROVIDER_CREDENTIALS
+    source: Environment

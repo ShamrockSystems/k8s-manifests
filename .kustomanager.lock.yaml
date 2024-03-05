@@ -239,15 +239,6 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
-  - timestamp: 1709519241
-    sourceHash: 953dc870ecd5419dd16a8e6fbae596b12e1fa1d06731896d380663da19fa76fd
-    sourceHashType: sha256
-    sourcePath: cluster-metal/crossplane
-    buildHash: 52f21dbaeb683fcd2d3d00568ed51e097fb4e8cc43419e8bd786437075d98f48
-    buildHashType: sha256
-    buildPath: builds/in-cluster/crossplane
-    cluster: in-cluster
-    name: crossplane
   - timestamp: 1709522345
     sourceHash: a94df23c0711afc39bf446ef7dd71766056fa8f43281f8751be03b2ff6a0edb2
     sourceHashType: sha256
@@ -257,12 +248,39 @@ builds:
     buildPath: builds/in-cluster/argocd
     cluster: in-cluster
     name: argocd
-  - timestamp: 1709522345
-    sourceHash: 4fd5390d13c8d7aaf74703e636fbedd1546a20f31193d59953f3de87fa3c9e1e
+  - timestamp: 1709854206
+    sourceHash: a6f5111ee47b78d988320c0801ab89e459d4971cd581d9b03ae481d23c8a6307
+    sourceHashType: sha256
+    sourcePath: cluster-metal/crossplane
+    buildHash: 983fa4a6f0ac1417a80f328f20523b5536eb5b868bd440263999e5be63603656
+    buildHashType: sha256
+    buildPath: builds/in-cluster/crossplane
+    cluster: in-cluster
+    name: crossplane
+  - timestamp: 1709863827
+    sourceHash: 71f7fe8d9da8cf8ef3425e32122a4d0884c5b81bab1cd8556d7d12fa1c064f67
+    sourceHashType: sha256
+    sourcePath: cluster-metal/reflector
+    buildHash: a2d6c76189185e3cdf3d561f27f827e0351c0c29e05b399807af763789aede70
+    buildHashType: sha256
+    buildPath: builds/in-cluster/reflector
+    cluster: in-cluster
+    name: reflector
+  - timestamp: 1709864454
+    sourceHash: 1836f912ff6b78bdffb5c85f9c9a915623966c28ae9d0887c9d061afa1a378ef
     sourceHashType: sha256
     sourcePath: cluster-metal/dpg-authentication
-    buildHash: e36e1c51b0d24b8d7d9c11432bdc7010743f746476c1acc05062883516a65f68
+    buildHash: 59f5c5dcab26e018f6143c05524359e083b6fb078b74ace9680a771ab5611adb
     buildHashType: sha256
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster
     name: dpg-authentication
+  - timestamp: 1709865304
+    sourceHash: 3bc0abfc97d84ff5e9c1905f92c1b075da9ba1f616b64acc46594aa282b9abe0
+    sourceHashType: sha256
+    sourcePath: cluster-metal/keycloak
+    buildHash: c70a897dcbd754089d334371f7f12772f810322d1642d18c234db995f776fa40
+    buildHashType: sha256
+    buildPath: builds/in-cluster/keycloak
+    cluster: in-cluster
+    name: keycloak

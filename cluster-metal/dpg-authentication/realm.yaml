@@ -5,10 +5,10 @@ metadata:
   namespace: deeppharmgraph
 spec:
   forProvider:
+    realm: deeppharmgraph
     displayName: DeepPharmGraph Barrier
     displayNameHtml: <div class="kc-logo-text"><span>DeepPharmGraph Barrier</span></div>
     enabled: true
-    realm: deeppharmgraph
     registrationAllowed: false
     registrationEmailAsUsername: false
     rememberMe: true
