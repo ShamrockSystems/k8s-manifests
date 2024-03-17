@@ -2369,6 +2369,7 @@ metadata:
   name: keycloak-postgres
   namespace: keycloak
 spec:
+  enableSuperuserAccess: true
   instances: 1
   storage:
     size: 16Gi

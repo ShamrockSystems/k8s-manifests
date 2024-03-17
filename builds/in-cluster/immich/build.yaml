@@ -1,0 +1,366 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: immich
+  name: immich
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: machine-learning
+    app.kubernetes.io/service: immich-machine-learning
+    app.kubernetes.io/version: v1.95.1
+    helm.sh/chart: immich-0.4.0
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  ports:
+  - name: http
+    port: 3003
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: machine-learning
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: server
+    app.kubernetes.io/service: immich-server
+    app.kubernetes.io/version: v1.95.1
+    helm.sh/chart: immich-0.4.0
+  name: immich-server
+  namespace: immich
+spec:
+  ports:
+  - name: http
+    port: 3001
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: server
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-data
+  namespace: immich
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 6Ti
+  storageClassName: filesystem-erasure
+  volumeMode: Filesystem
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: machine-learning
+    app.kubernetes.io/version: v1.95.1
+    helm.sh/chart: immich-0.4.0
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: immich
+      app.kubernetes.io/name: machine-learning
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: immich
+        app.kubernetes.io/name: machine-learning
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - env:
+        - name: DB_DATABASE_NAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: dbname
+              name: immich-postgres-app
+        - name: DB_HOSTNAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: immich-postgres-superuser
+        - name: DB_PASSWORD
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: immich-postgres-superuser
+        - name: DB_USERNAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: immich-postgres-superuser
+        - name: IMMICH_MACHINE_LEARNING_URL
+          value: http://immich-machine-learning:3003
+        - name: REDIS_HOSTNAME
+          value: immich-redis-standalone
+        - name: TRANSFORMERS_CACHE
+          value: /cache
+        image: ghcr.io/immich-app/immich-machine-learning:v1.95.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        name: immich-machine-learning
+        ports:
+        - containerPort: 3003
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /cache
+          name: cache
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      serviceAccountName: default
+      volumes:
+      - emptyDir: {}
+        name: cache
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: microservices
+    app.kubernetes.io/version: v1.95.1
+    helm.sh/chart: immich-0.4.0
+  name: immich-microservices
+  namespace: immich
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: immich
+      app.kubernetes.io/name: microservices
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: immich
+        app.kubernetes.io/name: microservices
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - ./start-microservices.sh
+        command:
+        - /bin/sh
+        env:
+        - name: DB_DATABASE_NAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: dbname
+              name: immich-postgres-app
+        - name: DB_HOSTNAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: immich-postgres-superuser
+        - name: DB_PASSWORD
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: immich-postgres-superuser
+        - name: DB_USERNAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: immich-postgres-superuser
+        - name: IMMICH_MACHINE_LEARNING_URL
+          value: http://immich-machine-learning:3003
+        - name: REDIS_HOSTNAME
+          value: immich-redis-standalone
+        image: ghcr.io/immich-app/immich-server:v1.95.1
+        imagePullPolicy: IfNotPresent
+        name: immich-microservices
+        volumeMounts:
+        - mountPath: /usr/src/app/upload
+          name: library
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      serviceAccountName: default
+      volumes:
+      - name: library
+        persistentVolumeClaim:
+          claimName: immich-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: server
+    app.kubernetes.io/version: v1.95.1
+    helm.sh/chart: immich-0.4.0
+  name: immich-server
+  namespace: immich
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: immich
+      app.kubernetes.io/name: server
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: immich
+        app.kubernetes.io/name: server
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - ./start-server.sh
+        command:
+        - /bin/sh
+        env:
+        - name: DB_DATABASE_NAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: dbname
+              name: immich-postgres-app
+        - name: DB_HOSTNAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: immich-postgres-superuser
+        - name: DB_PASSWORD
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: immich-postgres-superuser
+        - name: DB_USERNAME
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: immich-postgres-superuser
+        - name: IMMICH_MACHINE_LEARNING_URL
+          value: http://immich-machine-learning:3003
+        - name: REDIS_HOSTNAME
+          value: immich-redis-standalone
+        image: ghcr.io/immich-app/immich-server:v1.95.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /server-info/ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        name: immich-server
+        ports:
+        - containerPort: 3001
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /server-info/ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /usr/src/app/upload
+          name: library
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      serviceAccountName: default
+      volumes:
+      - name: library
+        persistentVolumeClaim:
+          claimName: immich-data
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-postgres
+  namespace: immich
+spec:
+  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16.2-v0.2.1
+  instances: 1
+  postgresql:
+    shared_preload_libraries:
+    - vectors.so
+  storage:
+    size: 16Gi
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: Redis
+metadata:
+  name: immich-redis-standalone
+  namespace: immich
+spec:
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v7.0.12
+    imagePullPolicy: IfNotPresent
+  podSecurityContext:
+    fsGroup: 1000
+    runAsUser: 1000
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.44.0
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

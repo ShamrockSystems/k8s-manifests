@@ -1,0 +1,13 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-postgres
+  namespace: immich
+spec:
+  instances: 1
+  storage:
+    size: 16Gi
+  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16.2-v0.2.1
+  postgresql:
+    shared_preload_libraries:
+      - "vectors.so"

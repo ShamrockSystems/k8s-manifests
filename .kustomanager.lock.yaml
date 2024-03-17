@@ -275,12 +275,21 @@ builds:
     buildPath: builds/in-cluster/dpg-authentication
     cluster: in-cluster
     name: dpg-authentication
-  - timestamp: 1709865304
-    sourceHash: 3bc0abfc97d84ff5e9c1905f92c1b075da9ba1f616b64acc46594aa282b9abe0
+  - timestamp: 1710665028
+    sourceHash: a830d0326e4851c2bb18f306d0b5cf0b7e4f8f82988379cb01a350980286030b
     sourceHashType: sha256
     sourcePath: cluster-metal/keycloak
-    buildHash: c70a897dcbd754089d334371f7f12772f810322d1642d18c234db995f776fa40
+    buildHash: a06b6f71e255ae24f5920e11e3c5c05df97b21791f35c84a6489e1aaf58e0cf5
     buildHashType: sha256
     buildPath: builds/in-cluster/keycloak
     cluster: in-cluster
     name: keycloak
+  - timestamp: 1710665409
+    sourceHash: 0d1a35323b4a575b5f76a60d3575d09316595eaa25f9c13d05d4f4bb218b8b4b
+    sourceHashType: sha256
+    sourcePath: cluster-metal/immich
+    buildHash: 4a6fd7e68629424d882030f6d96a2a43ea5a98c8a176fb84fd6706df2f6f01dc
+    buildHashType: sha256
+    buildPath: builds/in-cluster/immich
+    cluster: in-cluster
+    name: immich
