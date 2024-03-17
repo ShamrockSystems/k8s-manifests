@@ -65,6 +65,25 @@ spec:
   storageClassName: filesystem-erasure
   volumeMode: Filesystem
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: machine-learning
+    app.kubernetes.io/version: v1.95.1
+    helm.sh/chart: immich-0.4.0
+  name: immich-machine-learning-cache
+  namespace: immich
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 16Gi
+  storageClassName: filesystem-erasure
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -150,8 +169,9 @@ spec:
       enableServiceLinks: true
       serviceAccountName: default
       volumes:
-      - emptyDir: {}
-        name: cache
+      - name: cache
+        persistentVolumeClaim:
+          claimName: immich-machine-learning-cache
 ---
 apiVersion: apps/v1
 kind: Deployment
