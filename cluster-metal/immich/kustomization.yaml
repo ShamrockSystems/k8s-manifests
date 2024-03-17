@@ -8,6 +8,7 @@ resources:
   - ./cluster.postgres.yaml
   - ./redis.yaml
   - ./persistentvolumeclaim.yaml
+  - ./httproute.yaml
 
 helmCharts:
   - name: immich
