@@ -17,3 +17,16 @@ helmCharts:
     repo: https://immich-app.github.io/immich-charts
     valuesFile: values.immich.yaml
     version: 0.4.0
+
+patches:
+  # https://github.com/ceph/ceph-csi/issues/3562#issuecomment-1427506470
+  # Common RWX volume requires static SELinux label
+  - target:
+      kind: Deployment
+    # language=YAML
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext
+        value:
+          seLinuxOptions:
+            level: "s0:c105"

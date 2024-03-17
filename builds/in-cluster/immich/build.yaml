@@ -162,6 +162,9 @@ spec:
           initialDelaySeconds: 0
           periodSeconds: 10
           timeoutSeconds: 1
+        securityContext:
+          seLinuxOptions:
+            level: s0:c105
         volumeMounts:
         - mountPath: /cache
           name: cache
@@ -233,6 +236,9 @@ spec:
         image: ghcr.io/immich-app/immich-server:v1.98.2
         imagePullPolicy: IfNotPresent
         name: immich-microservices
+        securityContext:
+          seLinuxOptions:
+            level: s0:c105
         volumeMounts:
         - mountPath: /usr/src/app/upload
           name: library
@@ -324,6 +330,9 @@ spec:
           initialDelaySeconds: 0
           periodSeconds: 10
           timeoutSeconds: 1
+        securityContext:
+          seLinuxOptions:
+            level: s0:c105
         volumeMounts:
         - mountPath: /usr/src/app/upload
           name: library
