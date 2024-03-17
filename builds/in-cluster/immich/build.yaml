@@ -95,25 +95,21 @@ spec:
       containers:
       - env:
         - name: DB_DATABASE_NAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: dbname
               name: immich-postgres-app
         - name: DB_HOSTNAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: host
               name: immich-postgres-superuser
         - name: DB_PASSWORD
-          value: ""
           valueFrom:
             secretKeyRef:
               key: password
               name: immich-postgres-superuser
         - name: DB_USERNAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: username
@@ -191,25 +187,21 @@ spec:
         - /bin/sh
         env:
         - name: DB_DATABASE_NAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: dbname
               name: immich-postgres-app
         - name: DB_HOSTNAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: host
               name: immich-postgres-superuser
         - name: DB_PASSWORD
-          value: ""
           valueFrom:
             secretKeyRef:
               key: password
               name: immich-postgres-superuser
         - name: DB_USERNAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: username
@@ -266,25 +258,21 @@ spec:
         - /bin/sh
         env:
         - name: DB_DATABASE_NAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: dbname
               name: immich-postgres-app
         - name: DB_HOSTNAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: host
               name: immich-postgres-superuser
         - name: DB_PASSWORD
-          value: ""
           valueFrom:
             secretKeyRef:
               key: password
               name: immich-postgres-superuser
         - name: DB_USERNAME
-          value: ""
           valueFrom:
             secretKeyRef:
               key: username
