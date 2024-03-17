@@ -284,11 +284,11 @@ builds:
     buildPath: builds/in-cluster/keycloak
     cluster: in-cluster
     name: keycloak
-  - timestamp: 1710665652
-    sourceHash: 0aa2ea97488a47a6e4ec946c13cf513c1cc1b19ab82a90c71ae757ea14827e90
+  - timestamp: 1710665910
+    sourceHash: e617e551650279a5eb1d10492304312eafc06f7ce82aceae10d6225410eccd4a
     sourceHashType: sha256
     sourcePath: cluster-metal/immich
-    buildHash: 8a636559907b0b66626d59d177d082072b091a834e381f9a97c67eee824c5eac
+    buildHash: 82f94dccd5d98d83690dad5bcda14ef56b26a9a4a1e3dea1371712150b057000
     buildHashType: sha256
     buildPath: builds/in-cluster/immich
     cluster: in-cluster
