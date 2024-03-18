@@ -176,15 +176,6 @@ builds:
     buildPath: builds/in-cluster/grafana
     cluster: in-cluster
     name: grafana
-  - timestamp: 1707496863
-    sourceHash: 9125a237520aa363aa898b85e5141ce22cf2d8b7ff803c9da550509fc8ba1c11
-    sourceHashType: sha256
-    sourcePath: cluster-metal/cilium
-    buildHash: 2c5093812f202759ec6c3f9533568db283ad831bfa63cbdf2aed2b89542c2be6
-    buildHashType: sha256
-    buildPath: builds/in-cluster/cilium
-    cluster: in-cluster
-    name: cilium
   - timestamp: 1707780044
     sourceHash: 579da69d73171ba580b9e5d39faf796b596814427bdd1c24830e343995751085
     sourceHashType: sha256
@@ -293,3 +284,12 @@ builds:
     buildPath: builds/in-cluster/immich
     cluster: in-cluster
     name: immich
+  - timestamp: 1710797579
+    sourceHash: 85e9375e4ad204f6179db305e9b59573df84e764885f11e1ae8380d3d3cac2d8
+    sourceHashType: sha256
+    sourcePath: cluster-metal/cilium
+    buildHash: 854de6ad73f1a3379d815988fc5a6eb5883ad5f1114bdee082dd51a7702e1488
+    buildHashType: sha256
+    buildPath: builds/in-cluster/cilium
+    cluster: in-cluster
+    name: cilium

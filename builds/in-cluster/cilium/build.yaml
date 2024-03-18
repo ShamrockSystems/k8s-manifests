@@ -14551,7 +14551,9 @@ data:
   enable-svc-source-range-check: "true"
   enable-vtep: "false"
   enable-well-known-identities: "false"
+  enable-wireguard: "true"
   enable-xt-socket-fallback: "true"
+  encrypt-node: "true"
   enforce-ingress-https: "true"
   envoy-secrets-namespace: cilium-secrets
   external-envoy-proxy: "false"
