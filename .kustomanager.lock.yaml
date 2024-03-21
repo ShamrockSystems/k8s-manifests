@@ -284,11 +284,11 @@ builds:
     buildPath: builds/in-cluster/immich
     cluster: in-cluster
     name: immich
-  - timestamp: 1710797579
-    sourceHash: 85e9375e4ad204f6179db305e9b59573df84e764885f11e1ae8380d3d3cac2d8
+  - timestamp: 1711058078
+    sourceHash: 619bf7c9726e93bd7f0cae131a20da966a2f729d9f1fe991369d583224be9c13
     sourceHashType: sha256
     sourcePath: cluster-metal/cilium
-    buildHash: 854de6ad73f1a3379d815988fc5a6eb5883ad5f1114bdee082dd51a7702e1488
+    buildHash: 15b06af65193f5692bccc279c99ae6ca24c713f85c538315c1d5e642ecfa450a
     buildHashType: sha256
     buildPath: builds/in-cluster/cilium
     cluster: in-cluster

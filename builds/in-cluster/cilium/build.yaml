@@ -107,6 +107,23 @@ kind: Role
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+  name: cilium-bgp-control-plane-secrets
+  namespace: kube-system
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/part-of: cilium
   name: cilium-config-agent
   namespace: kube-system
 rules:
@@ -167,6 +184,9 @@ rules:
   resources:
   - ciliumloadbalancerippools
   - ciliumbgppeeringpolicies
+  - ciliumbgpnodeconfigs
+  - ciliumbgpadvertisements
+  - ciliumbgppeerconfigs
   - ciliumclusterwideenvoyconfigs
   - ciliumclusterwidenetworkpolicies
   - ciliumegressgatewaypolicies
@@ -221,6 +241,7 @@ rules:
   - ciliumendpoints/status
   - ciliumendpoints
   - ciliuml2announcementpolicies/status
+  - ciliumbgpnodeconfigs/status
   verbs:
   - patch
 ---
@@ -349,6 +370,9 @@ rules:
   resources:
   - ciliumendpointslices
   - ciliumenvoyconfigs
+  - ciliumbgppeerconfigs
+  - ciliumbgpadvertisements
+  - ciliumbgpnodeconfigs
   verbs:
   - create
   - update
@@ -371,6 +395,11 @@ rules:
   resourceNames:
   - ciliumloadbalancerippools.cilium.io
   - ciliumbgppeeringpolicies.cilium.io
+  - ciliumbgpclusterconfigs.cilium.io
+  - ciliumbgppeerconfigs.cilium.io
+  - ciliumbgpadvertisements.cilium.io
+  - ciliumbgpnodeconfigs.cilium.io
+  - ciliumbgpnodeconfigoverrides.cilium.io
   - ciliumclusterwideenvoyconfigs.cilium.io
   - ciliumclusterwidenetworkpolicies.cilium.io
   - ciliumegressgatewaypolicies.cilium.io
@@ -395,6 +424,8 @@ rules:
   resources:
   - ciliumloadbalancerippools
   - ciliumpodippools
+  - ciliumbgpclusterconfigs
+  - ciliumbgpnodeconfigoverrides
   verbs:
   - get
   - list
@@ -441,6 +472,7 @@ rules:
   - gateways
   - tlsroutes
   - httproutes
+  - grpcroutes
   - referencegrants
   - referencepolicies
   verbs:
@@ -453,6 +485,7 @@ rules:
   - gatewayclasses/status
   - gateways/status
   - httproutes/status
+  - grpcroutes/status
   - tlsroutes/status
   verbs:
   - update
@@ -543,6 +576,22 @@ kind: RoleBinding
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+  name: cilium-bgp-control-plane-secrets
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cilium-bgp-control-plane-secrets
+subjects:
+- kind: ServiceAccount
+  name: cilium
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/part-of: cilium
   name: cilium-config-agent
   namespace: kube-system
 roleRef:
@@ -616,7 +665,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -720,7 +772,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -860,7 +915,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -983,7 +1041,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1100,7 +1161,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1225,7 +1289,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "BPF memory usage in the entire system including components not managed by Cilium.",
           "fieldConfig": {
             "defaults": {
@@ -1348,7 +1415,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Fill percentage of BPF maps, tagged by map name",
           "fieldConfig": {
             "defaults": {
@@ -1459,7 +1529,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1560,7 +1633,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1661,7 +1737,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1762,7 +1841,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1863,7 +1945,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1964,7 +2049,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2100,7 +2188,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2201,7 +2292,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -2304,7 +2398,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2405,7 +2502,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2504,7 +2604,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2605,7 +2708,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2706,7 +2812,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2828,7 +2937,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -2931,7 +3043,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "decimals": 2,
           "fieldConfig": {
             "defaults": {
@@ -3034,7 +3149,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3135,7 +3253,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3236,7 +3357,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3356,7 +3480,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3453,7 +3580,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3573,7 +3703,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3739,7 +3872,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3905,7 +4041,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4071,7 +4210,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4222,7 +4364,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -4329,7 +4474,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4426,7 +4574,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4523,7 +4674,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4636,7 +4790,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4736,7 +4893,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4859,7 +5019,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -4959,7 +5122,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5107,7 +5273,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5227,7 +5396,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5329,7 +5501,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5453,7 +5628,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5555,7 +5733,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5691,7 +5872,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5807,7 +5991,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -5916,7 +6103,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6044,7 +6234,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6180,7 +6373,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6265,7 +6461,7 @@ data:
               "refId": "C"
             },
             {
-              "expr": "sum(cilium_policy_change_total{k8s_app=\"cilium\", pod=~\"$pod\"}, outcome=\"fail\") by (pod)",
+              "expr": "sum(cilium_policy_change_total{k8s_app=\"cilium\", pod=~\"$pod\", outcome=\"fail\"}) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "policy change errors",
@@ -6322,7 +6518,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6430,7 +6629,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6572,7 +6774,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -6672,7 +6877,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "decimals": null,
           "fieldConfig": {
             "defaults": {
@@ -6777,7 +6985,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -6887,7 +7098,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7010,7 +7224,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7131,7 +7348,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7263,7 +7483,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7364,7 +7587,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7465,7 +7691,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7566,7 +7795,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7667,7 +7899,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7767,7 +8002,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7866,7 +8104,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -7965,7 +8206,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8064,7 +8308,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8167,7 +8414,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8270,7 +8520,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8373,7 +8626,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8472,7 +8728,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8571,7 +8830,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8670,7 +8932,10 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -8772,13 +9037,31 @@ data:
       "templating": {
         "list": [
           {
+            "current": {},
+            "hide": 0,
+            "includeAll": false,
+            "label": "Prometheus",
+            "multi": false,
+            "name": "DS_PROMETHEUS",
+            "options": [],
+            "query": "prometheus",
+            "queryValue": "",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "type": "datasource"
+          },
+          {
             "allValue": "cilium.*",
             "current": {
               "selected": false,
               "text": "All",
               "value": "$__all"
             },
-            "datasource": "prometheus",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${DS_PROMETHEUS}"
+            },
             "definition": "label_values(cilium_version, pod)",
             "hide": 0,
             "includeAll": true,
@@ -13084,7 +13367,7 @@ data:
         ]
       },
       "timezone": "",
-      "title": "Hubble",
+      "title": "Hubble Metrics and Monitoring",
       "uid": "5HftnJAWz",
       "version": 24
     }
@@ -13096,6 +13379,219 @@ metadata:
     grafana_dashboard: "1"
     k8s-app: hubble
   name: hubble-dashboard
+  namespace: grafana
+---
+apiVersion: v1
+data:
+  hubble-dns-namespace.json: "{\n    \"__inputs\": [\n      {\n        \"name\": \"DS_PROMETHEUS\",\n
+    \       \"label\": \"Prometheus\",\n        \"description\": \"\",\n        \"type\":
+    \"datasource\",\n        \"pluginId\": \"prometheus\",\n        \"pluginName\":
+    \"Prometheus\"\n      }\n    ],\n    \"__elements\": {},\n    \"__requires\":
+    [\n      {\n        \"type\": \"panel\",\n        \"id\": \"bargauge\",\n        \"name\":
+    \"Bar gauge\",\n        \"version\": \"\"\n      },\n      {\n        \"type\":
+    \"grafana\",\n        \"id\": \"grafana\",\n        \"name\": \"Grafana\",\n        \"version\":
+    \"9.4.7\"\n      },\n      {\n        \"type\": \"datasource\",\n        \"id\":
+    \"prometheus\",\n        \"name\": \"Prometheus\",\n        \"version\": \"1.0.0\"\n
+    \     },\n      {\n        \"type\": \"panel\",\n        \"id\": \"timeseries\",\n
+    \       \"name\": \"Time series\",\n        \"version\": \"\"\n      }\n    ],\n
+    \   \"annotations\": {\n      \"list\": [\n        {\n          \"builtIn\": 1,\n
+    \         \"datasource\": {\n            \"type\": \"datasource\",\n            \"uid\":
+    \"grafana\"\n          },\n          \"enable\": true,\n          \"hide\": true,\n
+    \         \"iconColor\": \"rgba(0, 211, 255, 1)\",\n          \"name\": \"Annotations
+    & Alerts\",\n          \"target\": {\n            \"limit\": 100,\n            \"matchAny\":
+    false,\n            \"tags\": [],\n            \"type\": \"dashboard\"\n          },\n
+    \         \"type\": \"dashboard\"\n        }\n      ]\n    },\n    \"description\":
+    \"\",\n    \"editable\": true,\n    \"fiscalYearStartMonth\": 0,\n    \"gnetId\":
+    16612,\n    \"graphTooltip\": 0,\n    \"id\": null,\n    \"links\": [\n      {\n
+    \       \"asDropdown\": true,\n        \"icon\": \"external link\",\n        \"includeVars\":
+    true,\n        \"keepTime\": true,\n        \"tags\": [\n          \"cilium-overview\"\n
+    \       ],\n        \"targetBlank\": false,\n        \"title\": \"Cilium Overviews\",\n
+    \       \"tooltip\": \"\",\n        \"type\": \"dashboards\",\n        \"url\":
+    \"\"\n      },\n      {\n        \"asDropdown\": true,\n        \"icon\": \"external
+    link\",\n        \"includeVars\": false,\n        \"keepTime\": true,\n        \"tags\":
+    [\n          \"hubble\"\n        ],\n        \"targetBlank\": false,\n        \"title\":
+    \"Hubble\",\n        \"tooltip\": \"\",\n        \"type\": \"dashboards\",\n        \"url\":
+    \"\"\n      }\n    ],\n    \"liveNow\": false,\n    \"panels\": [\n      {\n        \"collapsed\":
+    false,\n        \"gridPos\": {\n          \"h\": 1,\n          \"w\": 24,\n          \"x\":
+    0,\n          \"y\": 0\n        },\n        \"id\": 2,\n        \"panels\": [],\n
+    \       \"title\": \"DNS\",\n        \"type\": \"row\"\n      },\n      {\n        \"datasource\":
+    {\n          \"type\": \"prometheus\",\n          \"uid\": \"${DS_PROMETHEUS}\"\n
+    \       },\n        \"description\": \"\",\n        \"fieldConfig\": {\n          \"defaults\":
+    {\n            \"color\": {\n              \"mode\": \"palette-classic\"\n            },\n
+    \           \"custom\": {\n              \"axisCenteredZero\": false,\n              \"axisColorMode\":
+    \"text\",\n              \"axisLabel\": \"\",\n              \"axisPlacement\":
+    \"auto\",\n              \"barAlignment\": 0,\n              \"drawStyle\": \"line\",\n
+    \             \"fillOpacity\": 10,\n              \"gradientMode\": \"none\",\n
+    \             \"hideFrom\": {\n                \"legend\": false,\n                \"tooltip\":
+    false,\n                \"viz\": false\n              },\n              \"lineInterpolation\":
+    \"linear\",\n              \"lineWidth\": 1,\n              \"pointSize\": 5,\n
+    \             \"scaleDistribution\": {\n                \"type\": \"linear\"\n
+    \             },\n              \"showPoints\": \"auto\",\n              \"spanNulls\":
+    false,\n              \"stacking\": {\n                \"group\": \"A\",\n                \"mode\":
+    \"normal\"\n              },\n              \"thresholdsStyle\": {\n                \"mode\":
+    \"off\"\n              }\n            },\n            \"mappings\": [],\n            \"min\":
+    0,\n            \"thresholds\": {\n              \"mode\": \"absolute\",\n              \"steps\":
+    [\n                {\n                  \"color\": \"green\",\n                  \"value\":
+    null\n                },\n                {\n                  \"color\": \"red\",\n
+    \                 \"value\": 80\n                }\n              ]\n            },\n
+    \           \"unit\": \"reqps\"\n          },\n          \"overrides\": []\n        },\n
+    \       \"gridPos\": {\n          \"h\": 9,\n          \"w\": 12,\n          \"x\":
+    0,\n          \"y\": 1\n        },\n        \"id\": 37,\n        \"options\":
+    {\n          \"legend\": {\n            \"calcs\": [\n              \"mean\",\n
+    \             \"lastNotNull\"\n            ],\n            \"displayMode\": \"table\",\n
+    \           \"placement\": \"bottom\",\n            \"showLegend\": true\n          },\n
+    \         \"tooltip\": {\n            \"mode\": \"single\",\n            \"sort\":
+    \"none\"\n          }\n        },\n        \"targets\": [\n          {\n            \"datasource\":
+    {\n              \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"sum(rate(hubble_dns_queries_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$source_namespace\\\", destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval]))
+    by (source) > 0\",\n            \"legendFormat\": \"{{source}}\",\n            \"range\":
+    true,\n            \"refId\": \"A\"\n          }\n        ],\n        \"title\":
+    \"DNS queries\",\n        \"type\": \"timeseries\"\n      },\n      {\n        \"datasource\":
+    {\n          \"type\": \"prometheus\",\n          \"uid\": \"${DS_PROMETHEUS}\"\n
+    \       },\n        \"fieldConfig\": {\n          \"defaults\": {\n            \"color\":
+    {\n              \"mode\": \"thresholds\"\n            },\n            \"mappings\":
+    [],\n            \"min\": 0,\n            \"thresholds\": {\n              \"mode\":
+    \"absolute\",\n              \"steps\": [\n                {\n                  \"color\":
+    \"green\",\n                  \"value\": null\n                }\n              ]\n
+    \           },\n            \"unit\": \"reqps\"\n          },\n          \"overrides\":
+    []\n        },\n        \"gridPos\": {\n          \"h\": 9,\n          \"w\":
+    12,\n          \"x\": 12,\n          \"y\": 1\n        },\n        \"id\": 41,\n
+    \       \"options\": {\n          \"displayMode\": \"gradient\",\n          \"minVizHeight\":
+    10,\n          \"minVizWidth\": 0,\n          \"orientation\": \"horizontal\",\n
+    \         \"reduceOptions\": {\n            \"calcs\": [\n              \"lastNotNull\"\n
+    \           ],\n            \"fields\": \"\",\n            \"values\": false\n
+    \         },\n          \"showUnfilled\": true\n        },\n        \"pluginVersion\":
+    \"9.4.7\",\n        \"targets\": [\n          {\n            \"datasource\": {\n
+    \             \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"topk(10,
+    sum(rate(hubble_dns_queries_total{cluster=~\\\"$cluster\\\", source_namespace=~\\\"$source_namespace\\\",
+    destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval])*60)
+    by (query))\",\n            \"legendFormat\": \"{{query}}\",\n            \"range\":
+    true,\n            \"refId\": \"A\"\n          }\n        ],\n        \"title\":
+    \"Top 10 DNS queries\",\n        \"type\": \"bargauge\"\n      },\n      {\n        \"datasource\":
+    {\n          \"type\": \"prometheus\",\n          \"uid\": \"${DS_PROMETHEUS}\"\n
+    \       },\n        \"fieldConfig\": {\n          \"defaults\": {\n            \"color\":
+    {\n              \"mode\": \"palette-classic\"\n            },\n            \"custom\":
+    {\n              \"axisCenteredZero\": false,\n              \"axisColorMode\":
+    \"text\",\n              \"axisLabel\": \"\",\n              \"axisPlacement\":
+    \"auto\",\n              \"barAlignment\": 0,\n              \"drawStyle\": \"line\",\n
+    \             \"fillOpacity\": 10,\n              \"gradientMode\": \"none\",\n
+    \             \"hideFrom\": {\n                \"legend\": false,\n                \"tooltip\":
+    false,\n                \"viz\": false\n              },\n              \"lineInterpolation\":
+    \"linear\",\n              \"lineWidth\": 1,\n              \"pointSize\": 5,\n
+    \             \"scaleDistribution\": {\n                \"type\": \"linear\"\n
+    \             },\n              \"showPoints\": \"auto\",\n              \"spanNulls\":
+    false,\n              \"stacking\": {\n                \"group\": \"A\",\n                \"mode\":
+    \"normal\"\n              },\n              \"thresholdsStyle\": {\n                \"mode\":
+    \"off\"\n              }\n            },\n            \"mappings\": [],\n            \"min\":
+    0,\n            \"thresholds\": {\n              \"mode\": \"absolute\",\n              \"steps\":
+    [\n                {\n                  \"color\": \"green\",\n                  \"value\":
+    null\n                },\n                {\n                  \"color\": \"red\",\n
+    \                 \"value\": 80\n                }\n              ]\n            },\n
+    \           \"unit\": \"reqps\"\n          },\n          \"overrides\": []\n        },\n
+    \       \"gridPos\": {\n          \"h\": 9,\n          \"w\": 12,\n          \"x\":
+    0,\n          \"y\": 10\n        },\n        \"id\": 39,\n        \"options\":
+    {\n          \"legend\": {\n            \"calcs\": [\n              \"mean\",\n
+    \             \"lastNotNull\"\n            ],\n            \"displayMode\": \"table\",\n
+    \           \"placement\": \"bottom\",\n            \"showLegend\": true\n          },\n
+    \         \"tooltip\": {\n            \"mode\": \"single\",\n            \"sort\":
+    \"none\"\n          }\n        },\n        \"targets\": [\n          {\n            \"datasource\":
+    {\n              \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"round(sum(rate(hubble_dns_queries_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$source_namespace\\\", destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval]))
+    by (source) - sum(label_replace(sum(rate(hubble_dns_responses_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$destination_namespace\\\", destination_namespace=~\\\"$source_namespace\\\"}[$__rate_interval]))
+    by (destination), \\\"source\\\", \\\"$1\\\", \\\"destination\\\", \\\"(.*)\\\"))
+    without (destination), 0.001) > 0\",\n            \"legendFormat\": \"{{source}}\",\n
+    \           \"range\": true,\n            \"refId\": \"A\"\n          }\n        ],\n
+    \       \"title\": \"Missing DNS responses\",\n        \"type\": \"timeseries\"\n
+    \     },\n      {\n        \"datasource\": {\n          \"type\": \"prometheus\",\n
+    \         \"uid\": \"${DS_PROMETHEUS}\"\n        },\n        \"fieldConfig\":
+    {\n          \"defaults\": {\n            \"color\": {\n              \"mode\":
+    \"palette-classic\"\n            },\n            \"custom\": {\n              \"axisCenteredZero\":
+    false,\n              \"axisColorMode\": \"text\",\n              \"axisLabel\":
+    \"\",\n              \"axisPlacement\": \"auto\",\n              \"barAlignment\":
+    0,\n              \"drawStyle\": \"line\",\n              \"fillOpacity\": 10,\n
+    \             \"gradientMode\": \"none\",\n              \"hideFrom\": {\n                \"legend\":
+    false,\n                \"tooltip\": false,\n                \"viz\": false\n
+    \             },\n              \"lineInterpolation\": \"linear\",\n              \"lineWidth\":
+    1,\n              \"pointSize\": 5,\n              \"scaleDistribution\": {\n
+    \               \"type\": \"linear\"\n              },\n              \"showPoints\":
+    \"auto\",\n              \"spanNulls\": false,\n              \"stacking\": {\n
+    \               \"group\": \"A\",\n                \"mode\": \"normal\"\n              },\n
+    \             \"thresholdsStyle\": {\n                \"mode\": \"off\"\n              }\n
+    \           },\n            \"mappings\": [],\n            \"min\": 0,\n            \"thresholds\":
+    {\n              \"mode\": \"absolute\",\n              \"steps\": [\n                {\n
+    \                 \"color\": \"green\",\n                  \"value\": null\n                },\n
+    \               {\n                  \"color\": \"red\",\n                  \"value\":
+    80\n                }\n              ]\n            },\n            \"unit\":
+    \"reqps\"\n          },\n          \"overrides\": []\n        },\n        \"gridPos\":
+    {\n          \"h\": 9,\n          \"w\": 12,\n          \"x\": 12,\n          \"y\":
+    10\n        },\n        \"id\": 43,\n        \"options\": {\n          \"legend\":
+    {\n            \"calcs\": [\n              \"mean\",\n              \"lastNotNull\"\n
+    \           ],\n            \"displayMode\": \"table\",\n            \"placement\":
+    \"bottom\",\n            \"showLegend\": true\n          },\n          \"tooltip\":
+    {\n            \"mode\": \"single\",\n            \"sort\": \"none\"\n          }\n
+    \       },\n        \"targets\": [\n          {\n            \"datasource\": {\n
+    \             \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"sum(rate(hubble_dns_responses_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$destination_namespace\\\", destination_namespace=~\\\"$source_namespace\\\",
+    rcode!=\\\"No Error\\\"}[$__rate_interval])) by (destination, rcode) > 0\",\n
+    \           \"legendFormat\": \"{{destination}}: {{rcode}}\",\n            \"range\":
+    true,\n            \"refId\": \"A\"\n          }\n        ],\n        \"title\":
+    \"DNS errors\",\n        \"type\": \"timeseries\"\n      }\n    ],\n    \"refresh\":
+    \"\",\n    \"revision\": 1,\n    \"schemaVersion\": 38,\n    \"style\": \"dark\",\n
+    \   \"tags\": [\n      \"kubecon-demo\"\n    ],\n    \"templating\": {\n      \"list\":
+    [\n        {\n          \"current\": {\n            \"selected\": false,\n            \"text\":
+    \"default\",\n            \"value\": \"default\"\n          },\n          \"hide\":
+    0,\n          \"includeAll\": false,\n          \"label\": \"Data Source\",\n
+    \         \"multi\": false,\n          \"name\": \"prometheus_datasource\",\n
+    \         \"options\": [],\n          \"query\": \"prometheus\",\n          \"queryValue\":
+    \"\",\n          \"refresh\": 1,\n          \"regex\": \"(?!grafanacloud-usage|grafanacloud-ml-metrics).+\",\n
+    \         \"skipUrlSync\": false,\n          \"type\": \"datasource\"\n        },\n
+    \       {\n          \"current\": {},\n          \"datasource\": {\n            \"type\":
+    \"prometheus\",\n            \"uid\": \"${DS_PROMETHEUS}\"\n          },\n          \"definition\":
+    \"label_values(cilium_version, cluster)\",\n          \"hide\": 0,\n          \"includeAll\":
+    true,\n          \"multi\": true,\n          \"name\": \"cluster\",\n          \"options\":
+    [],\n          \"query\": {\n            \"query\": \"label_values(cilium_version,
+    cluster)\",\n            \"refId\": \"StandardVariableQuery\"\n          },\n
+    \         \"refresh\": 1,\n          \"regex\": \"\",\n          \"skipUrlSync\":
+    false,\n          \"sort\": 0,\n          \"type\": \"query\"\n        },\n        {\n
+    \         \"allValue\": \".*\",\n          \"current\": {},\n          \"datasource\":
+    {\n            \"type\": \"prometheus\",\n            \"uid\": \"${DS_PROMETHEUS}\"\n
+    \         },\n          \"definition\": \"label_values(source_namespace)\",\n
+    \         \"hide\": 0,\n          \"includeAll\": true,\n          \"label\":
+    \"Source Namespace\",\n          \"multi\": true,\n          \"name\": \"source_namespace\",\n
+    \         \"options\": [],\n          \"query\": {\n            \"query\": \"label_values(source_namespace)\",\n
+    \           \"refId\": \"StandardVariableQuery\"\n          },\n          \"refresh\":
+    1,\n          \"regex\": \"\",\n          \"skipUrlSync\": false,\n          \"sort\":
+    0,\n          \"type\": \"query\"\n        },\n        {\n          \"allValue\":
+    \".*\",\n          \"current\": {},\n          \"datasource\": {\n            \"type\":
+    \"prometheus\",\n            \"uid\": \"${DS_PROMETHEUS}\"\n          },\n          \"definition\":
+    \"label_values(destination_namespace)\",\n          \"hide\": 0,\n          \"includeAll\":
+    true,\n          \"label\": \"Destination Namespace\",\n          \"multi\": true,\n
+    \         \"name\": \"destination_namespace\",\n          \"options\": [],\n          \"query\":
+    {\n            \"query\": \"label_values(destination_namespace)\",\n            \"refId\":
+    \"StandardVariableQuery\"\n          },\n          \"refresh\": 1,\n          \"regex\":
+    \"\",\n          \"skipUrlSync\": false,\n          \"sort\": 0,\n          \"type\":
+    \"query\"\n        }\n      ]\n    },\n    \"time\": {\n      \"from\": \"now-1h\",\n
+    \     \"to\": \"now\"\n    },\n    \"timepicker\": {\n      \"refresh_intervals\":
+    [\n        \"10s\",\n        \"30s\",\n        \"1m\",\n        \"5m\",\n        \"15m\",\n
+    \       \"30m\",\n        \"1h\",\n        \"2h\",\n        \"1d\"\n      ],\n
+    \     \"time_options\": [\n        \"5m\",\n        \"15m\",\n        \"1h\",\n
+    \       \"6h\",\n        \"12h\",\n        \"24h\",\n        \"2d\",\n        \"7d\",\n
+    \       \"30d\"\n      ]\n    },\n    \"timezone\": \"\",\n    \"title\": \"Hubble
+    / DNS Overview (Namespace)\",\n    \"uid\": \"_f0DUpY4k\",\n    \"version\": 26,\n
+    \   \"weekStart\": \"\"\n  }\n  "
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: hubble
+    app.kubernetes.io/part-of: cilium
+    grafana_dashboard: "1"
+    k8s-app: hubble
+  name: hubble-dns-namespace
   namespace: grafana
 ---
 apiVersion: v1
@@ -14498,9 +14994,366 @@ metadata:
 ---
 apiVersion: v1
 data:
+  hubble-network-overview-namespace.json: "{\n    \"__inputs\": [\n      {\n        \"name\":
+    \"DS_PROMETHEUS\",\n        \"label\": \"Prometheus\",\n        \"description\":
+    \"\",\n        \"type\": \"datasource\",\n        \"pluginId\": \"prometheus\",\n
+    \       \"pluginName\": \"Prometheus\"\n      }\n    ],\n    \"__elements\": {},\n
+    \   \"__requires\": [\n      {\n        \"type\": \"panel\",\n        \"id\":
+    \"bargauge\",\n        \"name\": \"Bar gauge\",\n        \"version\": \"\"\n      },\n
+    \     {\n        \"type\": \"grafana\",\n        \"id\": \"grafana\",\n        \"name\":
+    \"Grafana\",\n        \"version\": \"9.4.7\"\n      },\n      {\n        \"type\":
+    \"datasource\",\n        \"id\": \"prometheus\",\n        \"name\": \"Prometheus\",\n
+    \       \"version\": \"1.0.0\"\n      },\n      {\n        \"type\": \"panel\",\n
+    \       \"id\": \"timeseries\",\n        \"name\": \"Time series\",\n        \"version\":
+    \"\"\n      }\n    ],\n    \"annotations\": {\n      \"list\": [\n        {\n
+    \         \"builtIn\": 1,\n          \"datasource\": {\n            \"type\":
+    \"datasource\",\n            \"uid\": \"grafana\"\n          },\n          \"enable\":
+    true,\n          \"hide\": true,\n          \"iconColor\": \"rgba(0, 211, 255,
+    1)\",\n          \"name\": \"Annotations & Alerts\",\n          \"target\": {\n
+    \           \"limit\": 100,\n            \"matchAny\": false,\n            \"tags\":
+    [],\n            \"type\": \"dashboard\"\n          },\n          \"type\": \"dashboard\"\n
+    \       }\n      ]\n    },\n    \"description\": \"\",\n    \"editable\": true,\n
+    \   \"fiscalYearStartMonth\": 0,\n    \"gnetId\": 16612,\n    \"graphTooltip\":
+    0,\n    \"id\": null,\n    \"links\": [\n      {\n        \"asDropdown\": true,\n
+    \       \"icon\": \"external link\",\n        \"includeVars\": true,\n        \"keepTime\":
+    true,\n        \"tags\": [\n          \"cilium-overview\"\n        ],\n        \"targetBlank\":
+    false,\n        \"title\": \"Cilium Overviews\",\n        \"tooltip\": \"\",\n
+    \       \"type\": \"dashboards\",\n        \"url\": \"\"\n      },\n      {\n
+    \       \"asDropdown\": true,\n        \"icon\": \"external link\",\n        \"includeVars\":
+    false,\n        \"keepTime\": true,\n        \"tags\": [\n          \"hubble\"\n
+    \       ],\n        \"targetBlank\": false,\n        \"title\": \"Hubble\",\n
+    \       \"tooltip\": \"\",\n        \"type\": \"dashboards\",\n        \"url\":
+    \"\"\n      }\n    ],\n    \"liveNow\": false,\n    \"panels\": [\n      {\n        \"collapsed\":
+    false,\n        \"gridPos\": {\n          \"h\": 1,\n          \"w\": 24,\n          \"x\":
+    0,\n          \"y\": 0\n        },\n        \"id\": 8,\n        \"panels\": [],\n
+    \       \"title\": \"Flows processed\",\n        \"type\": \"row\"\n      },\n
+    \     {\n        \"datasource\": {\n          \"type\": \"prometheus\",\n          \"uid\":
+    \"${DS_PROMETHEUS}\"\n        },\n        \"fieldConfig\": {\n          \"defaults\":
+    {\n            \"color\": {\n              \"mode\": \"palette-classic\"\n            },\n
+    \           \"custom\": {\n              \"axisCenteredZero\": false,\n              \"axisColorMode\":
+    \"text\",\n              \"axisLabel\": \"\",\n              \"axisPlacement\":
+    \"auto\",\n              \"barAlignment\": 0,\n              \"drawStyle\": \"line\",\n
+    \             \"fillOpacity\": 10,\n              \"gradientMode\": \"none\",\n
+    \             \"hideFrom\": {\n                \"legend\": false,\n                \"tooltip\":
+    false,\n                \"viz\": false\n              },\n              \"lineInterpolation\":
+    \"linear\",\n              \"lineWidth\": 1,\n              \"pointSize\": 5,\n
+    \             \"scaleDistribution\": {\n                \"type\": \"linear\"\n
+    \             },\n              \"showPoints\": \"auto\",\n              \"spanNulls\":
+    false,\n              \"stacking\": {\n                \"group\": \"A\",\n                \"mode\":
+    \"normal\"\n              },\n              \"thresholdsStyle\": {\n                \"mode\":
+    \"off\"\n              }\n            },\n            \"mappings\": [],\n            \"min\":
+    0,\n            \"thresholds\": {\n              \"mode\": \"absolute\",\n              \"steps\":
+    [\n                {\n                  \"color\": \"green\",\n                  \"value\":
+    null\n                },\n                {\n                  \"color\": \"red\",\n
+    \                 \"value\": 80\n                }\n              ]\n            },\n
+    \           \"unit\": \"ops\"\n          },\n          \"overrides\": []\n        },\n
+    \       \"gridPos\": {\n          \"h\": 9,\n          \"w\": 12,\n          \"x\":
+    0,\n          \"y\": 1\n        },\n        \"id\": 12,\n        \"options\":
+    {\n          \"legend\": {\n            \"calcs\": [],\n            \"displayMode\":
+    \"list\",\n            \"placement\": \"bottom\",\n            \"showLegend\":
+    true\n          },\n          \"tooltip\": {\n            \"mode\": \"single\",\n
+    \           \"sort\": \"none\"\n          }\n        },\n        \"targets\":
+    [\n          {\n            \"datasource\": {\n              \"type\": \"prometheus\",\n
+    \             \"uid\": \"${DS_PROMETHEUS}\"\n            },\n            \"editorMode\":
+    \"code\",\n            \"expr\": \"sum(rate(hubble_flows_processed_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$source_namespace\\\", destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval]))
+    by (type, subtype)\",\n            \"legendFormat\": \"{{type}}/{{subtype}}\",\n
+    \           \"range\": true,\n            \"refId\": \"A\"\n          }\n        ],\n
+    \       \"title\": \"Flows processed by type\",\n        \"type\": \"timeseries\"\n
+    \     },\n      {\n        \"datasource\": {\n          \"type\": \"prometheus\",\n
+    \         \"uid\": \"${DS_PROMETHEUS}\"\n        },\n        \"fieldConfig\":
+    {\n          \"defaults\": {\n            \"color\": {\n              \"mode\":
+    \"palette-classic\"\n            },\n            \"custom\": {\n              \"axisCenteredZero\":
+    false,\n              \"axisColorMode\": \"text\",\n              \"axisLabel\":
+    \"\",\n              \"axisPlacement\": \"auto\",\n              \"barAlignment\":
+    0,\n              \"drawStyle\": \"line\",\n              \"fillOpacity\": 10,\n
+    \             \"gradientMode\": \"none\",\n              \"hideFrom\": {\n                \"legend\":
+    false,\n                \"tooltip\": false,\n                \"viz\": false\n
+    \             },\n              \"lineInterpolation\": \"linear\",\n              \"lineWidth\":
+    1,\n              \"pointSize\": 5,\n              \"scaleDistribution\": {\n
+    \               \"type\": \"linear\"\n              },\n              \"showPoints\":
+    \"auto\",\n              \"spanNulls\": false,\n              \"stacking\": {\n
+    \               \"group\": \"A\",\n                \"mode\": \"normal\"\n              },\n
+    \             \"thresholdsStyle\": {\n                \"mode\": \"off\"\n              }\n
+    \           },\n            \"mappings\": [],\n            \"min\": 0,\n            \"thresholds\":
+    {\n              \"mode\": \"absolute\",\n              \"steps\": [\n                {\n
+    \                 \"color\": \"green\",\n                  \"value\": null\n                },\n
+    \               {\n                  \"color\": \"red\",\n                  \"value\":
+    80\n                }\n              ]\n            },\n            \"unit\":
+    \"ops\"\n          },\n          \"overrides\": []\n        },\n        \"gridPos\":
+    {\n          \"h\": 9,\n          \"w\": 12,\n          \"x\": 12,\n          \"y\":
+    1\n        },\n        \"id\": 35,\n        \"options\": {\n          \"legend\":
+    {\n            \"calcs\": [],\n            \"displayMode\": \"list\",\n            \"placement\":
+    \"bottom\",\n            \"showLegend\": true\n          },\n          \"tooltip\":
+    {\n            \"mode\": \"single\",\n            \"sort\": \"none\"\n          }\n
+    \       },\n        \"targets\": [\n          {\n            \"datasource\": {\n
+    \             \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"sum(rate(hubble_flows_processed_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$source_namespace\\\", destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval]))
+    by (verdict)\",\n            \"legendFormat\": \"{{verdict}}\",\n            \"range\":
+    true,\n            \"refId\": \"A\"\n          }\n        ],\n        \"title\":
+    \"Flows processed by verdict\",\n        \"type\": \"timeseries\"\n      },\n
+    \     {\n        \"datasource\": {\n          \"type\": \"prometheus\",\n          \"uid\":
+    \"${DS_PROMETHEUS}\"\n        },\n        \"fieldConfig\": {\n          \"defaults\":
+    {\n            \"color\": {\n              \"mode\": \"thresholds\"\n            },\n
+    \           \"mappings\": [],\n            \"min\": 0,\n            \"thresholds\":
+    {\n              \"mode\": \"absolute\",\n              \"steps\": [\n                {\n
+    \                 \"color\": \"green\",\n                  \"value\": null\n                }\n
+    \             ]\n            },\n            \"unit\": \"pps\"\n          },\n
+    \         \"overrides\": []\n        },\n        \"gridPos\": {\n          \"h\":
+    9,\n          \"w\": 12,\n          \"x\": 0,\n          \"y\": 10\n        },\n
+    \       \"id\": 36,\n        \"options\": {\n          \"displayMode\": \"gradient\",\n
+    \         \"minVizHeight\": 10,\n          \"minVizWidth\": 0,\n          \"orientation\":
+    \"horizontal\",\n          \"reduceOptions\": {\n            \"calcs\": [\n              \"lastNotNull\"\n
+    \           ],\n            \"fields\": \"\",\n            \"values\": false\n
+    \         },\n          \"showUnfilled\": true\n        },\n        \"pluginVersion\":
+    \"9.4.7\",\n        \"targets\": [\n          {\n            \"datasource\": {\n
+    \             \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"topk(10,
+    sum(rate(hubble_flows_processed_total{cluster=~\\\"$cluster\\\", source_namespace=~\\\"$source_namespace\\\",
+    destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval])) by
+    (source))\",\n            \"legendFormat\": \"{{source}}\",\n            \"range\":
+    true,\n            \"refId\": \"A\"\n          }\n        ],\n        \"title\":
+    \"Top 10 sources\",\n        \"type\": \"bargauge\"\n      },\n      {\n        \"datasource\":
+    {\n          \"type\": \"prometheus\",\n          \"uid\": \"${DS_PROMETHEUS}\"\n
+    \       },\n        \"fieldConfig\": {\n          \"defaults\": {\n            \"color\":
+    {\n              \"mode\": \"thresholds\"\n            },\n            \"mappings\":
+    [],\n            \"min\": 0,\n            \"thresholds\": {\n              \"mode\":
+    \"absolute\",\n              \"steps\": [\n                {\n                  \"color\":
+    \"green\",\n                  \"value\": null\n                }\n              ]\n
+    \           },\n            \"unit\": \"pps\"\n          },\n          \"overrides\":
+    []\n        },\n        \"gridPos\": {\n          \"h\": 9,\n          \"w\":
+    12,\n          \"x\": 12,\n          \"y\": 10\n        },\n        \"id\": 37,\n
+    \       \"options\": {\n          \"displayMode\": \"gradient\",\n          \"minVizHeight\":
+    10,\n          \"minVizWidth\": 0,\n          \"orientation\": \"horizontal\",\n
+    \         \"reduceOptions\": {\n            \"calcs\": [\n              \"lastNotNull\"\n
+    \           ],\n            \"fields\": \"\",\n            \"values\": false\n
+    \         },\n          \"showUnfilled\": true\n        },\n        \"pluginVersion\":
+    \"9.4.7\",\n        \"targets\": [\n          {\n            \"datasource\": {\n
+    \             \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"topk(10,
+    sum(rate(hubble_flows_processed_total{cluster=~\\\"$cluster\\\", source_namespace=~\\\"$source_namespace\\\",
+    destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval])) by
+    (destination))\",\n            \"legendFormat\": \"{{source}}\",\n            \"range\":
+    true,\n            \"refId\": \"A\"\n          }\n        ],\n        \"title\":
+    \"Top 10 destinations\",\n        \"type\": \"bargauge\"\n      },\n      {\n
+    \       \"collapsed\": false,\n        \"gridPos\": {\n          \"h\": 1,\n          \"w\":
+    24,\n          \"x\": 0,\n          \"y\": 19\n        },\n        \"id\": 10,\n
+    \       \"panels\": [],\n        \"title\": \"Connection drops\",\n        \"type\":
+    \"row\"\n      },\n      {\n        \"datasource\": {\n          \"type\": \"prometheus\",\n
+    \         \"uid\": \"${DS_PROMETHEUS}\"\n        },\n        \"fieldConfig\":
+    {\n          \"defaults\": {\n            \"color\": {\n              \"mode\":
+    \"palette-classic\"\n            },\n            \"custom\": {\n              \"axisCenteredZero\":
+    false,\n              \"axisColorMode\": \"text\",\n              \"axisLabel\":
+    \"\",\n              \"axisPlacement\": \"auto\",\n              \"barAlignment\":
+    0,\n              \"drawStyle\": \"line\",\n              \"fillOpacity\": 10,\n
+    \             \"gradientMode\": \"none\",\n              \"hideFrom\": {\n                \"legend\":
+    false,\n                \"tooltip\": false,\n                \"viz\": false\n
+    \             },\n              \"lineInterpolation\": \"linear\",\n              \"lineWidth\":
+    1,\n              \"pointSize\": 5,\n              \"scaleDistribution\": {\n
+    \               \"type\": \"linear\"\n              },\n              \"showPoints\":
+    \"auto\",\n              \"spanNulls\": false,\n              \"stacking\": {\n
+    \               \"group\": \"A\",\n                \"mode\": \"normal\"\n              },\n
+    \             \"thresholdsStyle\": {\n                \"mode\": \"off\"\n              }\n
+    \           },\n            \"mappings\": [],\n            \"min\": 0,\n            \"thresholds\":
+    {\n              \"mode\": \"absolute\",\n              \"steps\": [\n                {\n
+    \                 \"color\": \"green\",\n                  \"value\": null\n                },\n
+    \               {\n                  \"color\": \"red\",\n                  \"value\":
+    80\n                }\n              ]\n            },\n            \"unit\":
+    \"pps\"\n          },\n          \"overrides\": []\n        },\n        \"gridPos\":
+    {\n          \"h\": 9,\n          \"w\": 12,\n          \"x\": 0,\n          \"y\":
+    20\n        },\n        \"id\": 23,\n        \"options\": {\n          \"legend\":
+    {\n            \"calcs\": [\n              \"mean\",\n              \"lastNotNull\"\n
+    \           ],\n            \"displayMode\": \"table\",\n            \"placement\":
+    \"bottom\",\n            \"showLegend\": true\n          },\n          \"tooltip\":
+    {\n            \"mode\": \"single\",\n            \"sort\": \"none\"\n          }\n
+    \       },\n        \"targets\": [\n          {\n            \"datasource\": {\n
+    \             \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"sum(rate(hubble_tcp_flags_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$source_namespace\\\", destination_namespace=~\\\"$destination_namespace\\\",
+    flag=\\\"SYN\\\"}[$__rate_interval])) by (source) - sum(label_replace(sum(rate(hubble_tcp_flags_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$destination_namespace\\\", destination_namespace=~\\\"$source_namespace\\\",
+    flag=\\\"SYN-ACK\\\"}[$__rate_interval])) by (destination), \\\"source\\\", \\\"$1\\\",
+    \\\"destination\\\", \\\"(.*)\\\")) without (destination) > 0\",\n            \"hide\":
+    false,\n            \"legendFormat\": \"{{source}}\",\n            \"range\":
+    true,\n            \"refId\": \"A\"\n          }\n        ],\n        \"title\":
+    \"Missing TCP SYN-ACKs\",\n        \"type\": \"timeseries\"\n      },\n      {\n
+    \       \"datasource\": {\n          \"type\": \"prometheus\",\n          \"uid\":
+    \"${DS_PROMETHEUS}\"\n        },\n        \"fieldConfig\": {\n          \"defaults\":
+    {\n            \"color\": {\n              \"mode\": \"palette-classic\"\n            },\n
+    \           \"custom\": {\n              \"axisCenteredZero\": false,\n              \"axisColorMode\":
+    \"text\",\n              \"axisLabel\": \"\",\n              \"axisPlacement\":
+    \"auto\",\n              \"barAlignment\": 0,\n              \"drawStyle\": \"line\",\n
+    \             \"fillOpacity\": 10,\n              \"gradientMode\": \"none\",\n
+    \             \"hideFrom\": {\n                \"legend\": false,\n                \"tooltip\":
+    false,\n                \"viz\": false\n              },\n              \"lineInterpolation\":
+    \"linear\",\n              \"lineWidth\": 1,\n              \"pointSize\": 5,\n
+    \             \"scaleDistribution\": {\n                \"type\": \"linear\"\n
+    \             },\n              \"showPoints\": \"auto\",\n              \"spanNulls\":
+    false,\n              \"stacking\": {\n                \"group\": \"A\",\n                \"mode\":
+    \"normal\"\n              },\n              \"thresholdsStyle\": {\n                \"mode\":
+    \"off\"\n              }\n            },\n            \"mappings\": [],\n            \"min\":
+    0,\n            \"thresholds\": {\n              \"mode\": \"absolute\",\n              \"steps\":
+    [\n                {\n                  \"color\": \"green\",\n                  \"value\":
+    null\n                },\n                {\n                  \"color\": \"red\",\n
+    \                 \"value\": 80\n                }\n              ]\n            },\n
+    \           \"unit\": \"pps\"\n          },\n          \"overrides\": []\n        },\n
+    \       \"gridPos\": {\n          \"h\": 9,\n          \"w\": 12,\n          \"x\":
+    12,\n          \"y\": 20\n        },\n        \"id\": 34,\n        \"options\":
+    {\n          \"legend\": {\n            \"calcs\": [\n              \"mean\",\n
+    \             \"lastNotNull\"\n            ],\n            \"displayMode\": \"table\",\n
+    \           \"placement\": \"bottom\",\n            \"showLegend\": true\n          },\n
+    \         \"tooltip\": {\n            \"mode\": \"single\",\n            \"sort\":
+    \"none\"\n          }\n        },\n        \"targets\": [\n          {\n            \"datasource\":
+    {\n              \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"sum(rate(hubble_icmp_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$source_namespace\\\", destination_namespace=~\\\"$destination_namespace\\\",
+    type=\\\"EchoRequest\\\"}[$__rate_interval])) by (source) - sum(label_replace(sum(rate(hubble_icmp_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$destination_namespace\\\", destination_namespace=~\\\"$source_namespace\\\",
+    type=\\\"EchoReply\\\"}[$__rate_interval])) by (destination), \\\"source\\\",
+    \\\"$1\\\", \\\"destination\\\", \\\"(.*)\\\")) without (destination) > 0\",\n
+    \           \"legendFormat\": \"{{source}}\",\n            \"range\": true,\n
+    \           \"refId\": \"A\"\n          }\n        ],\n        \"title\": \"Missing
+    ICMP Echo Replys\",\n        \"type\": \"timeseries\"\n      },\n      {\n        \"collapsed\":
+    false,\n        \"gridPos\": {\n          \"h\": 1,\n          \"w\": 24,\n          \"x\":
+    0,\n          \"y\": 29\n        },\n        \"id\": 6,\n        \"panels\": [],\n
+    \       \"title\": \"Network Policy drops\",\n        \"type\": \"row\"\n      },\n
+    \     {\n        \"datasource\": {\n          \"type\": \"prometheus\",\n          \"uid\":
+    \"${DS_PROMETHEUS}\"\n        },\n        \"fieldConfig\": {\n          \"defaults\":
+    {\n            \"color\": {\n              \"mode\": \"palette-classic\"\n            },\n
+    \           \"custom\": {\n              \"axisCenteredZero\": false,\n              \"axisColorMode\":
+    \"text\",\n              \"axisLabel\": \"\",\n              \"axisPlacement\":
+    \"auto\",\n              \"barAlignment\": 0,\n              \"drawStyle\": \"line\",\n
+    \             \"fillOpacity\": 10,\n              \"gradientMode\": \"none\",\n
+    \             \"hideFrom\": {\n                \"legend\": false,\n                \"tooltip\":
+    false,\n                \"viz\": false\n              },\n              \"lineInterpolation\":
+    \"linear\",\n              \"lineWidth\": 1,\n              \"pointSize\": 5,\n
+    \             \"scaleDistribution\": {\n                \"type\": \"linear\"\n
+    \             },\n              \"showPoints\": \"auto\",\n              \"spanNulls\":
+    false,\n              \"stacking\": {\n                \"group\": \"A\",\n                \"mode\":
+    \"normal\"\n              },\n              \"thresholdsStyle\": {\n                \"mode\":
+    \"off\"\n              }\n            },\n            \"mappings\": [],\n            \"min\":
+    0,\n            \"thresholds\": {\n              \"mode\": \"absolute\",\n              \"steps\":
+    [\n                {\n                  \"color\": \"green\",\n                  \"value\":
+    null\n                },\n                {\n                  \"color\": \"red\",\n
+    \                 \"value\": 80\n                }\n              ]\n            },\n
+    \           \"unit\": \"pps\"\n          },\n          \"overrides\": []\n        },\n
+    \       \"gridPos\": {\n          \"h\": 8,\n          \"w\": 12,\n          \"x\":
+    0,\n          \"y\": 30\n        },\n        \"id\": 29,\n        \"options\":
+    {\n          \"legend\": {\n            \"calcs\": [\n              \"mean\",\n
+    \             \"lastNotNull\"\n            ],\n            \"displayMode\": \"table\",\n
+    \           \"placement\": \"bottom\",\n            \"showLegend\": true\n          },\n
+    \         \"tooltip\": {\n            \"mode\": \"single\",\n            \"sort\":
+    \"none\"\n          }\n        },\n        \"targets\": [\n          {\n            \"datasource\":
+    {\n              \"type\": \"prometheus\",\n              \"uid\": \"${DS_PROMETHEUS}\"\n
+    \           },\n            \"editorMode\": \"code\",\n            \"expr\": \"sum(rate(hubble_drop_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$source_namespace\\\", destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval]))
+    by (source, reason) > 0\",\n            \"legendFormat\": \"{{source}}: {{reason}}\",\n
+    \           \"range\": true,\n            \"refId\": \"A\"\n          }\n        ],\n
+    \       \"title\": \"Network Policy drops by source\",\n        \"type\": \"timeseries\"\n
+    \     },\n      {\n        \"datasource\": {\n          \"type\": \"prometheus\",\n
+    \         \"uid\": \"${DS_PROMETHEUS}\"\n        },\n        \"fieldConfig\":
+    {\n          \"defaults\": {\n            \"color\": {\n              \"mode\":
+    \"palette-classic\"\n            },\n            \"custom\": {\n              \"axisCenteredZero\":
+    false,\n              \"axisColorMode\": \"text\",\n              \"axisLabel\":
+    \"\",\n              \"axisPlacement\": \"auto\",\n              \"barAlignment\":
+    0,\n              \"drawStyle\": \"line\",\n              \"fillOpacity\": 10,\n
+    \             \"gradientMode\": \"none\",\n              \"hideFrom\": {\n                \"legend\":
+    false,\n                \"tooltip\": false,\n                \"viz\": false\n
+    \             },\n              \"lineInterpolation\": \"linear\",\n              \"lineWidth\":
+    1,\n              \"pointSize\": 5,\n              \"scaleDistribution\": {\n
+    \               \"type\": \"linear\"\n              },\n              \"showPoints\":
+    \"auto\",\n              \"spanNulls\": false,\n              \"stacking\": {\n
+    \               \"group\": \"A\",\n                \"mode\": \"normal\"\n              },\n
+    \             \"thresholdsStyle\": {\n                \"mode\": \"off\"\n              }\n
+    \           },\n            \"mappings\": [],\n            \"min\": 0,\n            \"thresholds\":
+    {\n              \"mode\": \"absolute\",\n              \"steps\": [\n                {\n
+    \                 \"color\": \"green\",\n                  \"value\": null\n                },\n
+    \               {\n                  \"color\": \"red\",\n                  \"value\":
+    80\n                }\n              ]\n            },\n            \"unit\":
+    \"pps\"\n          },\n          \"overrides\": [\n            {\n              \"__systemRef\":
+    \"hideSeriesFrom\",\n              \"matcher\": {\n                \"id\": \"byNames\",\n
+    \               \"options\": {\n                  \"mode\": \"exclude\",\n                  \"names\":
+    [\n                    \"kube-dns-7d44cdb5d5-g85vg: UNSUPPORTED_PROTOCOL_FOR_NAT_MASQUERADE\"\n
+    \                 ],\n                  \"prefix\": \"All except:\",\n                  \"readOnly\":
+    true\n                }\n              },\n              \"properties\": [\n                {\n
+    \                 \"id\": \"custom.hideFrom\",\n                  \"value\": {\n
+    \                   \"legend\": false,\n                    \"tooltip\": false,\n
+    \                   \"viz\": true\n                  }\n                }\n              ]\n
+    \           }\n          ]\n        },\n        \"gridPos\": {\n          \"h\":
+    8,\n          \"w\": 12,\n          \"x\": 12,\n          \"y\": 30\n        },\n
+    \       \"id\": 30,\n        \"options\": {\n          \"legend\": {\n            \"calcs\":
+    [\n              \"mean\",\n              \"lastNotNull\"\n            ],\n            \"displayMode\":
+    \"table\",\n            \"placement\": \"bottom\",\n            \"showLegend\":
+    true\n          },\n          \"tooltip\": {\n            \"mode\": \"single\",\n
+    \           \"sort\": \"none\"\n          }\n        },\n        \"targets\":
+    [\n          {\n            \"datasource\": {\n              \"type\": \"prometheus\",\n
+    \             \"uid\": \"${DS_PROMETHEUS}\"\n            },\n            \"editorMode\":
+    \"code\",\n            \"expr\": \"sum(rate(hubble_drop_total{cluster=~\\\"$cluster\\\",
+    source_namespace=~\\\"$source_namespace\\\", destination_namespace=~\\\"$destination_namespace\\\"}[$__rate_interval]))
+    by (destination, reason) > 0\",\n            \"legendFormat\": \"{{destination}}:
+    {{reason}}\",\n            \"range\": true,\n            \"refId\": \"A\"\n          }\n
+    \       ],\n        \"title\": \"Network Policy drops by destination\",\n        \"type\":
+    \"timeseries\"\n      }\n    ],\n    \"refresh\": \"\",\n    \"revision\": 1,\n
+    \   \"schemaVersion\": 38,\n    \"style\": \"dark\",\n    \"tags\": [\n      \"kubecon-demo\"\n
+    \   ],\n    \"templating\": {\n      \"list\": [\n        {\n          \"current\":
+    {\n            \"selected\": false,\n            \"text\": \"default\",\n            \"value\":
+    \"default\"\n          },\n          \"hide\": 0,\n          \"includeAll\": false,\n
+    \         \"label\": \"Data Source\",\n          \"multi\": false,\n          \"name\":
+    \"prometheus_datasource\",\n          \"options\": [],\n          \"query\": \"prometheus\",\n
+    \         \"queryValue\": \"\",\n          \"refresh\": 1,\n          \"regex\":
+    \"(?!grafanacloud-usage|grafanacloud-ml-metrics).+\",\n          \"skipUrlSync\":
+    false,\n          \"type\": \"datasource\"\n        },\n        {\n          \"current\":
+    {},\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\":
+    \"${DS_PROMETHEUS}\"\n          },\n          \"definition\": \"label_values(cilium_version,
+    cluster)\",\n          \"hide\": 0,\n          \"includeAll\": true,\n          \"multi\":
+    true,\n          \"name\": \"cluster\",\n          \"options\": [],\n          \"query\":
+    {\n            \"query\": \"label_values(cilium_version, cluster)\",\n            \"refId\":
+    \"StandardVariableQuery\"\n          },\n          \"refresh\": 1,\n          \"regex\":
+    \"\",\n          \"skipUrlSync\": false,\n          \"sort\": 0,\n          \"type\":
+    \"query\"\n        },\n        {\n          \"allValue\": \".*\",\n          \"current\":
+    {},\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\":
+    \"${DS_PROMETHEUS}\"\n          },\n          \"definition\": \"label_values(source_namespace)\",\n
+    \         \"hide\": 0,\n          \"includeAll\": true,\n          \"label\":
+    \"Source Namespace\",\n          \"multi\": true,\n          \"name\": \"source_namespace\",\n
+    \         \"options\": [],\n          \"query\": {\n            \"query\": \"label_values(source_namespace)\",\n
+    \           \"refId\": \"StandardVariableQuery\"\n          },\n          \"refresh\":
+    1,\n          \"regex\": \"\",\n          \"skipUrlSync\": false,\n          \"sort\":
+    0,\n          \"type\": \"query\"\n        },\n        {\n          \"allValue\":
+    \".*\",\n          \"current\": {},\n          \"datasource\": {\n            \"type\":
+    \"prometheus\",\n            \"uid\": \"${DS_PROMETHEUS}\"\n          },\n          \"definition\":
+    \"label_values(destination_namespace)\",\n          \"hide\": 0,\n          \"includeAll\":
+    true,\n          \"label\": \"Destination Namespace\",\n          \"multi\": true,\n
+    \         \"name\": \"destination_namespace\",\n          \"options\": [],\n          \"query\":
+    {\n            \"query\": \"label_values(destination_namespace)\",\n            \"refId\":
+    \"StandardVariableQuery\"\n          },\n          \"refresh\": 1,\n          \"regex\":
+    \"\",\n          \"skipUrlSync\": false,\n          \"sort\": 0,\n          \"type\":
+    \"query\"\n        }\n      ]\n    },\n    \"time\": {\n      \"from\": \"now-1h\",\n
+    \     \"to\": \"now\"\n    },\n    \"timepicker\": {\n      \"refresh_intervals\":
+    [\n        \"10s\",\n        \"30s\",\n        \"1m\",\n        \"5m\",\n        \"15m\",\n
+    \       \"30m\",\n        \"1h\",\n        \"2h\",\n        \"1d\"\n      ],\n
+    \     \"time_options\": [\n        \"5m\",\n        \"15m\",\n        \"1h\",\n
+    \       \"6h\",\n        \"12h\",\n        \"24h\",\n        \"2d\",\n        \"7d\",\n
+    \       \"30d\"\n      ]\n    },\n    \"timezone\": \"\",\n    \"title\": \"Hubble
+    / Network Overview (Namespace)\",\n    \"uid\": \"nlsO8tYVz\",\n    \"version\":
+    18,\n    \"weekStart\": \"\"\n  }\n  "
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: hubble
+    app.kubernetes.io/part-of: cilium
+    grafana_dashboard: "1"
+    k8s-app: hubble
+  name: hubble-network-overview-namespace
+  namespace: grafana
+---
+apiVersion: v1
+data:
   agent-not-ready-taint-key: node.cilium.io/agent-not-ready
   arping-refresh-period: 30s
   auto-direct-node-routes: "false"
+  bgp-secrets-namespace: kube-system
+  bpf-lb-acceleration: disabled
   bpf-lb-external-clusterip: "false"
   bpf-lb-map-max: "65536"
   bpf-lb-sock: "false"
@@ -14515,10 +15368,10 @@ data:
   cluster-pool-ipv4-mask-size: "24"
   cni-exclusive: "false"
   cni-log-file: /var/run/cilium/cilium-cni.log
-  cnp-node-status-gc-interval: 0s
+  controller-group-metrics: write-cni-file sync-host-ips sync-lb-maps-with-k8s-services
   custom-cni-conf: "false"
   debug: "false"
-  disable-cnp-status-updates: "true"
+  dnsproxy-enable-transparent-mode: "true"
   egress-gateway-reconciliation-trigger-interval: 1s
   enable-auto-protect-node-port-range: "true"
   enable-bgp-control-plane: "true"
@@ -14527,11 +15380,13 @@ data:
   enable-envoy-config: "true"
   enable-gateway-api: "true"
   enable-gateway-api-secrets-sync: "true"
+  enable-health-check-loadbalancer-ip: "false"
   enable-health-check-nodeport: "true"
   enable-health-checking: "true"
   enable-hubble: "true"
   enable-hubble-open-metrics: "true"
   enable-ingress-controller: "true"
+  enable-ingress-proxy-protocol: "false"
   enable-ingress-secrets-sync: "true"
   enable-ipv4: "true"
   enable-ipv4-big-tcp: "false"
@@ -14544,6 +15399,7 @@ data:
   enable-l2-neigh-discovery: "true"
   enable-l7-proxy: "true"
   enable-local-redirect-policy: "false"
+  enable-masquerade-to-route-source: "false"
   enable-metrics: "true"
   enable-policy: default
   enable-remote-node-identity: "true"
@@ -14559,6 +15415,8 @@ data:
   external-envoy-proxy: "false"
   gateway-api-secrets-namespace: cilium-secrets
   hubble-disable-tls: "false"
+  hubble-export-file-max-backups: "5"
+  hubble-export-file-max-size-mb: "10"
   hubble-listen-address: :4244
   hubble-metrics: dns drop tcp flow port-distribution icmp httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction
   hubble-metrics-server: :9965
@@ -14577,10 +15435,11 @@ data:
   install-no-conntrack-iptables-rules: "false"
   ipam: cluster-pool
   ipam-cilium-node-update-rate: 15s
-  k8s-client-burst: "10"
-  k8s-client-qps: "5"
+  k8s-client-burst: "20"
+  k8s-client-qps: "10"
   kube-proxy-replacement: "true"
   kube-proxy-replacement-healthz-bind-address: ""
+  max-connected-clusters: "255"
   mesh-auth-enabled: "true"
   mesh-auth-gc-interval: 5m0s
   mesh-auth-queue-size: "1024"
@@ -14601,6 +15460,7 @@ data:
   proxy-prometheus-port: "9964"
   remove-cilium-node-taints: "true"
   routing-mode: tunnel
+  service-no-backend-response: reject
   set-cilium-is-up-condition: "true"
   set-cilium-node-taints: "true"
   sidecar-istio-proxy-image: cilium/istio_proxy
@@ -14618,6 +15478,7 @@ data:
   vtep-endpoint: ""
   vtep-mac: ""
   vtep-mask: ""
+  wireguard-persistent-keepalive: 0s
   write-cni-conf-when-ready: /host/etc/cni/net.d/05-cilium.conflist
 kind: ConfigMap
 metadata:
@@ -14804,7 +15665,7 @@ spec:
           value: 10.83.86.10
         - name: KUBERNETES_SERVICE_PORT
           value: "6443"
-        image: quay.io/cilium/operator-generic:v1.14.5@sha256:303f9076bdc73b3fc32aaedee64a14f6f44c8bb08ee9e3956d443021103ebe7a
+        image: quay.io/cilium/operator-generic:v1.15.2@sha256:4dd8f67630f45fcaf58145eb81780b677ef62d57632d7e4442905ad3226a9088
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -14901,11 +15762,16 @@ spec:
               fieldPath: metadata.namespace
         - name: CILIUM_CLUSTERMESH_CONFIG
           value: /var/lib/cilium/clustermesh/
+        - name: GOMEMLIMIT
+          valueFrom:
+            resourceFieldRef:
+              divisor: "1"
+              resource: limits.memory
         - name: KUBERNETES_SERVICE_HOST
           value: 10.83.86.10
         - name: KUBERNETES_SERVICE_PORT
           value: "6443"
-        image: quay.io/cilium/cilium:v1.14.5@sha256:d3b287029755b6a47dee01420e2ea469469f1b174a2089c10af7e5e9289ef05b
+        image: quay.io/cilium/cilium:v1.15.2@sha256:bfeb3f1034282444ae8c498dca94044df2b9c9c8e7ac678e0b43c849f0b31746
         imagePullPolicy: IfNotPresent
         lifecycle:
           postStart:
@@ -14927,10 +15793,10 @@ spec:
                 # dependencies on anything that is part of the startup script
                 # itself, and can be safely run multiple times per node (e.g. in
                 # case of a restart).
-                if [[ "$(iptables-save | grep -c 'AWS-SNAT-CHAIN|AWS-CONNMARK-CHAIN')" != "0" ]];
+                if [[ "$(iptables-save | grep -E -c 'AWS-SNAT-CHAIN|AWS-CONNMARK-CHAIN')" != "0" ]];
                 then
                     echo 'Deleting iptables rules created by the AWS CNI VPC plugin'
-                    iptables-save | grep -v 'AWS-SNAT-CHAIN|AWS-CONNMARK-CHAIN' | iptables-restore
+                    iptables-save | grep -E -v 'AWS-SNAT-CHAIN|AWS-CONNMARK-CHAIN' | iptables-restore
                 fi
                 echo 'Done!'
           preStop:
@@ -15011,6 +15877,7 @@ spec:
             path: /healthz
             port: 9879
             scheme: HTTP
+          initialDelaySeconds: 5
           periodSeconds: 2
           successThreshold: 1
         terminationMessagePolicy: FallbackToLogsOnError
@@ -15042,7 +15909,7 @@ spec:
       hostNetwork: true
       initContainers:
       - command:
-        - cilium
+        - cilium-dbg
         - build-config
         env:
         - name: K8S_NODE_NAME
@@ -15059,7 +15926,7 @@ spec:
           value: 10.83.86.10
         - name: KUBERNETES_SERVICE_PORT
           value: "6443"
-        image: quay.io/cilium/cilium:v1.14.5@sha256:d3b287029755b6a47dee01420e2ea469469f1b174a2089c10af7e5e9289ef05b
+        image: quay.io/cilium/cilium:v1.15.2@sha256:bfeb3f1034282444ae8c498dca94044df2b9c9c8e7ac678e0b43c849f0b31746
         imagePullPolicy: IfNotPresent
         name: config
         terminationMessagePolicy: FallbackToLogsOnError
@@ -15078,7 +15945,7 @@ spec:
           value: /run/cilium/cgroupv2
         - name: BIN_PATH
           value: /opt/cni/bin
-        image: quay.io/cilium/cilium:v1.14.5@sha256:d3b287029755b6a47dee01420e2ea469469f1b174a2089c10af7e5e9289ef05b
+        image: quay.io/cilium/cilium:v1.15.2@sha256:bfeb3f1034282444ae8c498dca94044df2b9c9c8e7ac678e0b43c849f0b31746
         imagePullPolicy: IfNotPresent
         name: mount-cgroup
         securityContext:
@@ -15108,7 +15975,7 @@ spec:
         env:
         - name: BIN_PATH
           value: /opt/cni/bin
-        image: quay.io/cilium/cilium:v1.14.5@sha256:d3b287029755b6a47dee01420e2ea469469f1b174a2089c10af7e5e9289ef05b
+        image: quay.io/cilium/cilium:v1.15.2@sha256:bfeb3f1034282444ae8c498dca94044df2b9c9c8e7ac678e0b43c849f0b31746
         imagePullPolicy: IfNotPresent
         name: apply-sysctl-overwrites
         securityContext:
@@ -15134,7 +16001,7 @@ spec:
         - /bin/bash
         - -c
         - --
-        image: quay.io/cilium/cilium:v1.14.5@sha256:d3b287029755b6a47dee01420e2ea469469f1b174a2089c10af7e5e9289ef05b
+        image: quay.io/cilium/cilium:v1.15.2@sha256:bfeb3f1034282444ae8c498dca94044df2b9c9c8e7ac678e0b43c849f0b31746
         imagePullPolicy: IfNotPresent
         name: mount-bpf-fs
         securityContext:
@@ -15159,11 +16026,17 @@ spec:
               key: clean-cilium-bpf-state
               name: cilium-config
               optional: true
+        - name: WRITE_CNI_CONF_WHEN_READY
+          valueFrom:
+            configMapKeyRef:
+              key: write-cni-conf-when-ready
+              name: cilium-config
+              optional: true
         - name: KUBERNETES_SERVICE_HOST
           value: 10.83.86.10
         - name: KUBERNETES_SERVICE_PORT
           value: "6443"
-        image: quay.io/cilium/cilium:v1.14.5@sha256:d3b287029755b6a47dee01420e2ea469469f1b174a2089c10af7e5e9289ef05b
+        image: quay.io/cilium/cilium:v1.15.2@sha256:bfeb3f1034282444ae8c498dca94044df2b9c9c8e7ac678e0b43c849f0b31746
         imagePullPolicy: IfNotPresent
         name: clean-cilium-state
         securityContext:
@@ -15189,7 +16062,7 @@ spec:
           name: cilium-run
       - command:
         - /install-plugin.sh
-        image: quay.io/cilium/cilium:v1.14.5@sha256:d3b287029755b6a47dee01420e2ea469469f1b174a2089c10af7e5e9289ef05b
+        image: quay.io/cilium/cilium:v1.15.2@sha256:bfeb3f1034282444ae8c498dca94044df2b9c9c8e7ac678e0b43c849f0b31746
         imagePullPolicy: IfNotPresent
         name: install-cni-binaries
         resources:

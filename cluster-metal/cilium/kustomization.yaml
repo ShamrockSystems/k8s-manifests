@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ./ciliumloadbalancerpool.yaml
   - ./certificate.yaml
+  - ./gatewayclass.yaml
   - ./gateway.yaml
   - ./grafanadashboard.yaml
 
@@ -12,11 +13,9 @@ helmCharts:
     namespace: kube-system
     name: cilium
     repo: https://helm.cilium.io
-    version: 1.14.5
+    version: 1.15.2
     valuesFile: values.cilium.yaml
     includeCRDs: true
-    apiVersions:
-      - gateway.networking.k8s.io/v1beta1/GatewayClass
 
 patches:
   - target:
