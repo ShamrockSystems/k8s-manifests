@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth2-proxy
+  namespace: kubernetes-dashboard
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: kubernetes-dashboard
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 4180

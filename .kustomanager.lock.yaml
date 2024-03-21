@@ -221,15 +221,6 @@ builds:
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
     name: dpg-processing
-  - timestamp: 1707912901
-    sourceHash: 59d2ee53394d46eaa2e20cd18bcdd66ca4b0dddaae35ae62acfa1c8e4b59365c
-    sourceHashType: sha256
-    sourcePath: cluster-metal/kubernetes-dashboard
-    buildHash: cb03b0998b474ff357b049c820cd105029336373691270066e7b20d29642fd6c
-    buildHashType: sha256
-    buildPath: builds/in-cluster/kubernetes-dashboard
-    cluster: in-cluster
-    name: kubernetes-dashboard
   - timestamp: 1709522345
     sourceHash: a94df23c0711afc39bf446ef7dd71766056fa8f43281f8751be03b2ff6a0edb2
     sourceHashType: sha256
@@ -293,3 +284,12 @@ builds:
     buildPath: builds/in-cluster/cilium
     cluster: in-cluster
     name: cilium
+  - timestamp: 1711072217
+    sourceHash: 9c21406e172481e2cd7114826cbec862389c78ec5193f2f3c2ec99295368d966
+    sourceHashType: sha256
+    sourcePath: cluster-metal/kubernetes-dashboard
+    buildHash: b35e9125c1d4f684f25137d08899e8168ef9216923eebe827bf2357f18002be3
+    buildHashType: sha256
+    buildPath: builds/in-cluster/kubernetes-dashboard
+    cluster: in-cluster
+    name: kubernetes-dashboard

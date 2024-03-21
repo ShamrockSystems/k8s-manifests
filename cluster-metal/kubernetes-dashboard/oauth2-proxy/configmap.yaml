@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oauth2-proxy-cm
+  namespace: kubernetes-dashboard
+data:
+  # language=YAML
+  config.yaml: |-
+    server:
+      bindAddress: "0.0.0.0:4180"
+    providers:
+      - id: "shamrock"
+        provider: "oidc"
+        clientID: "e0cfdff3-907c-45fc-b2a8-d96f611fa500"
+        clientSecret: "${SHAMROCK_CLIENT_SECRET}"
+        oidcConfig:
+          issuerURL: "https://sts.windows.net/7380c786-e737-424b-b1ff-fa4e2ff85ef4/"
+          audienceClaims: ["aud"]
+          userIDClaim: "upn"
+          emailClaim: "upn"
+          groupsClaim: "groups"
+        azureConfig:
+          tenant: "7380c786-e737-424b-b1ff-fa4e2ff85ef4"
+    injectRequestHeaders:
+      - name: "Authorization"
+        values:
+          - prefix: "Bearer "
+            claim: "id_token"
+    upstreamConfig:
+      upstreams:
+        - id: "web"
+          path: "/"
+          uri: "http://kubernetes-dashboard-web:8000"
+        - id: "api"
+          path: "/api/"
+          uri: "http://kubernetes-dashboard-api:9000/api"

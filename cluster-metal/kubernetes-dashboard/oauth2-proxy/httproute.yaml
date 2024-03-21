@@ -14,20 +14,10 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /api
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: kubernetes-dashboard-api
-          port: 9000
-          weight: 1
-    - matches:
-        - path:
-            type: PathPrefix
             value: /
       backendRefs:
         - group: ""
           kind: Service
-          name: kubernetes-dashboard-web
-          port: 8000
+          name: oauth2-proxy
+          port: 80
           weight: 1
