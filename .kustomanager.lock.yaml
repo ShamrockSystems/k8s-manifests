@@ -284,11 +284,11 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
-  - timestamp: 1711079313
-    sourceHash: b3c3ca9100933144465d991405ab24ab460a2de0401a49c4857552e8ffa78a1c
+  - timestamp: 1711079452
+    sourceHash: 1363b2dbb69b1ccceae328ae3cc8d926f849af3f73963496fa59474f65cd2223
     sourceHashType: sha256
     sourcePath: cluster-metal/cilium
-    buildHash: 25f957459d37d07115ce673a30b7698dae2d870fd7e6d3ea87a88a2d19b3ee10
+    buildHash: ed19954f19c9d5e04a5d10bbaf98d320aabac47493a7af02daef2c382a3a5093
     buildHashType: sha256
     buildPath: builds/in-cluster/cilium
     cluster: in-cluster

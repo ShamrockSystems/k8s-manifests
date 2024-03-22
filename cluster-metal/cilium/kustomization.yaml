@@ -7,6 +7,7 @@ resources:
   - ./gatewayclass.yaml
   - ./gateway.yaml
   - ./grafanadashboard.yaml
+  - ./httproute.yaml
 
 helmCharts:
   - releaseName: cilium
