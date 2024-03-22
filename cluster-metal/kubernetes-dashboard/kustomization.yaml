@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
+  - ./sealedsecret.yaml
   - ./oauth2-proxy
 
 namespace: kubernetes-dashboard
@@ -11,7 +12,7 @@ helmCharts:
     namespace: kubernetes-dashboard
     name: kubernetes-dashboard
     repo: https://kubernetes.github.io/dashboard/
-    version: 7.0.0-alpha1
+    version: 7.1.2
     valuesFile: values.dashboard.yaml
 
 patches:

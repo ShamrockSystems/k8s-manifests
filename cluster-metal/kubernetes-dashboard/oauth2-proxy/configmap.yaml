@@ -27,10 +27,9 @@ data:
           - prefix: "Bearer "
             claim: "id_token"
     upstreamConfig:
+      proxyRawPath: true
       upstreams:
-        - id: "web"
+        - id: "kong"
           path: "/"
-          uri: "http://kubernetes-dashboard-web:8000"
-        - id: "api"
-          path: "/api/"
-          uri: "http://kubernetes-dashboard-api:9000/api"
+          uri: "https://kubernetes-dashboard-kong-proxy"
+          insecureSkipTLSVerify: true
