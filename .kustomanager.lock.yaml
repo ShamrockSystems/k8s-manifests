@@ -275,15 +275,6 @@ builds:
     buildPath: builds/in-cluster/immich
     cluster: in-cluster
     name: immich
-  - timestamp: 1711058078
-    sourceHash: 619bf7c9726e93bd7f0cae131a20da966a2f729d9f1fe991369d583224be9c13
-    sourceHashType: sha256
-    sourcePath: cluster-metal/cilium
-    buildHash: 15b06af65193f5692bccc279c99ae6ca24c713f85c538315c1d5e642ecfa450a
-    buildHashType: sha256
-    buildPath: builds/in-cluster/cilium
-    cluster: in-cluster
-    name: cilium
   - timestamp: 1711078952
     sourceHash: 70c6521f97ccce8bb294e69d24744a10dea56acdf8934579f694eec351593949
     sourceHashType: sha256
@@ -293,3 +284,12 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
+  - timestamp: 1711079313
+    sourceHash: b3c3ca9100933144465d991405ab24ab460a2de0401a49c4857552e8ffa78a1c
+    sourceHashType: sha256
+    sourcePath: cluster-metal/cilium
+    buildHash: 25f957459d37d07115ce673a30b7698dae2d870fd7e6d3ea87a88a2d19b3ee10
+    buildHashType: sha256
+    buildPath: builds/in-cluster/cilium
+    cluster: in-cluster
+    name: cilium

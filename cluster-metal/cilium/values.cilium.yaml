@@ -196,7 +196,7 @@ extraHostPathMounts: []
   #   mountPath: /host/mnt/data
   #   hostPath: /mnt/data
   #   hostPathType: Directory
-  #   readOnly: true
+#   readOnly: true
 #   mountPropagation: HostToContainer
 
 # -- Additional agent volumes.
@@ -233,7 +233,7 @@ resources: {}
   #   cpu: 4000m
   #   memory: 4Gi
   # requests:
-  #   cpu: 100m
+#   cpu: 100m
 #   memory: 512Mi
 
 # -- resources & limits for the agent init containers
@@ -1232,7 +1232,7 @@ hubble:
 
   relay:
     # -- Enable Hubble Relay (requires hubble.enabled=true)
-    enabled: false
+    enabled: true
 
     # -- Roll out Hubble Relay pods automatically when configmap is updated.
     rollOutPods: false
@@ -1265,7 +1265,7 @@ hubble:
     # -- Pod topology spread constraints for hubble-relay
     topologySpreadConstraints: []
       # - maxSkew: 1
-      #   topologyKey: topology.kubernetes.io/zone
+    #   topologyKey: topology.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
 
     # -- Node labels for pod assignment
@@ -1435,7 +1435,7 @@ hubble:
 
   ui:
     # -- Whether to enable the Hubble UI.
-    enabled: false
+    enabled: true
 
     standalone:
       # -- When true, it will allow installing the Hubble UI only, without checking dependencies.
@@ -1458,7 +1458,7 @@ hubble:
           #         path: client.crt
           #       - key: tls.key
           #         path: client.key
-          #       - key: ca.crt
+        #       - key: ca.crt
         #         path: hubble-relay-ca.crt
 
     # -- Roll out Hubble-ui pods automatically when configmap is updated.
@@ -1576,7 +1576,7 @@ hubble:
     # -- Pod topology spread constraints for hubble-ui
     topologySpreadConstraints: []
       # - maxSkew: 1
-      #   topologyKey: topology.kubernetes.io/zone
+    #   topologyKey: topology.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
 
     # -- Node labels for pod assignment
@@ -1621,7 +1621,7 @@ hubble:
     ingress:
       enabled: false
       annotations: {}
-        # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
       className: ""
       hosts:
@@ -1719,7 +1719,7 @@ ipam:
       # other:
       #   ipv6:
       #     cidrs:
-      #       - fd00:100::/80
+    #       - fd00:100::/80
     #     maskSize: 96
     # -- The maximum burst size when rate limiting access to external APIs.
     # Also known as the token bucket capacity.
@@ -1761,7 +1761,7 @@ k8s: {}
   # requireIPv4PodCIDR: false
 
   # -- requireIPv6PodCIDR enables waiting for Kubernetes to provide the PodCIDR
-  # range via the Kubernetes node resource
+# range via the Kubernetes node resource
 # requireIPv6PodCIDR: false
 
 # -- Keep the deprecated selector labels when deploying Cilium DaemonSet.
@@ -1826,7 +1826,7 @@ maglev: {}
   # service entry
   # tableSize:
 
-  # -- hashSeed is the cluster-wide base64 encoded seed for the hashing
+# -- hashSeed is the cluster-wide base64 encoded seed for the hashing
 # hashSeed:
 
 # -- Enables masquerading of IPv4 traffic leaving the node from endpoints.
@@ -2101,7 +2101,7 @@ envoy:
     #   mountPath: /host/mnt/data
     #   hostPath: /mnt/data
     #   hostPathType: Directory
-    #   readOnly: true
+  #   readOnly: true
   #   mountPropagation: HostToContainer
 
   # -- Additional envoy volumes.
@@ -2144,7 +2144,7 @@ envoy:
     #   cpu: 4000m
     #   memory: 4Gi
     # requests:
-    #   cpu: 100m
+  #   cpu: 100m
   #   memory: 512Mi
 
   startupProbe:
@@ -2410,7 +2410,7 @@ etcd:
   # -- Pod topology spread constraints for cilium-etcd-operator
   topologySpreadConstraints: []
     # - maxSkew: 1
-    #   topologyKey: topology.kubernetes.io/zone
+  #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
   # -- Node labels for cilium-etcd-operator pod assignment
@@ -2448,7 +2448,7 @@ etcd:
     #   cpu: 4000m
     #   memory: 4Gi
     # requests:
-    #   cpu: 100m
+  #   cpu: 100m
   #   memory: 512Mi
 
   # -- Security context to be added to cilium-etcd-operator pods
@@ -2531,7 +2531,7 @@ operator:
   # -- Pod topology spread constraints for cilium-operator
   topologySpreadConstraints: []
     # - maxSkew: 1
-    #   topologyKey: topology.kubernetes.io/zone
+  #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
   # -- Node labels for cilium-operator pod assignment
@@ -2560,7 +2560,7 @@ operator:
     #   mountPath: /host/mnt/data
     #   hostPath: /mnt/data
     #   hostPathType: Directory
-    #   readOnly: true
+  #   readOnly: true
   #   mountPropagation: HostToContainer
 
   # -- Additional cilium-operator volumes.
@@ -2599,7 +2599,7 @@ operator:
     #   cpu: 1000m
     #   memory: 1Gi
     # requests:
-    #   cpu: 100m
+  #   cpu: 100m
   #   memory: 128Mi
 
   # -- Security context to be added to cilium-operator pods
@@ -2869,7 +2869,7 @@ preflight:
     #   cpu: 4000m
     #   memory: 4Gi
     # requests:
-    #   cpu: 100m
+  #   cpu: 100m
   #   memory: 512Mi
 
   # -- Security context to be added to preflight pods
@@ -3005,7 +3005,7 @@ clustermesh:
         #   cpu: 100m
         #   memory: 64Mi
         # limits:
-        #   cpu: 1000m
+      #   cpu: 1000m
       #   memory: 1024M
 
       # -- Additional KVStoreMesh volumeMounts.
@@ -3106,7 +3106,7 @@ clustermesh:
       #   cpu: 100m
       #   memory: 64Mi
       # limits:
-      #   cpu: 1000m
+    #   cpu: 1000m
     #   memory: 1024M
 
     # -- Affinity for clustermesh.apiserver
@@ -3121,7 +3121,7 @@ clustermesh:
     # -- Pod topology spread constraints for clustermesh-apiserver
     topologySpreadConstraints: []
       # - maxSkew: 1
-      #   topologyKey: topology.kubernetes.io/zone
+    #   topologyKey: topology.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
 
     # -- Node labels for pod assignment
@@ -3304,7 +3304,7 @@ cgroup:
       #   cpu: 100m
       #   memory: 128Mi
       # requests:
-      #   cpu: 100m
+    #   cpu: 100m
     #   memory: 128Mi
   # -- Configure cgroup root where cgroup2 filesystem is mounted on the host (see also: `cgroup.autoMount`)
   hostRoot: /run/cilium/cgroupv2
