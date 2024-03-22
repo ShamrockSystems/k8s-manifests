@@ -284,11 +284,11 @@ builds:
     buildPath: builds/in-cluster/cilium
     cluster: in-cluster
     name: cilium
-  - timestamp: 1711072217
-    sourceHash: 9c21406e172481e2cd7114826cbec862389c78ec5193f2f3c2ec99295368d966
+  - timestamp: 1711072408
+    sourceHash: 90612fa44cb6991555c20801f3ad115d29ae8787d97501d8b925e8864b8ba024
     sourceHashType: sha256
     sourcePath: cluster-metal/kubernetes-dashboard
-    buildHash: b35e9125c1d4f684f25137d08899e8168ef9216923eebe827bf2357f18002be3
+    buildHash: f88df093e23fddce808d37ba749fc1a8512072e13b16e6b0d0309017a114f9b7
     buildHashType: sha256
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster

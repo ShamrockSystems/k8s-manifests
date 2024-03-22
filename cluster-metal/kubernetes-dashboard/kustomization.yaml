@@ -3,8 +3,6 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
-  - ./sealedsecret.csrf.yaml
-  - ./sealedsecret.key-holder.yaml
   - ./oauth2-proxy
 
 namespace: kubernetes-dashboard
