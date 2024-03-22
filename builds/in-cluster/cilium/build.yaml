@@ -18,6 +18,12 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  name: hubble-generate-certs
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
   name: hubble-relay
   namespace: kube-system
 ---
@@ -508,6 +514,39 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+  name: hubble-generate-certs
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resourceNames:
+  - hubble-server-certs
+  - hubble-relay-client-certs
+  - hubble-relay-server-certs
+  resources:
+  - secrets
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resourceNames:
+  - cilium-ca
+  resources:
+  - secrets
+  verbs:
+  - get
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/part-of: cilium
   name: hubble-ui
 rules:
 - apiGroups:
@@ -688,6 +727,21 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: cilium-operator
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/part-of: cilium
+  name: hubble-generate-certs
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: hubble-generate-certs
+subjects:
+- kind: ServiceAccount
+  name: hubble-generate-certs
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -15490,7 +15544,7 @@ data:
   hubble-export-file-max-backups: "5"
   hubble-export-file-max-size-mb: "10"
   hubble-listen-address: :4244
-  hubble-metrics: dns drop tcp flow port-distribution icmp httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction
+  hubble-metrics: dns:query;ignoreAAAA drop tcp flow icmp http
   hubble-metrics-server: :9965
   hubble-socket-path: /var/run/cilium/hubble.sock
   hubble-tls-cert-file: /var/lib/cilium/tls/hubble/server.crt
@@ -15507,6 +15561,7 @@ data:
   install-no-conntrack-iptables-rules: "false"
   ipam: cluster-pool
   ipam-cilium-node-update-rate: 15s
+  ipv4-native-routing-cidr: 10.83.86.0/24
   k8s-client-burst: "20"
   k8s-client-qps: "10"
   kube-proxy-replacement: "true"
@@ -15560,10 +15615,10 @@ metadata:
 apiVersion: v1
 data:
   config.yaml: "cluster-name: default\npeer-service: \"hubble-peer.kube-system.svc.cluster.local:443\"\nlisten-address:
-    :4245\ngops: true\ngops-port: \"9893\"\ndial-timeout: \nretry-timeout: \nsort-buffer-len-max:
-    \nsort-buffer-drain-timeout: \ntls-hubble-client-cert-file: /var/lib/hubble-relay/tls/client.crt\ntls-hubble-client-key-file:
-    /var/lib/hubble-relay/tls/client.key\ntls-hubble-server-ca-files: /var/lib/hubble-relay/tls/hubble-server-ca.crt\ndisable-server-tls:
-    true\n"
+    :4245\ngops: true\ngops-port: \"9893\"\nmetrics-listen-address: \":9966\"\ndial-timeout:
+    \nretry-timeout: \nsort-buffer-len-max: \nsort-buffer-drain-timeout: \ntls-hubble-client-cert-file:
+    /var/lib/hubble-relay/tls/client.crt\ntls-hubble-client-key-file: /var/lib/hubble-relay/tls/client.key\ntls-hubble-server-ca-files:
+    /var/lib/hubble-relay/tls/hubble-server-ca.crt\ndisable-server-tls: true\n"
 kind: ConfigMap
 metadata:
   name: hubble-relay-config
@@ -15721,6 +15776,24 @@ spec:
   - port: 80
     protocol: TCP
     targetPort: 4245
+  selector:
+    k8s-app: hubble-relay
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: hubble-relay
+  name: hubble-relay-metrics
+  namespace: kube-system
+spec:
+  clusterIP: None
+  ports:
+  - name: metrics
+    port: 9966
+    protocol: TCP
+    targetPort: prometheus
   selector:
     k8s-app: hubble-relay
   type: ClusterIP
@@ -15903,6 +15976,9 @@ spec:
         ports:
         - containerPort: 4245
           name: grpc
+        - containerPort: 9966
+          name: prometheus
+          protocol: TCP
         readinessProbe:
           grpc:
             port: 4222
@@ -16032,6 +16108,48 @@ spec:
         name: hubble-ui-nginx-conf
       - emptyDir: {}
         name: tmp-dir
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels:
+    app.kubernetes.io/name: hubble-generate-certs
+    app.kubernetes.io/part-of: cilium
+    k8s-app: hubble-generate-certs
+  name: hubble-generate-certs
+  namespace: kube-system
+spec:
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            k8s-app: hubble-generate-certs
+        spec:
+          affinity: null
+          automountServiceAccountToken: true
+          containers:
+          - args:
+            - --cilium-namespace=kube-system
+            - --ca-generate
+            - --ca-reuse-secret
+            - --hubble-server-cert-generate
+            - --hubble-server-cert-common-name=*.default.hubble-grpc.cilium.io
+            - --hubble-server-cert-validity-duration=94608000s
+            - --hubble-relay-client-cert-generate
+            - --hubble-relay-client-cert-validity-duration=94608000s
+            command:
+            - /usr/bin/cilium-certgen
+            image: quay.io/cilium/certgen:v0.1.9@sha256:89a0847753686444daabde9474b48340993bd19c7bea66a46e45b2974b82041f
+            imagePullPolicy: IfNotPresent
+            name: certgen
+          hostNetwork: true
+          restartPolicy: OnFailure
+          serviceAccount: hubble-generate-certs
+          serviceAccountName: hubble-generate-certs
+      ttlSecondsAfterFinished: 1800
+  schedule: 0 0 1 */4 *
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -16489,6 +16607,46 @@ spec:
       maxUnavailable: 2
     type: RollingUpdate
 ---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+  labels:
+    app.kubernetes.io/name: hubble-generate-certs
+    app.kubernetes.io/part-of: cilium
+    k8s-app: hubble-generate-certs
+  name: hubble-generate-certs
+  namespace: kube-system
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: hubble-generate-certs
+    spec:
+      affinity: null
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - --cilium-namespace=kube-system
+        - --ca-generate
+        - --ca-reuse-secret
+        - --hubble-server-cert-generate
+        - --hubble-server-cert-common-name=*.default.hubble-grpc.cilium.io
+        - --hubble-server-cert-validity-duration=94608000s
+        - --hubble-relay-client-cert-generate
+        - --hubble-relay-client-cert-validity-duration=94608000s
+        command:
+        - /usr/bin/cilium-certgen
+        image: quay.io/cilium/certgen:v0.1.9@sha256:89a0847753686444daabde9474b48340993bd19c7bea66a46e45b2974b82041f
+        imagePullPolicy: IfNotPresent
+        name: certgen
+      hostNetwork: true
+      restartPolicy: OnFailure
+      serviceAccount: hubble-generate-certs
+      serviceAccountName: hubble-generate-certs
+  ttlSecondsAfterFinished: 1800
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -16515,42 +16673,6 @@ spec:
   usages:
   - server auth
   - client auth
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: hubble-relay-client-certs
-  namespace: kube-system
-spec:
-  commonName: '*.hubble-relay.cilium.io'
-  dnsNames:
-  - '*.hubble-relay.cilium.io'
-  duration: 26280h0m0s
-  issuerRef:
-    group: cert-manager.io
-    kind: ClusterIssuer
-    name: selfsigned
-  privateKey:
-    rotationPolicy: Always
-  secretName: hubble-relay-client-certs
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: hubble-server-certs
-  namespace: kube-system
-spec:
-  commonName: '*.default.hubble-grpc.cilium.io'
-  dnsNames:
-  - '*.default.hubble-grpc.cilium.io'
-  duration: 26280h0m0s
-  issuerRef:
-    group: cert-manager.io
-    kind: ClusterIssuer
-    name: selfsigned
-  privateKey:
-    rotationPolicy: Always
-  secretName: hubble-server-certs
 ---
 apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool
@@ -16727,6 +16849,24 @@ spec:
   selector:
     matchLabels:
       k8s-app: hubble
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels: null
+  name: hubble-relay
+  namespace: kube-system
+spec:
+  endpoints:
+  - interval: 10s
+    path: /metrics
+    port: metrics
+  namespaceSelector:
+    matchNames:
+    - kube-system
+  selector:
+    matchLabels:
+      k8s-app: hubble-relay
 ---
 apiVersion: networking.k8s.io/v1
 kind: IngressClass

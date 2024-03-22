@@ -192,10 +192,10 @@ extraEnv: []
 
 # -- Additional agent hostPath mounts.
 extraHostPathMounts: []
-  # - name: host-mnt-data
-  #   mountPath: /host/mnt/data
-  #   hostPath: /mnt/data
-  #   hostPathType: Directory
+# - name: host-mnt-data
+#   mountPath: /host/mnt/data
+#   hostPath: /mnt/data
+#   hostPathType: Directory
 #   readOnly: true
 #   mountPropagation: HostToContainer
 
@@ -229,10 +229,10 @@ podLabels: {}
 # -- Agent resource limits & requests
 # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 resources: {}
-  # limits:
-  #   cpu: 4000m
-  #   memory: 4Gi
-  # requests:
+# limits:
+#   cpu: 4000m
+#   memory: 4Gi
+# requests:
 #   cpu: 100m
 #   memory: 512Mi
 
@@ -1035,13 +1035,12 @@ hubble:
     #   --set hubble.metrics.enabled="{dns:query;ignoreAAAA,drop,tcp,flow,icmp,http}"
     #
     enabled:
-      - dns
+      - dns:query;ignoreAAAA
       - drop
       - tcp
       - flow
-      - port-distribution
       - icmp
-      - httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction
+      - http
     # -- Enables exporting hubble metrics in OpenMetrics format.
     enableOpenMetrics: true
     # -- Configure the port the hubble metric server listens on.
@@ -1198,7 +1197,7 @@ hubble:
       #                 certificates not provided by the user at installation
       #                 time.
       # - certmanager:  This method use cert-manager to generate & rotate certificates.
-      method: certmanager
+      method: cronJob
       # -- Generated certificates validity duration in days.
       certValidityDuration: 1095
       # -- Schedule for certificates regeneration (regardless of their expiration date).
@@ -1264,7 +1263,7 @@ hubble:
 
     # -- Pod topology spread constraints for hubble-relay
     topologySpreadConstraints: []
-      # - maxSkew: 1
+    # - maxSkew: 1
     #   topologyKey: topology.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
 
@@ -1399,12 +1398,12 @@ hubble:
     # -- Enable prometheus metrics for hubble-relay on the configured port at
     # /metrics
     prometheus:
-      enabled: false
+      enabled: true
       port: 9966
       serviceMonitor:
         # -- Enable service monitors.
         # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
-        enabled: false
+        enabled: true
         # -- Labels to add to ServiceMonitor hubble-relay
         labels: {}
         # -- Annotations to add to ServiceMonitor hubble-relay
@@ -1453,11 +1452,11 @@ hubble:
           #   sources:
           #   - secret:
           #       name: hubble-ui-client-certs
-          #       items:
-          #       - key: tls.crt
-          #         path: client.crt
-          #       - key: tls.key
-          #         path: client.key
+        #       items:
+        #       - key: tls.crt
+        #         path: client.crt
+        #       - key: tls.key
+        #         path: client.key
         #       - key: ca.crt
         #         path: hubble-relay-ca.crt
 
@@ -1575,7 +1574,7 @@ hubble:
 
     # -- Pod topology spread constraints for hubble-ui
     topologySpreadConstraints: []
-      # - maxSkew: 1
+    # - maxSkew: 1
     #   topologyKey: topology.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
 
@@ -1714,11 +1713,11 @@ ipam:
       # default:
       #   ipv4:
       #     cidrs:
-      #       - 10.10.0.0/8
-      #     maskSize: 24
-      # other:
-      #   ipv6:
-      #     cidrs:
+    #       - 10.10.0.0/8
+    #     maskSize: 24
+    # other:
+    #   ipv6:
+    #     cidrs:
     #       - fd00:100::/80
     #     maskSize: 96
     # -- The maximum burst size when rate limiting access to external APIs.
@@ -1756,11 +1755,11 @@ ipv6:
 
 # -- Configure Kubernetes specific configuration
 k8s: {}
-  # -- requireIPv4PodCIDR enables waiting for Kubernetes to provide the PodCIDR
-  # range via the Kubernetes node resource
-  # requireIPv4PodCIDR: false
+# -- requireIPv4PodCIDR enables waiting for Kubernetes to provide the PodCIDR
+# range via the Kubernetes node resource
+# requireIPv4PodCIDR: false
 
-  # -- requireIPv6PodCIDR enables waiting for Kubernetes to provide the PodCIDR
+# -- requireIPv6PodCIDR enables waiting for Kubernetes to provide the PodCIDR
 # range via the Kubernetes node resource
 # requireIPv6PodCIDR: false
 
@@ -1822,9 +1821,9 @@ logSystemLoad: false
 
 # -- Configure maglev consistent hashing
 maglev: {}
-  # -- tableSize is the size (parameter M) for the backend table of one
-  # service entry
-  # tableSize:
+# -- tableSize is the size (parameter M) for the backend table of one
+# service entry
+# tableSize:
 
 # -- hashSeed is the cluster-wide base64 encoded seed for the hashing
 # hashSeed:
@@ -1879,7 +1878,7 @@ vtep:
 # direct routing and the Kubernetes CIDR is included in the native routing CIDR,
 # the user must configure the routes to reach pods, either manually or by
 # setting the auto-direct-node-routes flag.
-ipv4NativeRoutingCIDR: ""
+ipv4NativeRoutingCIDR: "10.83.86.0/24"
 
 # -- (string) Allows to explicitly specify the IPv6 CIDR for native routing.
 # When specified, Cilium assumes networking for this CIDR is preconfigured and
@@ -2097,10 +2096,10 @@ envoy:
 
   # -- Additional envoy hostPath mounts.
   extraHostPathMounts: []
-    # - name: host-mnt-data
-    #   mountPath: /host/mnt/data
-    #   hostPath: /mnt/data
-    #   hostPathType: Directory
+  # - name: host-mnt-data
+  #   mountPath: /host/mnt/data
+  #   hostPath: /mnt/data
+  #   hostPathType: Directory
   #   readOnly: true
   #   mountPropagation: HostToContainer
 
@@ -2140,10 +2139,10 @@ envoy:
   # -- Envoy resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
   resources: {}
-    # limits:
-    #   cpu: 4000m
-    #   memory: 4Gi
-    # requests:
+  # limits:
+  #   cpu: 4000m
+  #   memory: 4Gi
+  # requests:
   #   cpu: 100m
   #   memory: 512Mi
 
@@ -2409,7 +2408,7 @@ etcd:
 
   # -- Pod topology spread constraints for cilium-etcd-operator
   topologySpreadConstraints: []
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
@@ -2444,10 +2443,10 @@ etcd:
   # -- cilium-etcd-operator resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
   resources: {}
-    # limits:
-    #   cpu: 4000m
-    #   memory: 4Gi
-    # requests:
+  # limits:
+  #   cpu: 4000m
+  #   memory: 4Gi
+  # requests:
   #   cpu: 100m
   #   memory: 512Mi
 
@@ -2530,7 +2529,7 @@ operator:
 
   # -- Pod topology spread constraints for cilium-operator
   topologySpreadConstraints: []
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
@@ -2556,10 +2555,10 @@ operator:
 
   # -- Additional cilium-operator hostPath mounts.
   extraHostPathMounts: []
-    # - name: host-mnt-data
-    #   mountPath: /host/mnt/data
-    #   hostPath: /mnt/data
-    #   hostPathType: Directory
+  # - name: host-mnt-data
+  #   mountPath: /host/mnt/data
+  #   hostPath: /mnt/data
+  #   hostPathType: Directory
   #   readOnly: true
   #   mountPropagation: HostToContainer
 
@@ -2595,10 +2594,10 @@ operator:
   # -- cilium-operator resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
   resources: {}
-    # limits:
-    #   cpu: 1000m
-    #   memory: 1Gi
-    # requests:
+  # limits:
+  #   cpu: 1000m
+  #   memory: 1Gi
+  # requests:
   #   cpu: 100m
   #   memory: 128Mi
 
@@ -2865,10 +2864,10 @@ preflight:
   # -- preflight resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
   resources: {}
-    # limits:
-    #   cpu: 4000m
-    #   memory: 4Gi
-    # requests:
+  # limits:
+  #   cpu: 4000m
+  #   memory: 4Gi
+  # requests:
   #   cpu: 100m
   #   memory: 512Mi
 
@@ -3001,10 +3000,10 @@ clustermesh:
 
       # -- Resource requests and limits for the KVStoreMesh container
       resources: {}
-        # requests:
-        #   cpu: 100m
-        #   memory: 64Mi
-        # limits:
+      # requests:
+      #   cpu: 100m
+      #   memory: 64Mi
+      # limits:
       #   cpu: 1000m
       #   memory: 1024M
 
@@ -3102,10 +3101,10 @@ clustermesh:
     #         memory: 64Mi
     # -- Resource requests and limits for the clustermesh-apiserver
     resources: {}
-      # requests:
-      #   cpu: 100m
-      #   memory: 64Mi
-      # limits:
+    # requests:
+    #   cpu: 100m
+    #   memory: 64Mi
+    # limits:
     #   cpu: 1000m
     #   memory: 1024M
 
@@ -3120,7 +3119,7 @@ clustermesh:
 
     # -- Pod topology spread constraints for clustermesh-apiserver
     topologySpreadConstraints: []
-      # - maxSkew: 1
+    # - maxSkew: 1
     #   topologyKey: topology.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
 
@@ -3300,10 +3299,10 @@ cgroup:
     enabled: true
     # -- Init Container Cgroup Automount resource limits & requests
     resources: {}
-      # limits:
-      #   cpu: 100m
-      #   memory: 128Mi
-      # requests:
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
     #   cpu: 100m
     #   memory: 128Mi
   # -- Configure cgroup root where cgroup2 filesystem is mounted on the host (see also: `cgroup.autoMount`)
