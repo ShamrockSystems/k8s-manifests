@@ -225,15 +225,15 @@ builds:
     buildPath: builds/in-cluster/dpg-processing
     cluster: in-cluster
     name: dpg-processing
-  - timestamp: 1707912901
-    sourceHash: 59d2ee53394d46eaa2e20cd18bcdd66ca4b0dddaae35ae62acfa1c8e4b59365c
+  - timestamp: 1709522345
+    sourceHash: a94df23c0711afc39bf446ef7dd71766056fa8f43281f8751be03b2ff6a0edb2
     sourceHashType: sha256
-    sourcePath: cluster-metal/kubernetes-dashboard
-    buildHash: cb03b0998b474ff357b049c820cd105029336373691270066e7b20d29642fd6c
+    sourcePath: cluster-metal/argocd
+    buildHash: ed8c7f7b10d9d54d2991376a532d5a88502df76da510619bb4c9cb4e33264dbd
     buildHashType: sha256
-    buildPath: builds/in-cluster/kubernetes-dashboard
+    buildPath: builds/in-cluster/argocd
     cluster: in-cluster
-    name: kubernetes-dashboard
+    name: argocd
   - timestamp: 1709854206
     sourceHash: a6f5111ee47b78d988320c0801ab89e459d4971cd581d9b03ae481d23c8a6307
     sourceHashType: sha256
@@ -279,11 +279,20 @@ builds:
     buildPath: builds/in-cluster/immich
     cluster: in-cluster
     name: immich
-  - timestamp: 1710797579
-    sourceHash: 85e9375e4ad204f6179db305e9b59573df84e764885f11e1ae8380d3d3cac2d8
+  - timestamp: 1711078952
+    sourceHash: 70c6521f97ccce8bb294e69d24744a10dea56acdf8934579f694eec351593949
+    sourceHashType: sha256
+    sourcePath: cluster-metal/kubernetes-dashboard
+    buildHash: 346ff056162c2a03672fa6ee8ea4d27b729087ac5496ab758a9029463e0618ba
+    buildHashType: sha256
+    buildPath: builds/in-cluster/kubernetes-dashboard
+    cluster: in-cluster
+    name: kubernetes-dashboard
+  - timestamp: 1711089590
+    sourceHash: ddb09b0e9b7485570482dc2ef78631a8cfd78c57c46ae7f215a178237529597b
     sourceHashType: sha256
     sourcePath: cluster-metal/cilium
-    buildHash: 854de6ad73f1a3379d815988fc5a6eb5883ad5f1114bdee082dd51a7702e1488
+    buildHash: c51d8e0d624b5b63c99f20afb8493316bb9f1dd9fe40fa29469d20d8035741f5
     buildHashType: sha256
     buildPath: builds/in-cluster/cilium
     cluster: in-cluster
@@ -360,15 +369,6 @@ builds:
     buildPath: builds/local/keycloak-provider
     cluster: local
     name: keycloak-provider
-  - timestamp: 1712733412
-    sourceHash: a94df23c0711afc39bf446ef7dd71766056fa8f43281f8751be03b2ff6a0edb2
-    sourceHashType: sha256
-    sourcePath: cluster-metal/argocd
-    buildHash: ed8c7f7b10d9d54d2991376a532d5a88502df76da510619bb4c9cb4e33264dbd
-    buildHashType: sha256
-    buildPath: builds/in-cluster/argocd
-    cluster: in-cluster
-    name: argocd
   - timestamp: 1712733461
     sourceHash: 297e1c519318064b1e7153c6a9757030b92fbec07fb66e360ad0e77384ceb969
     sourceHashType: sha256

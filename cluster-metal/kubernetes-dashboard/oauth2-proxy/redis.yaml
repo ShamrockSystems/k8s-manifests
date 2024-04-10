@@ -1,0 +1,25 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: Redis
+metadata:
+  name: oauth2-proxy-redis
+  namespace: kubernetes-dashboard
+spec:
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v7.0.12
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      name: oauth2-proxy-secret
+      key: OAUTH2_PROXY_REDIS_PASSWORD
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.44.0
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
