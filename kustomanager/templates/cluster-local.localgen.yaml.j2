@@ -24,6 +24,9 @@ ports:
   - # Envoy Gateway
     port: 80:30000
     nodeFilters: ["server:0:direct"]
+registries:
+  create:
+    name: registry.dev.lan.shamrock.systems
 options:
   k3d:
     disableLoadbalancer: true

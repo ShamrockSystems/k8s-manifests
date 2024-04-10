@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oxigraph-primary
+  labels:
+    app.kubernetes.io/name: oxigraph-primary
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oxigraph-primary
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oxigraph-primary
+    spec:
+      volumes:
+        - name: oxigraph-data
+          persistentVolumeClaim:
+            claimName: oxigraph-primary-pvc
+        - name: busybox
+          emptyDir: {}
+      containers:
+        - name: oxigraph
+          image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
+          args:
+            - serve
+            - --location
+            - /data
+            - --bind
+            - 0.0.0.0:7878
+          ports:
+            - containerPort: 7878
+          volumeMounts:
+            - mountPath: /data
+              name: oxigraph-data

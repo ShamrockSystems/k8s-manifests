@@ -2161,7 +2161,7 @@ spec:
     spec:
       containers:
       - args:
-        - start
+        - start-dev
         env:
         - name: KEYCLOAK_ADMIN
           value: admin
@@ -2169,10 +2169,6 @@ spec:
           value: password
         - name: KC_HOSTNAME
           value: id.dev.lan.shamrock.systems
-        - name: KC_PROXY
-          value: edge
-        - name: KC_HOSTNAME_STRICT_HTTPS
-          value: "false"
         - name: KC_DB
           value: postgres
         - name: KC_DB_URL

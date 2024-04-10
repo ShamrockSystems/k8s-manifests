@@ -360,15 +360,6 @@ builds:
     buildPath: builds/local/crossplane
     cluster: local
     name: crossplane
-  - timestamp: 1712732160
-    sourceHash: 0485e2af8727ea81e44258a1ac2f66f3cd0c8fc3cd9785ca65536453c7a83aa4
-    sourceHashType: sha256
-    sourcePath: cluster-local/keycloak-provider
-    buildHash: cef1acc572dc9bbef1d420951a4790b0ef0fed79c7a4543eeea71a4db262163d
-    buildHashType: sha256
-    buildPath: builds/local/keycloak-provider
-    cluster: local
-    name: keycloak-provider
   - timestamp: 1712733461
     sourceHash: 297e1c519318064b1e7153c6a9757030b92fbec07fb66e360ad0e77384ceb969
     sourceHashType: sha256
@@ -378,12 +369,57 @@ builds:
     buildPath: builds/local/argocd
     cluster: local
     name: argocd
-  - timestamp: 1712733843
-    sourceHash: 412870b42f20fb711df278bd8cd23f6ec21e0565546db63cd8bd61b638ce4c22
+  - timestamp: 1712738100
+    sourceHash: 28cc87faa5b6cf853aac1f36b1affa688adc81a837f7a4bb32d988e136b53381
     sourceHashType: sha256
     sourcePath: cluster-local/keycloak
-    buildHash: d574e3b130aa52da336642ac185de1eb338c3e865a046994b8d47d73b8434190
+    buildHash: 707d98f6ffa862540c7e14cef95a853886d71d1a1fcf7026ffc1fa8c81f143cc
     buildHashType: sha256
     buildPath: builds/local/keycloak
     cluster: local
     name: keycloak
+  - timestamp: 1712738100
+    sourceHash: 1d963b880ab57521602a8dc5141a53d2723651eb16a9f9fded52d77d548eb5cd
+    sourceHashType: sha256
+    sourcePath: cluster-local/keycloak-provider
+    buildHash: 89f5d2c352c304da1c4e4113d3236a6f5d9b056f4eba23d3cd7eaecea7cce90e
+    buildHashType: sha256
+    buildPath: builds/local/keycloak-provider
+    cluster: local
+    name: keycloak-provider
+  - timestamp: 1712739145
+    sourceHash: bac871a181b2998769e2c4330f99d63b175f7d640e658b4b39969679b31441d3
+    sourceHashType: sha256
+    sourcePath: cluster-local/whoami
+    buildHash: c9476984c1290eb30c3c108dfc0deb8dc796846f4eb69325f80831075231afe9
+    buildHashType: sha256
+    buildPath: builds/local/whoami
+    cluster: local
+    name: whoami
+  - timestamp: 1712739305
+    sourceHash: 08eaed4a08dc1acf68afe4be08c2667498da2e6289ff152a296cee6edeb652fb
+    sourceHashType: sha256
+    sourcePath: cluster-local/debug
+    buildHash: 6fc3be83c4d3738f2e1b1e1b054749040853d1b4134cc4d0df5693da0cba4193
+    buildHashType: sha256
+    buildPath: builds/local/debug
+    cluster: local
+    name: debug
+  - timestamp: 1712740463
+    sourceHash: 03debff110bc8b4ad4ba170e4ea4aecd33e3e88c89ee03936131337ebf047af2
+    sourceHashType: sha256
+    sourcePath: cluster-local/coredns
+    buildHash: d1a1cf717c14046d3689a6e853d7605c1a033480b2791862999f27a8eedadf3a
+    buildHashType: sha256
+    buildPath: builds/local/coredns
+    cluster: local
+    name: coredns
+  - timestamp: 1712751942
+    sourceHash: 9bc3fa06cb2a087ec674003fb6c24d663a54fd84831ff14b906038982017f6a8
+    sourceHashType: sha256
+    sourcePath: cluster-local/deeppharmgraph
+    buildHash: 6ef763f0026e641344901a914f25234eebfedcee213f0a007b14710a9d2637a5
+    buildHashType: sha256
+    buildPath: builds/local/deeppharmgraph
+    cluster: local
+    name: deeppharmgraph

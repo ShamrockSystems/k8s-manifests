@@ -1,0 +1,64 @@
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-admin-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowAdmin
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-public-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowPublic
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-viewer-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowViewer
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-user-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowUser
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-op-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowOp
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config

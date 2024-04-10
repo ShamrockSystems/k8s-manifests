@@ -1,0 +1,14 @@
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Memberships
+metadata:
+  name: airflow-admin-membership
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-admin-group
+    members:
+      - admin
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config

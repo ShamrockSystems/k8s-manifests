@@ -1,0 +1,64 @@
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-admin
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: admin
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-public
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: public
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-viewer
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: viewer
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-user
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: user
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-op
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: op
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config

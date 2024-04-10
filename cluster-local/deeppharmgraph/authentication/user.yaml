@@ -1,0 +1,21 @@
+apiVersion: user.keycloak.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: dpg-admin
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          key: password
+          name: dpg-admin-secret
+          namespace: deeppharmgraph
+    realmId: deeppharmgraph
+    username: admin
+    firstName: John
+    lastName: Doe
+    email: example@example.com
+    emailVerified: true
+  providerConfigRef:
+    name: keycloak-config

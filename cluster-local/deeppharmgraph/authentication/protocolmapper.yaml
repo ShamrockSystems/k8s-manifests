@@ -1,0 +1,20 @@
+apiVersion: client.keycloak.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: airflow-role-mapper
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    config:
+      claim.name: roles
+      multivalued: "true"
+      userinfo.token.claim: "true"
+      access.token.claim: "true"
+    name: role-mapper
+    protocol: openid-connect
+    protocolMapper: oidc-usermodel-client-role-mapper
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config

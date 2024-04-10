@@ -1,0 +1,2319 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: deeppharmgraph
+  name: deeppharmgraph
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow
+  namespace: deeppharmgraph
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow
+  namespace: deeppharmgraph
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - get
+  - delete
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+  - get
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-admin
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: admin
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-op
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: op
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-public
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: public
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-user
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: user
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: airflow-viewer
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    name: viewer
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow
+  namespace: deeppharmgraph
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: dpg-processing-airflow
+subjects:
+- kind: ServiceAccount
+  name: dpg-processing-airflow
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "true"
+  AUTH_KEYCLOAK_ACCESS_TOKEN_URL: http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/token
+  AUTH_KEYCLOAK_AIRFLOW_BASE_URL: http://dpg-processing.dev.lan.shamrock.systems/
+  AUTH_KEYCLOAK_API_BASE_URL: http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/
+  AUTH_KEYCLOAK_AUTHORIZE_URL: http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/auth
+  AUTH_KEYCLOAK_CLIENT_ID: application-airflow
+  AUTH_KEYCLOAK_JWKS_URL: http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/certs
+  AUTH_KEYCLOAK_SCOPE: openid
+kind: ConfigMap
+metadata:
+  name: airflow-env-configmap
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  pod_template.yaml: "\napiVersion: v1\nkind: Pod\nmetadata:\n  name: dummy-name\nspec:\n
+    \ restartPolicy: Never\n  serviceAccountName: dpg-processing-airflow\n  shareProcessNamespace:
+    false\n  nodeSelector:\n    {}\n  affinity:\n    {}\n  tolerations:\n    []\n
+    \ securityContext:\n    fsGroup: 0\n  containers:\n    - name: base      \n      image:
+    apache/airflow:2.6.3-python3.9\n      imagePullPolicy: IfNotPresent\n      securityContext:\n
+    \       runAsUser: 50000\n        runAsGroup: 0\n      envFrom:        \n        -
+    secretRef:\n            name: dpg-processing-airflow-config-envs\n      env:\n
+    \       ## KubernetesExecutor Pods use LocalExecutor internally\n        - name:
+    AIRFLOW__CORE__EXECUTOR\n          value: LocalExecutor        \n        - name:
+    DATABASE_USER\n          valueFrom:\n            secretKeyRef:\n              name:
+    airflow-postgres-app\n              key: user\n        - name: DATABASE_PASSWORD\n
+    \         valueFrom:\n            secretKeyRef:\n              name: airflow-postgres-app\n
+    \             key: password\n        - name: CONNECTION_CHECK_MAX_COUNT\n          value:
+    \"20\"\n        - name: AIRFLOW__CORE__FERNET_KEY\n          valueFrom:\n            secretKeyRef:\n
+    \             key: AIRFLOW__CORE__FERNET_KEY\n              name: airflow-env-secret\n
+    \       - name: AIRFLOW__WEBSERVER__SECRET_KEY\n          valueFrom:\n            secretKeyRef:\n
+    \             key: AIRFLOW__WEBSERVER__SECRET_KEY\n              name: airflow-env-secret\n
+    \       - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX\n              name: airflow-env-configmap\n
+    \       - name: AUTH_KEYCLOAK_API_BASE_URL\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AUTH_KEYCLOAK_API_BASE_URL\n              name: airflow-env-configmap\n
+    \       - name: AUTH_KEYCLOAK_SCOPE\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AUTH_KEYCLOAK_SCOPE\n              name: airflow-env-configmap\n
+    \       - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL\n              name: airflow-env-configmap\n
+    \       - name: AUTH_KEYCLOAK_AUTHORIZE_URL\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AUTH_KEYCLOAK_AUTHORIZE_URL\n              name: airflow-env-configmap\n
+    \       - name: AUTH_KEYCLOAK_JWKS_URL\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AUTH_KEYCLOAK_JWKS_URL\n              name: airflow-env-configmap\n
+    \       - name: AUTH_KEYCLOAK_CLIENT_ID\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AUTH_KEYCLOAK_CLIENT_ID\n              name: airflow-env-configmap\n
+    \       - name: AUTH_KEYCLOAK_CLIENT_SECRET\n          valueFrom:\n            secretKeyRef:\n
+    \             key: AUTH_KEYCLOAK_CLIENT_SECRET\n              name: airflow-env-secret\n
+    \       - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL\n              name: airflow-env-configmap\n
+    \     ports: []\n      command: []\n      args: []\n      volumeMounts:        \n
+    \       - name: logs-data\n          mountPath: /opt/airflow/logs\n  volumes:
+    \   \n    - name: logs-data\n      emptyDir: {}"
+kind: ConfigMap
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-pod-template
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: airflow-env-secret
+  namespace: deeppharmgraph
+stringData:
+  AIRFLOW__CORE__FERNET_KEY: su8TakfoyJ3Mv6i136Y-i6vcJqhlthL8Q60F9M6GLJM=
+  AIRFLOW__WEBSERVER__SECRET_KEY: e5EqEnDH4wkWxnMf97n7RK7mAyBG2qdu
+  AUTH_KEYCLOAK_CLIENT_SECRET: HxLbmeGmDDcDGuC5eh9MrkQFWYAE3cZE
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dpg-admin-secret
+  namespace: deeppharmgraph
+stringData:
+  password: password
+---
+apiVersion: v1
+data:
+  AIRFLOW__CELERY__FLOWER_PORT: NTU1NQ==
+  AIRFLOW__CORE__DAGS_FOLDER: L29wdC9haXJmbG93L2RhZ3M=
+  AIRFLOW__CORE__EXECUTOR: S3ViZXJuZXRlc0V4ZWN1dG9y
+  AIRFLOW__CORE__SQL_ALCHEMY_CONN_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX1NRTEFMQ0hFTVlfQ01EIic=
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN_CMD: YmFzaCAtYyAnZXZhbCAiJERBVEFCQVNFX1NRTEFMQ0hFTVlfQ01EIic=
+  AIRFLOW__KUBERNETES__NAMESPACE: ZGVlcHBoYXJtZ3JhcGg=
+  AIRFLOW__KUBERNETES__POD_TEMPLATE_FILE: L29wdC9haXJmbG93L3BvZF90ZW1wbGF0ZXMvcG9kX3RlbXBsYXRlLnlhbWw=
+  AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: YXBhY2hlL2FpcmZsb3c=
+  AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: Mi42LjMtcHl0aG9uMy45
+  AIRFLOW__KUBERNETES_EXECUTOR__NAMESPACE: ZGVlcHBoYXJtZ3JhcGg=
+  AIRFLOW__KUBERNETES_EXECUTOR__POD_TEMPLATE_FILE: L29wdC9haXJmbG93L3BvZF90ZW1wbGF0ZXMvcG9kX3RlbXBsYXRlLnlhbWw=
+  AIRFLOW__KUBERNETES_EXECUTOR__WORKER_CONTAINER_REPOSITORY: YXBhY2hlL2FpcmZsb3c=
+  AIRFLOW__KUBERNETES_EXECUTOR__WORKER_CONTAINER_TAG: Mi42LjMtcHl0aG9uMy45
+  AIRFLOW__LOGGING__BASE_LOG_FOLDER: L29wdC9haXJmbG93L2xvZ3M=
+  AIRFLOW__LOGGING__DAG_PROCESSOR_MANAGER_LOG_LOCATION: L29wdC9haXJmbG93L2xvZ3MvZGFnX3Byb2Nlc3Nvcl9tYW5hZ2VyL2RhZ19wcm9jZXNzb3JfbWFuYWdlci5sb2c=
+  AIRFLOW__SCHEDULER__CHILD_PROCESS_LOG_DIRECTORY: L29wdC9haXJmbG93L2xvZ3Mvc2NoZWR1bGVy
+  AIRFLOW__TRIGGERER__DEFAULT_CAPACITY: MTAwMA==
+  AIRFLOW__WEBSERVER__WEB_SERVER_PORT: ODA4MA==
+  DATABASE_CELERY_CMD: ZWNobyAtbiAiZGIrcG9zdGdyZXNxbDovLyQoZXZhbCAkREFUQUJBU0VfVVNFUl9DTUQpOiQoZXZhbCAkREFUQUJBU0VfUEFTU1dPUkRfQ01EKUAke0RBVEFCQVNFX0hPU1R9OiR7REFUQUJBU0VfUE9SVH0vJHtEQVRBQkFTRV9EQn0ke0RBVEFCQVNFX1BST1BFUlRJRVN9Ig==
+  DATABASE_DB: YXBw
+  DATABASE_HOST: ZHBnLXByb2Nlc3NpbmctYWlyZmxvdy1wZ2JvdW5jZXIuZGVlcHBoYXJtZ3JhcGguc3ZjLmNsdXN0ZXIubG9jYWw=
+  DATABASE_PASSWORD_CMD: ZWNobyAiJHtEQVRBQkFTRV9QQVNTV09SRH0iIHwgcHl0aG9uMyAtYyAiaW1wb3J0IHVybGxpYi5wYXJzZTsgZW5jb2RlZF9wYXNzID0gdXJsbGliLnBhcnNlLnF1b3RlKGlucHV0KCkpOyBwcmludChlbmNvZGVkX3Bhc3MpIg==
+  DATABASE_PORT: NjQzMg==
+  DATABASE_PROPERTIES: ""
+  DATABASE_PSQL_CMD: ZWNobyAtbiAicG9zdGdyZXNxbDovLyQoZXZhbCAkREFUQUJBU0VfVVNFUl9DTUQpOiQoZXZhbCAkREFUQUJBU0VfUEFTU1dPUkRfQ01EKUAxMjcuMC4wLjE6JHtEQVRBQkFTRV9QT1JUfS8ke0RBVEFCQVNFX0RCfSR7REFUQUJBU0VfUFJPUEVSVElFU30i
+  DATABASE_SQLALCHEMY_CMD: ZWNobyAtbiAicG9zdGdyZXNxbCtwc3ljb3BnMjovLyQoZXZhbCAkREFUQUJBU0VfVVNFUl9DTUQpOiQoZXZhbCAkREFUQUJBU0VfUEFTU1dPUkRfQ01EKUAke0RBVEFCQVNFX0hPU1R9OiR7REFUQUJBU0VfUE9SVH0vJHtEQVRBQkFTRV9EQn0ke0RBVEFCQVNFX1BST1BFUlRJRVN9Ig==
+  DATABASE_USER_CMD: ZWNobyAiJHtEQVRBQkFTRV9VU0VSfSIgfCBweXRob24zIC1jICJpbXBvcnQgdXJsbGliLnBhcnNlOyBlbmNvZGVkX3VzZXIgPSB1cmxsaWIucGFyc2UucXVvdGUoaW5wdXQoKSk7IHByaW50KGVuY29kZWRfdXNlciki
+  TZ: RXRjL1VUQw==
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-config-envs
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  db_migrations.py: CiMjIyMjIyMjIyMjIyMKIyMgSW1wb3J0cyAjIwojIyMjIyMjIyMjIyMjCmltcG9ydCBsb2dnaW5nCmltcG9ydCB0aW1lCmZyb20gYWlyZmxvdy51dGlscy5kYiBpbXBvcnQgdXBncmFkZWRiCgoKIyMjIyMjIyMjIyMjIwojIyBDb25maWdzICMjCiMjIyMjIyMjIyMjIyMKbG9nID0gbG9nZ2luZy5nZXRMb2dnZXIoX19maWxlX18pCmxvZy5zZXRMZXZlbCgiSU5GTyIpCgojIGhvdyBmcmVxdWVudGx5IHRvIGNoZWNrIGZvciB1bmFwcGxpZWQgbWlncmF0aW9ucwpDT05GX19DSEVDS19NSUdSQVRJT05TX0lOVEVSVkFMID0gMzAwCgoKIyMjIyMjIyMjIyMjIyMjCiMjIEZ1bmN0aW9ucyAjIwojIyMjIyMjIyMjIyMjIyMKZnJvbSBhaXJmbG93LnV0aWxzLmRiIGltcG9ydCBjaGVja19taWdyYXRpb25zCgoKZGVmIG5lZWRzX2RiX21pZ3JhdGlvbnMoKSAtPiBib29sOgogICAgIiIiCiAgICBSZXR1cm4gYSBib29sZWFuIHJlcHJlc2VudGluZyBpZiB0aGUgZGF0YWJhc2UgaGFzIHVuYXBwbGllZCBtaWdyYXRpb25zLgogICAgIiIiCiAgICBsb2dfYWxlbWJpYyA9IGxvZ2dpbmcuZ2V0TG9nZ2VyKCJhbGVtYmljLnJ1bnRpbWUubWlncmF0aW9uIikKICAgIGxvZ19hbGVtYmljX2xldmVsID0gbG9nX2FsZW1iaWMubGV2ZWwKICAgIHRyeToKICAgICAgICBsb2dfYWxlbWJpYy5zZXRMZXZlbCgiV0FSTiIpCiAgICAgICAgY2hlY2tfbWlncmF0aW9ucygxKQogICAgICAgIGxvZ19hbGVtYmljLnNldExldmVsKGxvZ19hbGVtYmljX2xldmVsKQogICAgICAgIHJldHVybiBGYWxzZQogICAgZXhjZXB0IFRpbWVvdXRFcnJvcjoKICAgICAgICByZXR1cm4gVHJ1ZQoKCmRlZiBhcHBseV9kYl9taWdyYXRpb25zKCkgLT4gTm9uZToKICAgICIiIgogICAgQXBwbHkgYW55IHBlbmRpbmcgREIgbWlncmF0aW9ucy4KICAgICIiIgogICAgbG9nLmluZm8oIi0tLS0tLS0tIFNUQVJUIC0gQVBQTFkgREIgTUlHUkFUSU9OUyAtLS0tLS0tLSIpCiAgICB1cGdyYWRlZGIoKQogICAgbG9nLmluZm8oIi0tLS0tLS0tIEZJTklTSCAtIEFQUExZIERCIE1JR1JBVElPTlMgLS0tLS0tLS0iKQoKCmRlZiBtYWluKHN5bmNfZm9yZXZlcjogYm9vbCk6CiAgICAjIGluaXRpYWwgY2hlY2sgJiBhcHBseQogICAgaWYgbmVlZHNfZGJfbWlncmF0aW9ucygpOgogICAgICAgIGxvZy53YXJuaW5nKCJ0aGVyZSBhcmUgdW5hcHBsaWVkIGRiIG1pZ3JhdGlvbnMsIHRyaWdnZXJpbmcgYXBwbHkuLi4iKQogICAgICAgIGFwcGx5X2RiX21pZ3JhdGlvbnMoKQogICAgZWxzZToKICAgICAgICBsb2cuaW5mbygidGhlcmUgYXJlIG5vIHVuYXBwbGllZCBkYiBtaWdyYXRpb25zLCBjb250aW51aW5nLi4uIikKCiAgICBpZiBzeW5jX2ZvcmV2ZXI6CiAgICAgICAgIyBkZWZpbmUgdmFyaWFibGUgdG8gdHJhY2sgaG93IGxvbmcgc2luY2UgbGFzdCBtaWdyYXRpb25zIGNoZWNrCiAgICAgICAgbWlncmF0aW9uc19jaGVja19lcG9jaCA9IHRpbWUudGltZSgpCgogICAgICAgICMgbWFpbiBsb29wCiAgICAgICAgd2hpbGUgVHJ1ZToKICAgICAgICAgICAgaWYgKHRpbWUudGltZSgpIC0gbWlncmF0aW9uc19jaGVja19lcG9jaCkgPiBDT05GX19DSEVDS19NSUdSQVRJT05TX0lOVEVSVkFMOgogICAgICAgICAgICAgICAgbG9nLmRlYnVnKGYiY2hlY2sgaW50ZXJ2YWwgcmVhY2hlZCwgY2hlY2tpbmcgZm9yIHVuYXBwbGllZCBkYiBtaWdyYXRpb25zLi4uIikKICAgICAgICAgICAgICAgIGlmIG5lZWRzX2RiX21pZ3JhdGlvbnMoKToKICAgICAgICAgICAgICAgICAgICBsb2cud2FybmluZygidGhlcmUgYXJlIHVuYXBwbGllZCBkYiBtaWdyYXRpb25zLCB0cmlnZ2VyaW5nIGFwcGx5Li4uIikKICAgICAgICAgICAgICAgICAgICBhcHBseV9kYl9taWdyYXRpb25zKCkKICAgICAgICAgICAgICAgIG1pZ3JhdGlvbnNfY2hlY2tfZXBvY2ggPSB0aW1lLnRpbWUoKQoKICAgICAgICAgICAgIyBlbnN1cmUgd2UgZG9udCBsb29wIHRvbyBmYXN0CiAgICAgICAgICAgIHRpbWUuc2xlZXAoMC41KQoKCiMjIyMjIyMjIyMjIyMjCiMjIFJ1biBNYWluICMjCiMjIyMjIyMjIyMjIyMjCm1haW4oc3luY19mb3JldmVyPVRydWUp
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: db-migrations
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-db-migrations
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  gen_auth_file.sh: CiMhL2Jpbi9zaCAtZQoKIyBERVNDUklQVElPTjoKIyAtIHVwZGF0ZXMgdGhlIHBnYm91bmNlciBgYXV0aF9maWxlYCBmcm9tIGVudmlyb25tZW50IHZhcmlhYmxlcwojIC0gY2FsbGVkIGluIG1haW4gcGdib3VuY2VyIGNvbnRhaW5lciBzdGFydC1jb21tYW5kIHNvIHRoYXQgYGF1dGhfZmlsZWAgaXMgdXBkYXRlZCBlYWNoIHJlc3RhcnQsCiMgICBmb3IgZXhhbXBsZSwgd2hlbiB0aGUgbGl2ZW5lc3NQcm9iZSBmYWlscyBkdWUgdG8gYSBEQVRBQkFTRV9QQVNTV09SRCBzZWNyZXQgdXBkYXRlCgojIHZhcmlhYmxlcyB0byBpbmNyZWFzZSBjbGFyaXR5IG9mIHBhdHRlcm4gbWF0Y2hpbmcKT05FX1FVT1RFPSciJwpUV09fUVVPVEU9JyIiJwoKIyBwZ2JvdW5jZXIgcmVxdWlyZXMgYCJgIHRvIGJlIGVzY2FwZWQgYXMgYCIiYApFU0NBUEVEX0RBVEFCQVNFX1VTRVI9IiR7REFUQUJBU0VfVVNFUi8kT05FX1FVT1RFLyRUV09fUVVPVEV9IgpFU0NBUEVEX0RBVEFCQVNFX1BBU1NXT1JEPSIke0RBVEFCQVNFX1BBU1NXT1JELyRPTkVfUVVPVEUvJFRXT19RVU9URX0iCgojIHBnYm91bmNlciByZXF1aXJlcyBhdXRoX2ZpbGUgaW4gZm9ybWF0IGAibXktdXNlcm5hbWUiICJteS1wYXNzd29yZCJgCmVjaG8gXCIkRVNDQVBFRF9EQVRBQkFTRV9VU0VSXCIgXCIkRVNDQVBFRF9EQVRBQkFTRV9QQVNTV09SRFwiID4gL2hvbWUvcGdib3VuY2VyL3VzZXJzLnR4dAplY2hvICJTdWNjZXNzZnVsbHkgZ2VuZXJhdGVkIGF1dGhfZmlsZTogL2hvbWUvcGdib3VuY2VyL3VzZXJzLnR4dCI=
+  gen_self_signed_cert.sh: CiMhL2Jpbi9zaCAtZQoKQ0VSVF9ESVI9Ii9ob21lL3BnYm91bmNlci9nZW5lcmF0ZWQtY2VydHMiCktFWV9GSUxFPSIkQ0VSVF9ESVIvY2xpZW50LmtleSIKQ0VSVF9GSUxFPSIkQ0VSVF9ESVIvY2xpZW50LmNydCIKCiMgY3JlYXRlIHRoZSBkaXJlY3RvcnkgZm9yIHRoZSBzZWxmLXNpZ25lZCBjZXJ0aWZpY2F0ZQpta2RpciAtcCAiJENFUlRfRElSIgoKIyB2YXJpYWJsZXMgZm9yIGNlcnRpZmljYXRlIGdlbmVyYXRpb24KQ09NTU9OX05BTUU9ImxvY2FsaG9zdCIKREFZU19WQUxJRD0zNjUKCiMgZ2VuZXJhdGUgdGhlIHNlbGYtc2lnbmVkIGNlcnRpZmljYXRlIGFuZCBhIHByaXZhdGUga2V5Cm9wZW5zc2wgcmVxIC14NTA5IFwKICAtbmV3a2V5IHJzYTo0MDk2IFwKICAta2V5b3V0ICIkS0VZX0ZJTEUiIFwKICAtb3V0ICIkQ0VSVF9GSUxFIiBcCiAgLWRheXMgIiREQVlTX1ZBTElEIiBcCiAgLXN1YmogIi9DTj0kQ09NTU9OX05BTUUiIFwKICAtbm9kZXMKCiMgc2V0IHBlcm1pc3Npb25zIGZvciB0aGUgcHJpdmF0ZSBrZXkgZmlsZQpjaG1vZCA2MDAgIiRLRVlfRklMRSIKCmVjaG8gIlN1Y2Nlc3NmdWxseSBnZW5lcmF0ZWQgc2VsZi1zaWduZWQgY2VydGlmaWNhdGU6ICRDRVJUX0ZJTEUiCmVjaG8gIlN1Y2Nlc3NmdWxseSBnZW5lcmF0ZWQgc2VsZi1zaWduZWQgY2VydGlmaWNhdGUga2V5OiAkS0VZX0ZJTEUi
+  pgbouncer.ini: CltkYXRhYmFzZXNdCiogPSBob3N0PWFpcmZsb3ctcG9zdGdyZXMtcncgcG9ydD01NDMyCgpbcGdib3VuY2VyXQpwb29sX21vZGUgPSB0cmFuc2FjdGlvbgptYXhfY2xpZW50X2Nvbm4gPSAxMDAwCmRlZmF1bHRfcG9vbF9zaXplID0gIDIwCmlnbm9yZV9zdGFydHVwX3BhcmFtZXRlcnMgPSBleHRyYV9mbG9hdF9kaWdpdHMKCmxpc3Rlbl9wb3J0ID0gNjQzMgpsaXN0ZW5fYWRkciA9ICoKCmF1dGhfdHlwZSA9IG1kNQphdXRoX2ZpbGUgPSAvaG9tZS9wZ2JvdW5jZXIvdXNlcnMudHh0Cgpsb2dfZGlzY29ubmVjdGlvbnMgPSAwCmxvZ19jb25uZWN0aW9ucyA9IDAKCiMgbG9ja3Mgd2lsbCBuZXZlciBiZSByZWxlYXNlZCB3aGVuIGBwb29sX21vZGU9dHJhbnNhY3Rpb25gIChhaXJmbG93IGluaXRkYi91cGdyYWRlZGIgc2NyaXB0cyBjcmVhdGUgbG9ja3MpCnNlcnZlcl9yZXNldF9xdWVyeSA9IFNFTEVDVCBwZ19hZHZpc29yeV91bmxvY2tfYWxsKCkKc2VydmVyX3Jlc2V0X3F1ZXJ5X2Fsd2F5cyA9IDEKCiMjIENMSUVOVCBUTFMgU0VUVElOR1MgIyMKY2xpZW50X3Rsc19zc2xtb2RlID0gcHJlZmVyCmNsaWVudF90bHNfY2lwaGVycyA9IG5vcm1hbApjbGllbnRfdGxzX2tleV9maWxlID0gL2hvbWUvcGdib3VuY2VyL2dlbmVyYXRlZC1jZXJ0cy9jbGllbnQua2V5CmNsaWVudF90bHNfY2VydF9maWxlID0gL2hvbWUvcGdib3VuY2VyL2dlbmVyYXRlZC1jZXJ0cy9jbGllbnQuY3J0CgojIyBTRVJWRVIgVExTIFNFVFRJTkdTICMjCnNlcnZlcl90bHNfc3NsbW9kZSA9IHByZWZlcgpzZXJ2ZXJfdGxzX2NpcGhlcnMgPSBub3JtYWw=
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: pgbouncer
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-pgbouncer
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+data:
+  webserver_config.py: aW1wb3J0IG9zCmZyb20gdHlwaW5nIGltcG9ydCBBbnksIFVuaW9uCgpmcm9tIGFpcmZsb3cud3d3LnNlY3VyaXR5IGltcG9ydCBBaXJmbG93U2VjdXJpdHlNYW5hZ2VyCmZyb20gZmxhc2tfYXBwYnVpbGRlci5zZWN1cml0eS5tYW5hZ2VyIGltcG9ydCBBVVRIX09BVVRICgoKY2xhc3MgS2V5Y2xvYWtBdXRob3JpemVyKEFpcmZsb3dTZWN1cml0eU1hbmFnZXIpOgogICAgZGVmIGdldF9vYXV0aF91c2VyX2luZm8oCiAgICAgICAgc2VsZiwgcHJvdmlkZXI6IHN0ciwgcmVzcDogQW55CiAgICApIC0+IGRpY3Rbc3RyLCBVbmlvbltzdHIsIGxpc3Rbc3RyXV1dOgogICAgICAgIG1lID0gc2VsZi5hcHBidWlsZGVyLnNtLm9hdXRoX3JlbW90ZXNbcHJvdmlkZXJdLmdldCgib3BlbmlkLWNvbm5lY3QvdXNlcmluZm8iKQogICAgICAgIG1lLnJhaXNlX2Zvcl9zdGF0dXMoKQogICAgICAgIGRhdGEgPSBtZS5qc29uKCkKICAgICAgICBwYXlsb2FkID0gewogICAgICAgICAgICAiZmlyc3RfbmFtZSI6IGRhdGEuZ2V0KCJnaXZlbl9uYW1lIiwgIiIpLAogICAgICAgICAgICAibGFzdF9uYW1lIjogZGF0YS5nZXQoImZhbWlseV9uYW1lIiwgIiIpLAogICAgICAgICAgICAiZW1haWwiOiBkYXRhLmdldCgiZW1haWwiLCAiIiksCiAgICAgICAgICAgICJuYW1lIjogZGF0YS5nZXQoIm5hbWUiLCAiIiksCiAgICAgICAgICAgICJ1c2VybmFtZSI6IGRhdGEuZ2V0KCJwcmVmZXJyZWRfdXNlcm5hbWUiLCAiIiksCiAgICAgICAgICAgICJyb2xlX2tleXMiOiBkYXRhLmdldCgicm9sZXMiLCBbXSksCiAgICAgICAgfQogICAgICAgIHByaW50KHBheWxvYWQpCiAgICAgICAgcmV0dXJuIHBheWxvYWQKCgpBVVRIX1RZUEUgPSBBVVRIX09BVVRICgpBVVRIX1JPTEVTX01BUFBJTkcgPSB7CiAgICAiYWRtaW4iOiBbIkFkbWluIl0sCiAgICAicHVibGljIjogWyJQdWJsaWMiXSwKICAgICJ2aWV3ZXIiOiBbIlZpZXdlciJdLAogICAgInVzZXIiOiBbIlVzZXIiXSwKICAgICJvcCI6IFsiT3AiXSwKfQoKQVVUSF9ST0xFU19TWU5DX0FUX0xPR0lOID0gVHJ1ZQpBVVRIX1VTRVJfUkVHSVNUUkFUSU9OID0gVHJ1ZQoKT0FVVEhfUFJPVklERVJTID0gWwogICAgewogICAgICAgICJuYW1lIjogImtleWNsb2FrIiwKICAgICAgICAiaWNvbiI6ICJmYS1rZXkiLAogICAgICAgICJ0b2tlbl9rZXkiOiAiYWNjZXNzX3Rva2VuIiwKICAgICAgICAicmVtb3RlX2FwcCI6IHsKICAgICAgICAgICAgImFwaV9iYXNlX3VybCI6IG9zLmVudmlyb25bIkFVVEhfS0VZQ0xPQUtfQVBJX0JBU0VfVVJMIl0sCiAgICAgICAgICAgICJjbGllbnRfa3dhcmdzIjogeyJzY29wZSI6IG9zLmVudmlyb25bIkFVVEhfS0VZQ0xPQUtfU0NPUEUiXX0sCiAgICAgICAgICAgICJyZXF1ZXN0X3Rva2VuX3VybCI6IE5vbmUsCiAgICAgICAgICAgICJhY2Nlc3NfdG9rZW5fdXJsIjogb3MuZW52aXJvblsiQVVUSF9LRVlDTE9BS19BQ0NFU1NfVE9LRU5fVVJMIl0sCiAgICAgICAgICAgICJhdXRob3JpemVfdXJsIjogb3MuZW52aXJvblsiQVVUSF9LRVlDTE9BS19BVVRIT1JJWkVfVVJMIl0sCiAgICAgICAgICAgICJqd2tzX3VyaSI6IG9zLmVudmlyb25bIkFVVEhfS0VZQ0xPQUtfSldLU19VUkwiXSwKICAgICAgICAgICAgImNsaWVudF9pZCI6IG9zLmVudmlyb25bIkFVVEhfS0VZQ0xPQUtfQ0xJRU5UX0lEIl0sCiAgICAgICAgICAgICJjbGllbnRfc2VjcmV0Ijogb3MuZW52aXJvblsiQVVUSF9LRVlDTE9BS19DTElFTlRfU0VDUkVUIl0sCiAgICAgICAgICAgICJhaXJmbG93X2Jhc2VfdXJsIjogb3MuZW52aXJvblsiQVVUSF9LRVlDTE9BS19BSVJGTE9XX0JBU0VfVVJMIl0sCiAgICAgICAgfSwKICAgIH0KXQoKU0VDVVJJVFlfTUFOQUdFUl9DTEFTUyA9IEtleWNsb2FrQXV0aG9yaXplcgo=
+kind: Secret
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-webserver-config
+  namespace: deeppharmgraph
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dpg-datastore-primary
+  namespace: deeppharmgraph
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 7878
+  selector:
+    app.kubernetes.io/name: oxigraph-primary
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: pgbouncer
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-pgbouncer
+  namespace: deeppharmgraph
+spec:
+  ports:
+  - name: pgbouncer
+    port: 6432
+    protocol: TCP
+  selector:
+    app: airflow
+    component: pgbouncer
+    release: dpg-processing-airflow
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: web
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-web
+  namespace: deeppharmgraph
+spec:
+  ports:
+  - name: web
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: airflow
+    component: web
+    release: dpg-processing-airflow
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: oxigraph-primary-pvc
+  namespace: deeppharmgraph
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 32Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: db-migrations
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-db-migrations
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: db-migrations
+      release: dpg-processing-airflow
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        checksum/db-migrations-script: 37898f38b90abd06081105d992362ec9e0d0015123b69e758e59031a9e6ddfc9
+        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: db-migrations
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - python
+        - -u
+        - /mnt/scripts/db_migrations.py
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: db-migrations
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+        - mountPath: /mnt/scripts
+          name: scripts
+          readOnly: true
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+      - name: scripts
+        secret:
+          secretName: dpg-processing-airflow-db-migrations
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: pgbouncer
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-pgbouncer
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: pgbouncer
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      annotations:
+        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-pgbouncer: 4e9f8069d3409019804aa33f690710e2b9e381ea88a829a848b20d8ee46fba38
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: pgbouncer
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - |-
+          /home/pgbouncer/config/gen_self_signed_cert.sh && \
+          /home/pgbouncer/config/gen_auth_file.sh && \
+          exec pgbouncer /home/pgbouncer/config/pgbouncer.ini
+        command:
+        - /usr/bin/dumb-init
+        - --rewrite=15:2
+        - --
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: ghcr.io/airflow-helm/pgbouncer:1.18.0-patch.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - psql $(eval $DATABASE_PSQL_CMD) --tuples-only --command="SELECT 1;"
+              | grep -q "1"
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          timeoutSeconds: 60
+        name: pgbouncer
+        ports:
+        - containerPort: 6432
+          name: pgbouncer
+          protocol: TCP
+        resources: {}
+        securityContext:
+          runAsGroup: 1001
+          runAsUser: 1001
+        startupProbe:
+          failureThreshold: 30
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          tcpSocket:
+            port: 6432
+          timeoutSeconds: 15
+        volumeMounts:
+        - mountPath: /home/pgbouncer/config
+          name: pgbouncer-config
+          readOnly: true
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      terminationGracePeriodSeconds: 120
+      tolerations: []
+      volumes:
+      - name: pgbouncer-config
+        secret:
+          items:
+          - key: gen_auth_file.sh
+            mode: 493
+            path: gen_auth_file.sh
+          - key: gen_self_signed_cert.sh
+            mode: 493
+            path: gen_self_signed_cert.sh
+          - key: pgbouncer.ini
+            path: pgbouncer.ini
+          secretName: dpg-processing-airflow-pgbouncer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: scheduler
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-scheduler
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: scheduler
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config-pod-template: 7eb8c18e40789e086be46f5739e74888c5c7f69c149ab70dd2d4dde3b6d1a4c3
+        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: scheduler
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow scheduler -n -1
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/dumb-init
+            - --
+            - /entrypoint
+            - python
+            - -Wignore
+            - -c
+            - |
+              import os
+              import sys
+
+              # suppress logs triggered from importing airflow packages
+              os.environ["AIRFLOW__LOGGING__LOGGING_LEVEL"] = "ERROR"
+
+              # shared imports
+              try:
+                  from airflow.jobs.job import Job
+              except ImportError:
+                  # `BaseJob` was renamed to `Job` in airflow 2.6.0
+                  from airflow.jobs.base_job import BaseJob as Job
+              from airflow.utils.db import create_session
+              from airflow.utils.net import get_hostname
+
+              # heartbeat check imports
+              try:
+                  from airflow.jobs.scheduler_job_runner import SchedulerJobRunner
+              except ImportError:
+                  # `SchedulerJob` is wrapped by `SchedulerJobRunner` since airflow 2.6.0
+                  from airflow.jobs.scheduler_job import SchedulerJob as SchedulerJobRunner
+
+              with create_session() as session:
+                  ########################
+                  # heartbeat check
+                  ########################
+                  # ensure the SchedulerJob with most recent heartbeat for this `hostname` is alive
+                  hostname = get_hostname()
+                  scheduler_job = session \
+                      .query(Job) \
+                      .filter_by(job_type=SchedulerJobRunner.job_type) \
+                      .filter_by(hostname=hostname) \
+                      .order_by(Job.latest_heartbeat.desc()) \
+                      .limit(1) \
+                      .first()
+                  if (scheduler_job is not None) and scheduler_job.is_alive():
+                      pass
+                  else:
+                      sys.exit(f"The SchedulerJob (id={scheduler_job.id}) for hostname '{hostname}' is not alive")
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 60
+        name: airflow-scheduler
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+        - mountPath: /opt/airflow/pod_templates/pod_template.yaml
+          name: pod-template
+          readOnly: true
+          subPath: pod_template.yaml
+      - args:
+        - bash
+        - -c
+        - |
+          set -euo pipefail
+
+          # break the infinite loop when we receive SIGINT or SIGTERM
+          trap "exit 0" SIGINT SIGTERM
+
+          while true; do
+            START_EPOCH=$(date --utc +%s)
+            echo "[$(date --utc +%FT%T.%3N)] deleting log files older than $RETENTION_MINUTES minutes..."
+
+            # delete all writable files ending in ".log" with modified-time older than $RETENTION_MINUTES
+            # NOTE: `-printf "."` prints a "." for each deleted file, which we count the bytes of with `wc -c`
+            DELETED_COUNT=$(
+              find "$LOG_PATH" \
+                -type f \
+                -name "*.log" \
+                -mmin +"$RETENTION_MINUTES" \
+                -writable \
+                -delete \
+                -printf "." \
+              | wc -c
+            )
+
+            END_EPOCH=$(date --utc +%s)
+            LOOP_DURATION=$((END_EPOCH - START_EPOCH))
+            echo "[$(date --utc +%FT%T.%3N)] deleted $DELETED_COUNT files in $LOOP_DURATION seconds"
+
+            SECONDS_TO_SLEEP=$((INTERVAL_SECONDS - LOOP_DURATION))
+            if (( SECONDS_TO_SLEEP > 0 )); then
+              echo "[$(date --utc +%FT%T.%3N)] waiting $SECONDS_TO_SLEEP seconds..."
+              sleep $SECONDS_TO_SLEEP
+            fi
+          done
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: LOG_PATH
+          value: /opt/airflow/logs
+        - name: RETENTION_MINUTES
+          value: "21600"
+        - name: INTERVAL_SECONDS
+          value: "900"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: log-cleanup
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+      - configMap:
+          name: dpg-processing-airflow-pod-template
+        name: pod-template
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: triggerer
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-triggerer
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: triggerer
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: triggerer
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow triggerer
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/dumb-init
+            - --
+            - /entrypoint
+            - python
+            - -Wignore
+            - -c
+            - |
+              import os
+              import sys
+
+              # suppress logs triggered from importing airflow packages
+              os.environ["AIRFLOW__LOGGING__LOGGING_LEVEL"] = "ERROR"
+
+              # shared imports
+              try:
+                  from airflow.jobs.job import Job
+              except ImportError:
+                  # `BaseJob` was renamed to `Job` in airflow 2.6.0
+                  from airflow.jobs.base_job import BaseJob as Job
+              from airflow.utils.db import create_session
+              from airflow.utils.net import get_hostname
+
+              # heartbeat check imports
+              try:
+                  from airflow.jobs.triggerer_job_runner import TriggererJobRunner
+              except ImportError:
+                  # `TriggererJob` is wrapped by `TriggererJobRunner` since airflow 2.6.0
+                  from airflow.jobs.triggerer_job import TriggererJob as TriggererJobRunner
+
+              with create_session() as session:
+                  # ensure the TriggererJob with most recent heartbeat for this `hostname` is alive
+                  hostname = get_hostname()
+                  triggerer_job = session \
+                      .query(Job) \
+                      .filter_by(job_type=TriggererJobRunner.job_type) \
+                      .filter_by(hostname=hostname) \
+                      .order_by(Job.latest_heartbeat.desc()) \
+                      .limit(1) \
+                      .first()
+                  if (triggerer_job is not None) and triggerer_job.is_alive():
+                      pass
+                  else:
+                      sys.exit(f"The TriggererJob (id={triggerer_job.id}) for hostname '{hostname}' is not alive")
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 60
+        name: airflow-triggerer
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: airflow
+    chart: airflow-8.8.0
+    component: web
+    heritage: Helm
+    release: dpg-processing-airflow
+  name: dpg-processing-airflow-web
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: web
+      release: dpg-processing-airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config-webserver-config: 0c55e7421113d4db2812f65670e5c92075d1884fb1099f0bf7695e7e88af9824
+        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: airflow
+        component: web
+        release: dpg-processing-airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow webserver
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /health
+            port: web
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: airflow-web
+        ports:
+        - containerPort: 8080
+          name: web
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /health
+            port: web
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+        - mountPath: /opt/airflow/webserver_config.py
+          name: webserver-config
+          readOnly: true
+          subPath: webserver_config.py
+      initContainers:
+      - args:
+        - bash
+        - -c
+        - exec timeout 60s airflow db check
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: check-db
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      - args:
+        - bash
+        - -c
+        - exec airflow db check-migrations -t 60
+        command:
+        - /usr/bin/dumb-init
+        - --
+        - /entrypoint
+        env:
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: airflow-postgres-app
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: airflow-postgres-app
+        - name: CONNECTION_CHECK_MAX_COUNT
+          value: "0"
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__CORE__FERNET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__WEBSERVER__SECRET_KEY
+              name: airflow-env-secret
+        - name: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_API_BASE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_SCOPE
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_SCOPE
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_ACCESS_TOKEN_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_AUTHORIZE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AUTHORIZE_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_JWKS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_JWKS_URL
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_ID
+              name: airflow-env-configmap
+        - name: AUTH_KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEYCLOAK_CLIENT_SECRET
+              name: airflow-env-secret
+        - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        envFrom:
+        - secretRef:
+            name: dpg-processing-airflow-config-envs
+        image: apache/airflow:2.6.3-python3.9
+        imagePullPolicy: IfNotPresent
+        name: wait-for-db-migrations
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 50000
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs-data
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+      serviceAccountName: dpg-processing-airflow
+      tolerations: []
+      volumes:
+      - emptyDir: {}
+        name: logs-data
+      - name: webserver-config
+        secret:
+          defaultMode: 420
+          secretName: dpg-processing-airflow-webserver-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: oxigraph-primary
+  name: oxigraph-primary
+  namespace: deeppharmgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oxigraph-primary
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oxigraph-primary
+    spec:
+      containers:
+      - args:
+        - serve
+        - --location
+        - /data
+        - --bind
+        - 0.0.0.0:7878
+        image: ghcr.io/oxigraph/oxigraph:0.4.0-alpha.3
+        name: oxigraph
+        ports:
+        - containerPort: 7878
+        volumeMounts:
+        - mountPath: /data
+          name: oxigraph-data
+      volumes:
+      - name: oxigraph-data
+        persistentVolumeClaim:
+          claimName: oxigraph-primary-pvc
+      - emptyDir: {}
+        name: busybox
+---
+apiVersion: client.keycloak.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: airflow-role-mapper
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    clientIdRef:
+      name: dpg-airflow-client
+    config:
+      access.token.claim: "true"
+      claim.name: roles
+      multivalued: "true"
+      userinfo.token.claim: "true"
+    name: role-mapper
+    protocol: openid-connect
+    protocolMapper: oidc-usermodel-client-role-mapper
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: http-datastore
+  namespace: deeppharmgraph
+spec:
+  hostnames:
+  - dpg-datastore.dev.lan.shamrock.systems
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: eg
+    namespace: envoy-gateway-system
+  rules:
+  - backendRefs:
+    - name: dpg-datastore-primary
+      port: 80
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: http-processing-webserver
+  namespace: deeppharmgraph
+spec:
+  hostnames:
+  - dpg-processing.dev.lan.shamrock.systems
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: eg
+    namespace: envoy-gateway-system
+  rules:
+  - backendRefs:
+    - name: dpg-processing-airflow-web
+      port: 8080
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-admin-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowAdmin
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-op-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowOp
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-public-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowPublic
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-user-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowUser
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: airflow-viewer-group
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    name: AirflowViewer
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Memberships
+metadata:
+  name: airflow-admin-membership
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-admin-group
+    members:
+    - admin
+    realmId: deeppharmgraph
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-admin-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-admin-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+    - name: airflow-admin
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-op-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-op-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+    - name: airflow-op
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-public-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-public-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+    - name: airflow-public
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-user-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-user-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+    - name: airflow-user
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-viewer-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-viewer-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+    - name: airflow-viewer
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: dpg-airflow-client
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    accessType: CONFIDENTIAL
+    clientId: application-airflow
+    clientSecretSecretRef:
+      key: AUTH_KEYCLOAK_CLIENT_SECRET
+      name: airflow-env-secret
+      namespace: deeppharmgraph
+    realmId: deeppharmgraph
+    standardFlowEnabled: true
+    validRedirectUris:
+    - http://dpg-processing.dev.lan.shamrock.systems/oauth-authorized/keycloak
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: airflow-postgres
+  namespace: deeppharmgraph
+spec:
+  instances: 1
+  storage:
+    size: 16Gi
+---
+apiVersion: realm.keycloak.crossplane.io/v1alpha1
+kind: Realm
+metadata:
+  name: dpg-keycloak-realm
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    displayName: DeepPharmGraph Barrier
+    displayNameHtml: <div class="kc-logo-text"><span>DeepPharmGraph Barrier</span></div>
+    enabled: true
+    realm: deeppharmgraph
+    registrationAllowed: false
+    registrationEmailAsUsername: false
+    rememberMe: true
+    resetPasswordAllowed: true
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: user.keycloak.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: dpg-admin
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    email: example@example.com
+    emailVerified: true
+    firstName: John
+    initialPassword:
+    - temporary: false
+      valueSecretRef:
+        key: password
+        name: dpg-admin-secret
+        namespace: deeppharmgraph
+    lastName: Doe
+    realmId: deeppharmgraph
+    username: admin
+  providerConfigRef:
+    name: keycloak-config

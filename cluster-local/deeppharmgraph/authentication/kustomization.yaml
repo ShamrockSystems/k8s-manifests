@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ./realm.yaml
+  - ./client.yaml
+  - ./secret.admin.yaml
+  - ./role.yaml
+  - ./protocolmapper.yaml
+  - ./user.yaml
+  - ./group.yaml
+  - ./membership.yaml
+  - ./roles.group.yaml

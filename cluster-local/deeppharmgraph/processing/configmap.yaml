@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airflow-env-configmap
+  namespace: deeppharmgraph
+data:
+  AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "true"
+  AUTH_KEYCLOAK_API_BASE_URL: "http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/"
+  AUTH_KEYCLOAK_SCOPE: "openid"
+  AUTH_KEYCLOAK_ACCESS_TOKEN_URL: "http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/token"
+  AUTH_KEYCLOAK_AUTHORIZE_URL: "http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/auth"
+  AUTH_KEYCLOAK_JWKS_URL: "http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/certs"
+  AUTH_KEYCLOAK_CLIENT_ID: "application-airflow"
+  AUTH_KEYCLOAK_AIRFLOW_BASE_URL: "http://dpg-processing.dev.lan.shamrock.systems/"

@@ -1,0 +1,74 @@
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-admin-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-admin-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+      - name: airflow-admin
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-public-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-public-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+      - name: airflow-public
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-viewer-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-viewer-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+      - name: airflow-viewer
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-user-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-user-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+      - name: airflow-user
+  providerConfigRef:
+    name: keycloak-config
+---
+apiVersion: group.keycloak.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: airflow-op-group-roles
+  namespace: deeppharmgraph
+spec:
+  forProvider:
+    groupIdRef:
+      name: airflow-op-group
+    realmId: deeppharmgraph
+    roleIdsRefs:
+      - name: airflow-op
+  providerConfigRef:
+    name: keycloak-config

@@ -1,0 +1,20 @@
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: dpg-airflow-client
+  namespace: deeppharmgraph
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    accessType: CONFIDENTIAL
+    clientId: application-airflow
+    clientSecretSecretRef:
+      key: AUTH_KEYCLOAK_CLIENT_SECRET
+      name: airflow-env-secret
+      namespace: deeppharmgraph
+    realmId: deeppharmgraph
+    standardFlowEnabled: true
+    validRedirectUris:
+      - http://dpg-processing.dev.lan.shamrock.systems/oauth-authorized/keycloak
+  providerConfigRef:
+    name: keycloak-config

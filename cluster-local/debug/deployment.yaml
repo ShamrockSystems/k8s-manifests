@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curl-debug
+  namespace: default
+  labels:
+    app.kubernetes.io/name: curl-debug
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: curl-debug
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: curl-debug
+    spec:
+      containers:
+        - name: curl
+          image: quay.io/curl/curl:latest
+          command: ["sleep"]
+          args: ["infinity"]
