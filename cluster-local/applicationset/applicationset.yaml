@@ -29,6 +29,9 @@ spec:
           prune: true
   templatePatch: |
     {{- if ne .path.basename "keycloak" }}
+    metadata:
+      annotations:
+        argocd.argoproj.io/compare-options: ServerSideDiff=true
     spec:
       syncPolicy:
         syncOptions:

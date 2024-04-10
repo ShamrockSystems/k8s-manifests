@@ -1,4 +1,5 @@
 import logging
+import subprocess
 import sys
 import time
 from io import BytesIO
@@ -19,6 +20,7 @@ from kustomanager.meta import (
     LOG_HASH,
     LOG_HASH_NAME,
 )
+from kustomanager.template import j2_env
 from kustomanager.util import normalize_line_endings
 
 TIMESTAMP = int(time.time())
@@ -28,6 +30,7 @@ logger = logging.getLogger("cli")
 def main():
     cli.add_command(add)
     cli.add_command(build)
+    cli.add_command(localdev)
     cli()
 
 
@@ -141,6 +144,34 @@ def build():
         lockfile["builds"].append(mismatched_build)
 
     save_lockfile(yaml, lockfile)
+
+
+@click.command()
+def localdev():
+    k3d_template = j2_env.get_template("cluster-local.localgen.yaml.j2")
+    with open("cluster-local.localgen.yaml", "w", encoding="utf-8") as f:
+        f.write(k3d_template.render(repo_path=str(Path.cwd().absolute())))
+    args: list[str] = [
+        "k3d",
+        "cluster",
+        "create",
+        "--config",
+        "cluster-local.localgen.yaml",
+    ]
+    logger.debug(f"Running {args}")
+    result = subprocess.run(
+        args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding="utf-8",
+        text=True,
+        universal_newlines=True,
+    )
+    if result.returncode != 0:
+        logger.error(result.stderr)
+        raise ChildProcessError
+    if len(result.stderr):
+        logger.warn(result.stderr)
 
 
 def load_lockfile(yaml: YAML) -> tuple[Any, dict]:

@@ -3,15 +3,9 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from jinja2 import Environment, PackageLoader, select_autoescape
+from kustomanager.template import j2_env
 
 logger = logging.getLogger("builder")
-
-j2_env = Environment(
-    loader=PackageLoader("kustomanager"),
-    autoescape=select_autoescape(),
-    keep_trailing_newline=True,
-)
 
 
 def build_from_source(kustomization_directory: Path, target_directory: Path):
