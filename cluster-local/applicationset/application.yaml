@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kustomanager
+  namespace: argocd
+spec:
+  destination:
+    name: in-cluster
+  project: kustomanager
+  source:
+    repoURL: file:///mnt/argo-cd-manifests
+    targetRevision: HEAD
+    path: cluster-local/applicationset
+  syncPolicy:
+    syncOptions:
+      - ServerSideApply=true
+    automated:
+      prune: true

@@ -1,0 +1,11 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-keycloak
+  namespace: crossplane-system
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-keycloak:v0.11.0
+  runtimeConfigRef:
+    apiVersion: pkg.crossplane.io/v1beta1
+    kind: DeploymentRuntimeConfig
+    name: keycloak-runtime-config

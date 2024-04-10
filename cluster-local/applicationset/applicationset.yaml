@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kustomanager
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: file:///mnt/argo-cd-manifests
+        revision: HEAD
+        directories:
+          - path: builds/local/*
+  template:
+    metadata:
+      name: '{{ index .path.segments 1 }}-{{.path.basename}}'
+      namespace: argocd
+    spec:
+      project: "kustomanager"
+      source:
+        repoURL: file:///mnt/argo-cd-manifests
+        targetRevision: HEAD
+        path: '{{.path.path}}'
+      destination:
+        name: in-cluster
+      syncPolicy:
+        automated:
+          prune: true
+  templatePatch: |
+    {{- if ne .path.basename "keycloak" }}
+    spec:
+      syncPolicy:
+        syncOptions:
+          - ServerSideApply=true
+    {{- end }}

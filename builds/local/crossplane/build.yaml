@@ -1,0 +1,945 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: crossplane-system
+  name: crossplane-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane
+  namespace: crossplane-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: rbac-manager
+  namespace: crossplane-system
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.crossplane.io/aggregate-to-crossplane: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.crossplane.io/aggregate-to-admin: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane-admin
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.crossplane.io/aggregate-to-browse: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane-browse
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.crossplane.io/aggregate-to-edit: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane-edit
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane-rbac-manager
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - namespaces/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - apiextensions.crossplane.io
+  resources:
+  - compositeresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.crossplane.io
+  resources:
+  - compositeresourcedefinitions/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - pkg.crossplane.io
+  resources:
+  - providerrevisions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - pkg.crossplane.io
+  resources:
+  - providerrevisions/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  - roles
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - escalate
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  verbs:
+  - bind
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  - coordination.k8s.io
+  resources:
+  - configmaps
+  - leases
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - watch
+  - delete
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.crossplane.io/aggregate-to-view: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane-view
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+    rbac.crossplane.io/aggregate-to-admin: "true"
+  name: crossplane:aggregate-to-admin
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - namespaces
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  - roles
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - rolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - apiextensions.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - pkg.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+    rbac.crossplane.io/aggregate-to-browse: "true"
+  name: crossplane:aggregate-to-browse
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+    rbac.crossplane.io/aggregate-to-edit: "true"
+  name: crossplane:aggregate-to-edit
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - pkg.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+    rbac.crossplane.io/aggregate-to-view: "true"
+  name: crossplane:aggregate-to-view
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - pkg.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.crossplane.io/aggregate-to-allowed-provider-permissions: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane:allowed-provider-permissions
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    crossplane.io/scope: system
+    helm.sh/chart: crossplane-1.15.0
+    rbac.crossplane.io/aggregate-to-crossplane: "true"
+  name: crossplane:system:aggregate-to-crossplane
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  - customresourcedefinitions/status
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  - services
+  verbs:
+  - '*'
+- apiGroups:
+  - apiextensions.crossplane.io
+  - pkg.crossplane.io
+  - secrets.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - extensions
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - ""
+  - coordination.k8s.io
+  resources:
+  - configmaps
+  - leases
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - watch
+  - delete
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  - mutatingwebhookconfigurations
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - watch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: crossplane
+subjects:
+- kind: ServiceAccount
+  name: crossplane
+  namespace: crossplane-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: crossplane-admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: crossplane:masters
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+  name: crossplane-rbac-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: crossplane-rbac-manager
+subjects:
+- kind: ServiceAccount
+  name: rbac-manager
+  namespace: crossplane-system
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: crossplane-root-ca
+  namespace: crossplane-system
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: crossplane-tls-client
+  namespace: crossplane-system
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: crossplane-tls-server
+  namespace: crossplane-system
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+    release: crossplane
+  name: crossplane-webhooks
+  namespace: crossplane-system
+spec:
+  ports:
+  - port: 9443
+    protocol: TCP
+    targetPort: 9443
+  selector:
+    app: crossplane
+    release: crossplane
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+    release: crossplane
+  name: crossplane
+  namespace: crossplane-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crossplane
+      release: crossplane
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: crossplane
+        app.kubernetes.io/component: cloud-infrastructure-controller
+        app.kubernetes.io/instance: crossplane
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: crossplane
+        app.kubernetes.io/part-of: crossplane
+        app.kubernetes.io/version: 1.15.0
+        helm.sh/chart: crossplane-1.15.0
+        release: crossplane
+    spec:
+      containers:
+      - args:
+        - core
+        - start
+        env:
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              containerName: crossplane
+              divisor: "1"
+              resource: limits.cpu
+        - name: GOMEMLIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: crossplane
+              divisor: "1"
+              resource: limits.memory
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        - name: LEADER_ELECTION
+          value: "true"
+        - name: TLS_SERVER_SECRET_NAME
+          value: crossplane-tls-server
+        - name: TLS_SERVER_CERTS_DIR
+          value: /tls/server
+        - name: TLS_CLIENT_SECRET_NAME
+          value: crossplane-tls-client
+        - name: TLS_CLIENT_CERTS_DIR
+          value: /tls/client
+        image: xpkg.upbound.io/crossplane/crossplane:v1.15.0
+        imagePullPolicy: IfNotPresent
+        name: crossplane
+        ports:
+        - containerPort: 8081
+          name: readyz
+        - containerPort: 9443
+          name: webhooks
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsUser: 65532
+        startupProbe:
+          failureThreshold: 30
+          periodSeconds: 2
+          tcpSocket:
+            port: readyz
+        volumeMounts:
+        - mountPath: /cache
+          name: package-cache
+        - mountPath: /tls/server
+          name: tls-server-certs
+        - mountPath: /tls/client
+          name: tls-client-certs
+      hostNetwork: false
+      initContainers:
+      - args:
+        - core
+        - init
+        env:
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              containerName: crossplane-init
+              divisor: "1"
+              resource: limits.cpu
+        - name: GOMEMLIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: crossplane-init
+              divisor: "1"
+              resource: limits.memory
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        - name: WEBHOOK_SERVICE_NAME
+          value: crossplane-webhooks
+        - name: WEBHOOK_SERVICE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: WEBHOOK_SERVICE_PORT
+          value: "9443"
+        - name: TLS_CA_SECRET_NAME
+          value: crossplane-root-ca
+        - name: TLS_SERVER_SECRET_NAME
+          value: crossplane-tls-server
+        - name: TLS_CLIENT_SECRET_NAME
+          value: crossplane-tls-client
+        image: xpkg.upbound.io/crossplane/crossplane:v1.15.0
+        imagePullPolicy: IfNotPresent
+        name: crossplane-init
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsUser: 65532
+      serviceAccountName: crossplane
+      volumes:
+      - emptyDir:
+          medium: null
+          sizeLimit: 20Mi
+        name: package-cache
+      - name: tls-server-certs
+        secret:
+          secretName: crossplane-tls-server
+      - name: tls-client-certs
+        secret:
+          secretName: crossplane-tls-client
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: crossplane-rbac-manager
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.15.0
+    helm.sh/chart: crossplane-1.15.0
+    release: crossplane
+  name: crossplane-rbac-manager
+  namespace: crossplane-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crossplane-rbac-manager
+      release: crossplane
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: crossplane-rbac-manager
+        app.kubernetes.io/component: cloud-infrastructure-controller
+        app.kubernetes.io/instance: crossplane
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: crossplane
+        app.kubernetes.io/part-of: crossplane
+        app.kubernetes.io/version: 1.15.0
+        helm.sh/chart: crossplane-1.15.0
+        release: crossplane
+    spec:
+      containers:
+      - args:
+        - rbac
+        - start
+        - --provider-clusterrole=crossplane:allowed-provider-permissions
+        env:
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              containerName: crossplane
+              resource: limits.cpu
+        - name: GOMEMLIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: crossplane
+              resource: limits.memory
+        - name: LEADER_ELECTION
+          value: "true"
+        image: xpkg.upbound.io/crossplane/crossplane:v1.15.0
+        imagePullPolicy: IfNotPresent
+        name: crossplane
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsUser: 65532
+      initContainers:
+      - args:
+        - rbac
+        - init
+        env:
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              containerName: crossplane-init
+              resource: limits.cpu
+        - name: GOMEMLIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: crossplane-init
+              resource: limits.memory
+        image: xpkg.upbound.io/crossplane/crossplane:v1.15.0
+        imagePullPolicy: IfNotPresent
+        name: crossplane-init
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsUser: 65532
+      serviceAccountName: rbac-manager

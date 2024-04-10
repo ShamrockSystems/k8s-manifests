@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-repo-server
+spec:
+  template:
+    spec:
+      containers:
+        - name: argocd-repo-server
+          volumeMounts:
+            - mountPath: '/mnt/argo-cd-manifests'
+              name: local-git-repo
+              readOnly: true
+      volumes:
+        - name: local-git-repo
+          hostPath:
+            path: '/mnt/argo-cd-manifests'
+            type: Directory

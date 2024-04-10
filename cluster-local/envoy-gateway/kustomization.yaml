@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - https://github.com/envoyproxy/gateway/releases/download/v1.0.1/install.yaml
+
+patches:
+  - target:
+      kind: Job
+      name: eg-gateway-helm-certgen
+      namespace: envoy-gateway-system
+    patch: |- # See: https://github.com/argoproj/argo-cd/issues/6880
+      - op: remove
+        path: /spec/ttlSecondsAfterFinished

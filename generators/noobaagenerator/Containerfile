@@ -1,0 +1,20 @@
+FROM quay.io/curl/curl:8.6.0 as get
+
+USER root
+
+ARG YQ_VERSION=v4.40.7
+ARG YQ_BINARY=yq_linux_amd64
+ARG NOOBAA_OPERATOR_VERSION=v5.15.1
+ARG NOOBAA_OPERATOR_ARCHIVE=noobaa-operator-${NOOBAA_OPERATOR_VERSION}-linux-amd64.tar.gz
+
+RUN curl -L "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ_BINARY}" -o /yq
+RUN curl -L "https://github.com/noobaa/noobaa-operator/releases/download/${NOOBAA_OPERATOR_VERSION}/${NOOBAA_OPERATOR_ARCHIVE}" -o /noobaa-archive
+RUN tar -xvf /noobaa-archive -C /
+
+FROM docker.io/bash:5
+
+COPY --chmod=755 --from=get /yq /usr/bin/yq
+COPY --chmod=755 --from=get /noobaa-operator /usr/bin/noobaa
+COPY --chmod=755 entrypoint.sh /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "" ]

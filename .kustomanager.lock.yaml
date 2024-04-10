@@ -13,6 +13,10 @@ clusters:
     directory: ./cluster-metal
     destination:
       server: https://kubernetes.default.svc
+  - name: local
+    directory: ./cluster-local
+    destination:
+      name: in-cluster
 
 # The directory where ApplicationSet resources are generated and managed
 applicationsetDir: ./applicationsets
@@ -230,15 +234,6 @@ builds:
     buildPath: builds/in-cluster/kubernetes-dashboard
     cluster: in-cluster
     name: kubernetes-dashboard
-  - timestamp: 1709522345
-    sourceHash: a94df23c0711afc39bf446ef7dd71766056fa8f43281f8751be03b2ff6a0edb2
-    sourceHashType: sha256
-    sourcePath: cluster-metal/argocd
-    buildHash: ed8c7f7b10d9d54d2991376a532d5a88502df76da510619bb4c9cb4e33264dbd
-    buildHashType: sha256
-    buildPath: builds/in-cluster/argocd
-    cluster: in-cluster
-    name: argocd
   - timestamp: 1709854206
     sourceHash: a6f5111ee47b78d988320c0801ab89e459d4971cd581d9b03ae481d23c8a6307
     sourceHashType: sha256
@@ -293,3 +288,102 @@ builds:
     buildPath: builds/in-cluster/cilium
     cluster: in-cluster
     name: cilium
+  - timestamp: 1712718351
+    sourceHash: c37ef69c36a748b1546d6eaf546e26e113d92c828e63d3672ffbffbc97c91197
+    sourceHashType: sha256
+    sourcePath: cluster-local/cloudnative-pg
+    buildHash: bf290692a9b4bd425a7d2a8f8dd3099f927024d0c825d88257d54d56faea7ed0
+    buildHashType: sha256
+    buildPath: builds/local/cloudnative-pg
+    cluster: local
+    name: cloudnative-pg
+  - timestamp: 1712721476
+    sourceHash: c36e5197d6fa977de1fafb8514c09607ade69ef17dcdd2269d8bb66b1c8396d7
+    sourceHashType: sha256
+    sourcePath: cluster-local/redis-operator
+    buildHash: 27e305bcec61dcc3a1fd9c2550236ad0c9d1446ca40fd9c3182aa7153f098e5f
+    buildHashType: sha256
+    buildPath: builds/local/redis-operator
+    cluster: local
+    name: redis-operator
+  - timestamp: 1712722146
+    sourceHash: d352e802b46172f06055ee775ec23e35cef85bd091ab1a3ad9726e5ad63db3c4
+    sourceHashType: sha256
+    sourcePath: cluster-local/envoy-gateway
+    buildHash: 9d7525ff614758e858480a7c4612dfba6c04a5b0fdd85c2810a0380199a429ba
+    buildHashType: sha256
+    buildPath: builds/local/envoy-gateway
+    cluster: local
+    name: envoy-gateway
+  - timestamp: 1712726930
+    sourceHash: 49220044e13ac3331bc71d1c8f89e259a6e06e28e91ea5fbfee04b19180a2553
+    sourceHashType: sha256
+    sourcePath: cluster-local/gateway
+    buildHash: 43abbc46f72ebc492d64cc9a05b6c4a8c4c3d6b10fd8d034eb882ff013b63f85
+    buildHashType: sha256
+    buildPath: builds/local/gateway
+    cluster: local
+    name: gateway
+  - timestamp: 1712730633
+    sourceHash: 815f480149e9a731078d454932eeb489dd248d564e3821ce8c5b39745f85828c
+    sourceHashType: sha256
+    sourcePath: cluster-local/noobaa
+    buildHash: 8f4bb2636f3f33a92eefa8452c34aa76732f5fe0810d8d8f09409ac900c68b6d
+    buildHashType: sha256
+    buildPath: builds/local/noobaa
+    cluster: local
+    name: noobaa
+  - timestamp: 1712731487
+    sourceHash: 97beec5fb6851a8fb2114c3c7dd7519cbb4fd5ca06bf826e7cfc05808f75bfe6
+    sourceHashType: sha256
+    sourcePath: cluster-local/reflector
+    buildHash: ad096c7f5e6b2f5cd466f38bff90c551eee6a3af0839652b2ccbcc695a4def71
+    buildHashType: sha256
+    buildPath: builds/local/reflector
+    cluster: local
+    name: reflector
+  - timestamp: 1712731495
+    sourceHash: 24569d9e7e97c298c282a2373d643b0de84684c72598299faa3caace16da797c
+    sourceHashType: sha256
+    sourcePath: cluster-local/crossplane
+    buildHash: 9fb85898d80950c708d3d46845cd6b6c0481d429c19f5f440fcfc8cf49af0756
+    buildHashType: sha256
+    buildPath: builds/local/crossplane
+    cluster: local
+    name: crossplane
+  - timestamp: 1712732160
+    sourceHash: 0485e2af8727ea81e44258a1ac2f66f3cd0c8fc3cd9785ca65536453c7a83aa4
+    sourceHashType: sha256
+    sourcePath: cluster-local/keycloak-provider
+    buildHash: cef1acc572dc9bbef1d420951a4790b0ef0fed79c7a4543eeea71a4db262163d
+    buildHashType: sha256
+    buildPath: builds/local/keycloak-provider
+    cluster: local
+    name: keycloak-provider
+  - timestamp: 1712733412
+    sourceHash: a94df23c0711afc39bf446ef7dd71766056fa8f43281f8751be03b2ff6a0edb2
+    sourceHashType: sha256
+    sourcePath: cluster-metal/argocd
+    buildHash: ed8c7f7b10d9d54d2991376a532d5a88502df76da510619bb4c9cb4e33264dbd
+    buildHashType: sha256
+    buildPath: builds/in-cluster/argocd
+    cluster: in-cluster
+    name: argocd
+  - timestamp: 1712733461
+    sourceHash: 297e1c519318064b1e7153c6a9757030b92fbec07fb66e360ad0e77384ceb969
+    sourceHashType: sha256
+    sourcePath: cluster-local/argocd
+    buildHash: 7972e8ffd639f7a1ab9b60e6ae271eb85c16275da9efec0c8e1a0a6cd08b7dbb
+    buildHashType: sha256
+    buildPath: builds/local/argocd
+    cluster: local
+    name: argocd
+  - timestamp: 1712733843
+    sourceHash: 412870b42f20fb711df278bd8cd23f6ec21e0565546db63cd8bd61b638ce4c22
+    sourceHashType: sha256
+    sourcePath: cluster-local/keycloak
+    buildHash: d574e3b130aa52da336642ac185de1eb338c3e865a046994b8d47d73b8434190
+    buildHashType: sha256
+    buildPath: builds/local/keycloak
+    cluster: local
+    name: keycloak

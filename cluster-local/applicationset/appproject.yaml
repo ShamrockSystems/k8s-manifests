@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: kustomanager
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Kustomanager-managed Project
+  sourceRepos:
+    - file:///mnt/argo-cd-manifests
+  destinations:
+    - name: in-cluster
+      namespace: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"

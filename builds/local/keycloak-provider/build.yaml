@@ -1,0 +1,36 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-keycloak
+  namespace: crossplane-system
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-keycloak:v0.11.0
+  runtimeConfigRef:
+    apiVersion: pkg.crossplane.io/v1beta1
+    kind: DeploymentRuntimeConfig
+    name: keycloak-runtime-config
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: keycloak-runtime-config
+spec:
+  deploymentTemplate:
+    spec:
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: keycloak-provider
+      template:
+        spec:
+          containers:
+          - env:
+            - name: PROVIDER_CREDENTIALS
+              value: |
+                {
+                  "client_id": "crossplane",
+                  "url": "https://auth.shamrock.systems",
+                  "realm": "master"
+                }
+            - name: KEYCLOAK_CLIENT_SECRET
+              value: ShamroclLocalDevSecret
+            name: package-runtime

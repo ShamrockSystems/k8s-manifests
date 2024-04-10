@@ -1,0 +1,16 @@
+apiVersion: kustomize.shamrock.systems/v1alpha1
+kind: NoobaaGenerator
+metadata:
+  name: noobaa-generator
+  annotations:
+    # language=YAML
+    config.kubernetes.io/function: |
+      container:
+        image: ghcr.io/shamrocksystems/noobaagenerator:latest
+    config.kubernetes.io/local-config: "true"
+spec:
+  installArgs:
+    - --noobaa-image
+    - docker.io/noobaa/noobaa-core:5.15.1
+    - --operator-image
+    - docker.io/noobaa/noobaa-operator:5.15.1
