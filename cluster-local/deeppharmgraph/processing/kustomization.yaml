@@ -5,6 +5,8 @@ namespace: deeppharmgraph
 
 resources:
   - ./secret.airflow.yaml
+  - ./persistentvolumeclaim.yaml
+  - ./persistentvolume.yaml
   - ./configmap.yaml
   - ./cluster.postgres.yaml
   - ./httproute.yaml

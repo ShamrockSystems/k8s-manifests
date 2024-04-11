@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: dags-host-ro
+  namespace: deeppharmgraph
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 32Gi
+  accessModes:
+    - ReadOnlyMany
+  hostPath:
+    path: "/mnt/dpg-airflow-dags"
+  claimRef:
+    name: dags-host-ro
+    namespace: deeppharmgraph

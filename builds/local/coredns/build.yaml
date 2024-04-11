@@ -1,7 +1,7 @@
 apiVersion: v1
 data:
   keycloak.override: |
-    rewrite name substring id.dev.lan.shamrock.systems keycloak.keycloak.svc.cluster.local
+    rewrite name id.dev.lan.shamrock.systems keycloak.keycloak.svc.cluster.local
 kind: ConfigMap
 metadata:
   name: coredns-custom

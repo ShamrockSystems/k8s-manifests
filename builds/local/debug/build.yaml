@@ -22,3 +22,28 @@ spec:
         - sleep
         image: quay.io/curl/curl:latest
         name: curl
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: swiss-army-knife
+  name: swiss-army-knife
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: swiss-army-knife
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: swiss-army-knife
+    spec:
+      containers:
+      - args:
+        - infinity
+        command:
+        - sleep
+        image: docker.io/rancherlabs/swiss-army-knife:latest
+        name: swiss-army-knife

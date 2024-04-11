@@ -20,6 +20,8 @@ volumes:
   - # Argo CD manifests
     volume: {{ repo_path -}}:/mnt/argo-cd-manifests:Z
     nodeFilters: ["server:*"]
+  - # DeepPharmGraph Airflow DAGs
+    volume: {{ repo_path -}}/cluster-local/deeppharmgraph/volumes/dags:/mnt/dpg-airflow-dags:Z
 ports:
   - # Envoy Gateway
     port: 80:30000

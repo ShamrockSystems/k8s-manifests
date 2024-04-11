@@ -10,7 +10,7 @@ airflow:
   ##
   image:
     repository: apache/airflow
-    tag: 2.6.3-python3.9
+    tag: 2.9.0-python3.12
     pullPolicy: IfNotPresent
     pullSecret: ""
     uid: 50000
@@ -1443,11 +1443,11 @@ dags:
   persistence:
     ## if a persistent volume is mounted at `dags.path`
     ##
-    enabled: false
+    enabled: true
 
     ## the name of an existing PVC to use
     ##
-    existingClaim: ""
+    existingClaim: dags-host-ro
 
     ## sub-path under `dags.persistence.existingClaim` to use
     ##

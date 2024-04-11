@@ -165,7 +165,7 @@ data:
     \ restartPolicy: Never\n  serviceAccountName: dpg-processing-airflow\n  shareProcessNamespace:
     false\n  nodeSelector:\n    {}\n  affinity:\n    {}\n  tolerations:\n    []\n
     \ securityContext:\n    fsGroup: 0\n  containers:\n    - name: base      \n      image:
-    apache/airflow:2.6.3-python3.9\n      imagePullPolicy: IfNotPresent\n      securityContext:\n
+    apache/airflow:2.9.0-python3.12\n      imagePullPolicy: IfNotPresent\n      securityContext:\n
     \       runAsUser: 50000\n        runAsGroup: 0\n      envFrom:        \n        -
     secretRef:\n            name: dpg-processing-airflow-config-envs\n      env:\n
     \       ## KubernetesExecutor Pods use LocalExecutor internally\n        - name:
@@ -197,8 +197,10 @@ data:
     \       - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL\n          valueFrom:\n            configMapKeyRef:\n
     \             key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL\n              name: airflow-env-configmap\n
     \     ports: []\n      command: []\n      args: []\n      volumeMounts:        \n
-    \       - name: logs-data\n          mountPath: /opt/airflow/logs\n  volumes:
-    \   \n    - name: logs-data\n      emptyDir: {}"
+    \       - name: dags-data\n          mountPath: /opt/airflow/dags\n          subPath:
+    \n          readOnly: true\n        - name: logs-data\n          mountPath: /opt/airflow/logs\n
+    \ volumes:    \n    - name: dags-data\n      persistentVolumeClaim:\n        claimName:
+    dags-host-ro\n    - name: logs-data\n      emptyDir: {}"
 kind: ConfigMap
 metadata:
   labels:
@@ -237,11 +239,11 @@ data:
   AIRFLOW__KUBERNETES__NAMESPACE: ZGVlcHBoYXJtZ3JhcGg=
   AIRFLOW__KUBERNETES__POD_TEMPLATE_FILE: L29wdC9haXJmbG93L3BvZF90ZW1wbGF0ZXMvcG9kX3RlbXBsYXRlLnlhbWw=
   AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: YXBhY2hlL2FpcmZsb3c=
-  AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: Mi42LjMtcHl0aG9uMy45
+  AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: Mi45LjAtcHl0aG9uMy4xMg==
   AIRFLOW__KUBERNETES_EXECUTOR__NAMESPACE: ZGVlcHBoYXJtZ3JhcGg=
   AIRFLOW__KUBERNETES_EXECUTOR__POD_TEMPLATE_FILE: L29wdC9haXJmbG93L3BvZF90ZW1wbGF0ZXMvcG9kX3RlbXBsYXRlLnlhbWw=
   AIRFLOW__KUBERNETES_EXECUTOR__WORKER_CONTAINER_REPOSITORY: YXBhY2hlL2FpcmZsb3c=
-  AIRFLOW__KUBERNETES_EXECUTOR__WORKER_CONTAINER_TAG: Mi42LjMtcHl0aG9uMy45
+  AIRFLOW__KUBERNETES_EXECUTOR__WORKER_CONTAINER_TAG: Mi45LjAtcHl0aG9uMy4xMg==
   AIRFLOW__LOGGING__BASE_LOG_FOLDER: L29wdC9haXJmbG93L2xvZ3M=
   AIRFLOW__LOGGING__DAG_PROCESSOR_MANAGER_LOG_LOCATION: L29wdC9haXJmbG93L2xvZ3MvZGFnX3Byb2Nlc3Nvcl9tYW5hZ2VyL2RhZ19wcm9jZXNzb3JfbWFuYWdlci5sb2c=
   AIRFLOW__SCHEDULER__CHILD_PROCESS_LOG_DIRECTORY: L29wdC9haXJmbG93L2xvZ3Mvc2NoZWR1bGVy
@@ -372,6 +374,36 @@ spec:
   type: ClusterIP
 ---
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: dags-host-ro
+  namespace: deeppharmgraph
+spec:
+  accessModes:
+  - ReadOnlyMany
+  capacity:
+    storage: 32Gi
+  claimRef:
+    name: dags-host-ro
+    namespace: deeppharmgraph
+  hostPath:
+    path: /mnt/dpg-airflow-dags
+  storageClassName: manual
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dags-host-ro
+  namespace: deeppharmgraph
+spec:
+  accessModes:
+  - ReadOnlyMany
+  resources:
+    requests:
+      storage: 32Gi
+  storageClassName: manual
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: oxigraph-primary-pvc
@@ -407,7 +439,7 @@ spec:
     metadata:
       annotations:
         checksum/db-migrations-script: 37898f38b90abd06081105d992362ec9e0d0015123b69e758e59031a9e6ddfc9
-        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-config-envs: b97e1127143b9c7c9756f703c02cedbde03f5a1f73469252328f12bac3302511
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -496,7 +528,7 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: db-migrations
         resources: {}
@@ -504,6 +536,10 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
         - mountPath: /mnt/scripts
@@ -589,13 +625,17 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: check-db
         securityContext:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -605,6 +645,9 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - name: dags-data
+        persistentVolumeClaim:
+          claimName: dags-host-ro
       - emptyDir: {}
         name: logs-data
       - name: scripts
@@ -636,7 +679,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-config-envs: b97e1127143b9c7c9756f703c02cedbde03f5a1f73469252328f12bac3302511
         checksum/secret-pgbouncer: 4e9f8069d3409019804aa33f690710e2b9e381ea88a829a848b20d8ee46fba38
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -808,8 +851,8 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config-pod-template: 7eb8c18e40789e086be46f5739e74888c5c7f69c149ab70dd2d4dde3b6d1a4c3
-        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/config-pod-template: 4cd9fceb9b151deeb9528c515955367f3ca201b8f21a18a26dc10902f2859369
+        checksum/secret-config-envs: b97e1127143b9c7c9756f703c02cedbde03f5a1f73469252328f12bac3302511
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -898,7 +941,7 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -959,6 +1002,10 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
         - mountPath: /opt/airflow/pod_templates/pod_template.yaml
@@ -1082,7 +1129,7 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: log-cleanup
         resources: {}
@@ -1172,13 +1219,17 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: check-db
         securityContext:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
       - args:
@@ -1260,13 +1311,17 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-db-migrations
         securityContext:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -1276,6 +1331,9 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - name: dags-data
+        persistentVolumeClaim:
+          claimName: dags-host-ro
       - emptyDir: {}
         name: logs-data
       - configMap:
@@ -1308,7 +1366,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-config-envs: b97e1127143b9c7c9756f703c02cedbde03f5a1f73469252328f12bac3302511
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -1397,7 +1455,7 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -1455,6 +1513,10 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
       initContainers:
@@ -1537,13 +1599,17 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: check-db
         securityContext:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
       - args:
@@ -1625,13 +1691,17 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-db-migrations
         securityContext:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -1641,6 +1711,9 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - name: dags-data
+        persistentVolumeClaim:
+          claimName: dags-host-ro
       - emptyDir: {}
         name: logs-data
 ---
@@ -1671,7 +1744,7 @@ spec:
     metadata:
       annotations:
         checksum/config-webserver-config: 0c55e7421113d4db2812f65670e5c92075d1884fb1099f0bf7695e7e88af9824
-        checksum/secret-config-envs: 858f363428dd71df9353344009e3328775b49a39540c4652c12f6310419f5d51
+        checksum/secret-config-envs: b97e1127143b9c7c9756f703c02cedbde03f5a1f73469252328f12bac3302511
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
@@ -1760,7 +1833,7 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6
@@ -1790,6 +1863,10 @@ spec:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
         - mountPath: /opt/airflow/webserver_config.py
@@ -1876,13 +1953,17 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: check-db
         securityContext:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
       - args:
@@ -1964,13 +2045,17 @@ spec:
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
-        image: apache/airflow:2.6.3-python3.9
+        image: apache/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-db-migrations
         securityContext:
           runAsGroup: 0
           runAsUser: 50000
         volumeMounts:
+        - mountPath: /opt/airflow/dags
+          name: dags-data
+          readOnly: true
+          subPath: null
         - mountPath: /opt/airflow/logs
           name: logs-data
       nodeSelector: {}
@@ -1980,6 +2065,9 @@ spec:
       serviceAccountName: dpg-processing-airflow
       tolerations: []
       volumes:
+      - name: dags-data
+        persistentVolumeClaim:
+          claimName: dags-host-ro
       - emptyDir: {}
         name: logs-data
       - name: webserver-config
