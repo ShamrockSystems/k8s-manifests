@@ -3907,6 +3907,7 @@ spec:
   cleanupPolicy: {}
   dbImage: quay.io/sclorg/postgresql-15-c9s
   dbType: postgres
+  disableLoadBalancerService: true
   image: docker.io/noobaa/noobaa-core:5.15.1
   loadBalancerSourceSubnets: {}
   security:

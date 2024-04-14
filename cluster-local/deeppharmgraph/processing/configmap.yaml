@@ -12,3 +12,6 @@ data:
   AUTH_KEYCLOAK_JWKS_URL: "http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/certs"
   AUTH_KEYCLOAK_CLIENT_ID: "application-airflow"
   AUTH_KEYCLOAK_AIRFLOW_BASE_URL: "http://dpg-processing.dev.lan.shamrock.systems/"
+  AIRFLOW__CORE__XCOM_BACKEND: "airflow.providers.common.io.xcom.backend.XComObjectStoreBackend"
+  AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD: "1048576"
+  AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION: "gzip"

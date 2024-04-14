@@ -3,3 +3,8 @@ kind: Kustomization
 
 generators:
   - ./noobaagenerator.yaml
+
+resources: []
+## ON HOLD! Restore once COSI support is readded to noobaa
+#  - ./bucketclass.yaml
+#  - ./bucketaccessclass.yaml

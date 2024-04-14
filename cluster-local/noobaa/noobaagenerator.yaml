@@ -10,7 +10,8 @@ metadata:
     config.kubernetes.io/local-config: "true"
 spec:
   installArgs:
-    - --noobaa-image
-    - docker.io/noobaa/noobaa-core:5.15.1
-    - --operator-image
-    - docker.io/noobaa/noobaa-operator:5.15.1
+    - "--namespace=noobaa"
+    - "--admission=true"
+    - "--disable-load-balancer=true"
+    - "--noobaa-image=docker.io/noobaa/noobaa-core:5.15.1"
+    - "--operator-image=docker.io/noobaa/noobaa-operator:5.15.1"

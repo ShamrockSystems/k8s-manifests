@@ -1,0 +1,14 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: xcom-bucket-secret-transformer
+  namespace: deeppharmgraph
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["dpg-processing-xcom-transformed"]
+    verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["dpg-processing-xcom"]
+    verbs: ["*"]

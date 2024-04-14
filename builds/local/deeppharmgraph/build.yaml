@@ -16,6 +16,12 @@ metadata:
   name: dpg-processing-airflow
   namespace: deeppharmgraph
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: xcom-bucket-secret-transformer
+  namespace: deeppharmgraph
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -59,6 +65,29 @@ rules:
   verbs:
   - create
   - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: xcom-bucket-secret-transformer
+  namespace: deeppharmgraph
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - dpg-processing-xcom-transformed
+  resources:
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resourceNames:
+  - dpg-processing-xcom
+  resources:
+  - configmaps
+  verbs:
+  - '*'
 ---
 apiVersion: role.keycloak.crossplane.io/v1alpha1
 kind: Role
@@ -144,8 +173,25 @@ subjects:
   name: dpg-processing-airflow
   namespace: deeppharmgraph
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: xcom-bucket-secret-transformer
+  namespace: deeppharmgraph
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: xcom-bucket-secret-transformer
+subjects:
+- kind: ServiceAccount
+  name: xcom-bucket-secret-transformer
+  namespace: deeppharmgraph
+---
 apiVersion: v1
 data:
+  AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION: gzip
+  AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD: "1048576"
+  AIRFLOW__CORE__XCOM_BACKEND: airflow.providers.common.io.xcom.backend.XComObjectStoreBackend
   AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "true"
   AUTH_KEYCLOAK_ACCESS_TOKEN_URL: http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/token
   AUTH_KEYCLOAK_AIRFLOW_BASE_URL: http://dpg-processing.dev.lan.shamrock.systems/
@@ -196,11 +242,26 @@ data:
     \             key: AUTH_KEYCLOAK_CLIENT_SECRET\n              name: airflow-env-secret\n
     \       - name: AUTH_KEYCLOAK_AIRFLOW_BASE_URL\n          valueFrom:\n            configMapKeyRef:\n
     \             key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL\n              name: airflow-env-configmap\n
-    \     ports: []\n      command: []\n      args: []\n      volumeMounts:        \n
-    \       - name: dags-data\n          mountPath: /opt/airflow/dags\n          subPath:
-    \n          readOnly: true\n        - name: logs-data\n          mountPath: /opt/airflow/logs\n
-    \ volumes:    \n    - name: dags-data\n      persistentVolumeClaim:\n        claimName:
-    dags-host-ro\n    - name: logs-data\n      emptyDir: {}"
+    \       - name: AWS_ACCESS_KEY_ID\n          valueFrom:\n            secretKeyRef:\n
+    \             key: AWS_ACCESS_KEY_ID\n              name: dpg-processing-xcom\n
+    \       - name: AWS_SECRET_ACCESS_KEY\n          valueFrom:\n            secretKeyRef:\n
+    \             key: AWS_SECRET_ACCESS_KEY\n              name: dpg-processing-xcom\n
+    \       - name: AWS_ENDPOINT_URL\n          valueFrom:\n            secretKeyRef:\n
+    \             key: AWS_ENDPOINT_URL\n              name: dpg-processing-xcom-transformed\n
+    \       - name: AIRFLOW__CORE__XCOM_BACKEND\n          valueFrom:\n            configMapKeyRef:\n
+    \             key: AIRFLOW__CORE__XCOM_BACKEND\n              name: airflow-env-configmap\n
+    \       - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH\n          valueFrom:\n
+    \           secretKeyRef:\n              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH\n
+    \             name: dpg-processing-xcom-transformed\n        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD\n
+    \         valueFrom:\n            configMapKeyRef:\n              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD\n
+    \             name: airflow-env-configmap\n        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION\n
+    \         valueFrom:\n            configMapKeyRef:\n              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION\n
+    \             name: airflow-env-configmap\n      ports: []\n      command: []\n
+    \     args: []\n      volumeMounts:        \n        - name: dags-data\n          mountPath:
+    /opt/airflow/dags\n          subPath: \n          readOnly: true\n        - name:
+    logs-data\n          mountPath: /opt/airflow/logs\n  volumes:    \n    - name:
+    dags-data\n      persistentVolumeClaim:\n        claimName: dags-host-ro\n    -
+    name: logs-data\n      emptyDir: {}"
 kind: ConfigMap
 metadata:
   labels:
@@ -525,6 +586,41 @@ spec:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
               name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -621,6 +717,41 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
               name: airflow-env-configmap
         envFrom:
         - secretRef:
@@ -768,6 +899,41 @@ spec:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
               name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -851,7 +1017,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config-pod-template: 4cd9fceb9b151deeb9528c515955367f3ca201b8f21a18a26dc10902f2859369
+        checksum/config-pod-template: 2536bb2579407a010bf532eae583886d6aa60e015f168679a240a6431736fad7
         checksum/secret-config-envs: b97e1127143b9c7c9756f703c02cedbde03f5a1f73469252328f12bac3302511
         checksum/secret-local-settings: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
@@ -937,6 +1103,41 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
               name: airflow-env-configmap
         envFrom:
         - secretRef:
@@ -1126,6 +1327,41 @@ spec:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
               name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1215,6 +1451,41 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
               name: airflow-env-configmap
         envFrom:
         - secretRef:
@@ -1307,6 +1578,41 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
               name: airflow-env-configmap
         envFrom:
         - secretRef:
@@ -1452,6 +1758,41 @@ spec:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
               name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1596,6 +1937,41 @@ spec:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
               name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1687,6 +2063,41 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
               name: airflow-env-configmap
         envFrom:
         - secretRef:
@@ -1830,6 +2241,41 @@ spec:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
               name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -1950,6 +2396,41 @@ spec:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
               name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+              name: airflow-env-configmap
         envFrom:
         - secretRef:
             name: dpg-processing-airflow-config-envs
@@ -2041,6 +2522,41 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: AUTH_KEYCLOAK_AIRFLOW_BASE_URL
+              name: airflow-env-configmap
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: dpg-processing-xcom
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: dpg-processing-xcom
+        - name: AWS_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ENDPOINT_URL
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__CORE__XCOM_BACKEND
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__CORE__XCOM_BACKEND
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+          valueFrom:
+            secretKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH
+              name: dpg-processing-xcom-transformed
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD
+              name: airflow-env-configmap
+        - name: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION
               name: airflow-env-configmap
         envFrom:
         - secretRef:
@@ -2335,6 +2851,15 @@ spec:
   providerConfigRef:
     name: keycloak-config
 ---
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: dpg-processing-xcom
+  namespace: deeppharmgraph
+spec:
+  generateBucketName: dpg-processing-xcom
+  storageClassName: noobaa.noobaa.io
+---
 apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
 kind: Client
 metadata:
@@ -2383,6 +2908,33 @@ spec:
     resetPasswordAllowed: true
   providerConfigRef:
     name: keycloak-config
+---
+apiVersion: templates.kluctl.io/v1alpha1
+kind: ObjectTemplate
+metadata:
+  name: xcom-bucket-secret-transformer
+  namespace: deeppharmgraph
+spec:
+  interval: 1m
+  matrix:
+  - name: configmap
+    object:
+      ref:
+        apiVersion: v1
+        kind: ConfigMap
+        name: dpg-processing-xcom
+  prune: true
+  serviceAccountName: xcom-bucket-secret-transformer
+  templates:
+  - object:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: dpg-processing-xcom-transformed
+      stringData:
+        AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH: s3://{{ matrix.configmap.data.BUCKET_NAME
+          }}
+        AWS_ENDPOINT_URL: http://{{ matrix.configmap.data.BUCKET_HOST }}
 ---
 apiVersion: user.keycloak.crossplane.io/v1alpha1
 kind: User

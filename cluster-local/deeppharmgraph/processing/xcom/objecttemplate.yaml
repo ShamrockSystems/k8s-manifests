@@ -1,0 +1,25 @@
+apiVersion: templates.kluctl.io/v1alpha1
+kind: ObjectTemplate
+metadata:
+  name: xcom-bucket-secret-transformer
+  namespace: deeppharmgraph
+spec:
+  serviceAccountName: xcom-bucket-secret-transformer
+  prune: true
+  matrix:
+    - name: configmap
+      object:
+        ref:
+          apiVersion: v1
+          kind: ConfigMap
+          name: dpg-processing-xcom
+  templates:
+    - object:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: "dpg-processing-xcom-transformed"
+        stringData:
+          AWS_ENDPOINT_URL: "http://{{ matrix.configmap.data.BUCKET_HOST }}"
+          AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH: "s3://{{ matrix.configmap.data.BUCKET_NAME }}"
+  interval: "1m"

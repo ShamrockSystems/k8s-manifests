@@ -333,15 +333,6 @@ builds:
     buildPath: builds/local/gateway
     cluster: local
     name: gateway
-  - timestamp: 1712730633
-    sourceHash: 815f480149e9a731078d454932eeb489dd248d564e3821ce8c5b39745f85828c
-    sourceHashType: sha256
-    sourcePath: cluster-local/noobaa
-    buildHash: 8f4bb2636f3f33a92eefa8452c34aa76732f5fe0810d8d8f09409ac900c68b6d
-    buildHashType: sha256
-    buildPath: builds/local/noobaa
-    cluster: local
-    name: noobaa
   - timestamp: 1712731487
     sourceHash: 97beec5fb6851a8fb2114c3c7dd7519cbb4fd5ca06bf826e7cfc05808f75bfe6
     sourceHashType: sha256
@@ -405,15 +396,6 @@ builds:
     buildPath: builds/local/debug
     cluster: local
     name: debug
-  - timestamp: 1712817787
-    sourceHash: 5d88321dc26efe323e7cf38af8a9ec2ae3624d927d85cd6b8bff2c5552315eac
-    sourceHashType: sha256
-    sourcePath: cluster-local/deeppharmgraph
-    buildHash: d2c100c92e935592c2f4d8988fc5e32c1a217faf782cf66287da1c9853140a8d
-    buildHashType: sha256
-    buildPath: builds/local/deeppharmgraph
-    cluster: local
-    name: deeppharmgraph
   - timestamp: 1712819944
     sourceHash: 5ae9fb1e8cf1ab1a909d8bb718eacfc5e1a9c9405c86ef87c37692865e792068
     sourceHashType: sha256
@@ -423,3 +405,30 @@ builds:
     buildPath: builds/local/coredns
     cluster: local
     name: coredns
+  - timestamp: 1713136036
+    sourceHash: 42a214e24339383724147ce88ed5dad6a8cdcf71b4f024f05815b791fbbe1c5d
+    sourceHashType: sha256
+    sourcePath: cluster-local/noobaa
+    buildHash: fdeac70cddf1e4027bc2297d6c251d49c7f3628922f041e118990359f727362c
+    buildHashType: sha256
+    buildPath: builds/local/noobaa
+    cluster: local
+    name: noobaa
+  - timestamp: 1713137615
+    sourceHash: 67b9ca39b700b0b89b1b95eff2deb4b90aa6246212cc229411b4ea000f3e797f
+    sourceHashType: sha256
+    sourcePath: cluster-local/template-controller
+    buildHash: 48ea3e31ff025af27112d3e4b75e613a373d0baf3916d8d850fa22d8c1d92746
+    buildHashType: sha256
+    buildPath: builds/local/template-controller
+    cluster: local
+    name: template-controller
+  - timestamp: 1713143557
+    sourceHash: 745153a0663129f6eeee96a516f673208a7fbe3b27417a0a493399f3e884b61d
+    sourceHashType: sha256
+    sourcePath: cluster-local/deeppharmgraph
+    buildHash: a5537bcd6c29a3bca0aa346df1975e29c98db0b8b4340ce2354b1f012ec2f0c0
+    buildHashType: sha256
+    buildPath: builds/local/deeppharmgraph
+    cluster: local
+    name: deeppharmgraph

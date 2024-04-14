@@ -7,6 +7,7 @@ resources:
   - ./secret.airflow.yaml
   - ./persistentvolumeclaim.yaml
   - ./persistentvolume.yaml
+  - ./xcom
   - ./configmap.yaml
   - ./cluster.postgres.yaml
   - ./httproute.yaml
