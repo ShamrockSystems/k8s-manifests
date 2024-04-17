@@ -1,0 +1,10 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: airflow-postgres-secret-transformer
+  namespace: deeppharmgraph
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["airflow-postgres-app", "airflow-postgres-app-transformed"]
+    verbs: ["*"]

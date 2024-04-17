@@ -396,15 +396,6 @@ builds:
     buildPath: builds/local/debug
     cluster: local
     name: debug
-  - timestamp: 1712819944
-    sourceHash: 5ae9fb1e8cf1ab1a909d8bb718eacfc5e1a9c9405c86ef87c37692865e792068
-    sourceHashType: sha256
-    sourcePath: cluster-local/coredns
-    buildHash: 9069be48999b847d59be9b33245770d9fac88f814b432bcd8f2ba4f1da5d577e
-    buildHashType: sha256
-    buildPath: builds/local/coredns
-    cluster: local
-    name: coredns
   - timestamp: 1713136036
     sourceHash: 42a214e24339383724147ce88ed5dad6a8cdcf71b4f024f05815b791fbbe1c5d
     sourceHashType: sha256
@@ -423,12 +414,21 @@ builds:
     buildPath: builds/local/template-controller
     cluster: local
     name: template-controller
-  - timestamp: 1713143557
-    sourceHash: 745153a0663129f6eeee96a516f673208a7fbe3b27417a0a493399f3e884b61d
+  - timestamp: 1713335508
+    sourceHash: 45e08b7148666eea351ac9f1905a94f88ea29c9e7a957342f7422f0c6e9c18bf
     sourceHashType: sha256
     sourcePath: cluster-local/deeppharmgraph
-    buildHash: a5537bcd6c29a3bca0aa346df1975e29c98db0b8b4340ce2354b1f012ec2f0c0
+    buildHash: 0059622e2739a925341dd0f67821abb656d753dc5b277aee549008d8bf8ce061
     buildHashType: sha256
     buildPath: builds/local/deeppharmgraph
     cluster: local
     name: deeppharmgraph
+  - timestamp: 1713337715
+    sourceHash: c4659c2c067edc519e77e0c54353c5e7c4c9abd5e8bd97c6810414c58c9a21b5
+    sourceHashType: sha256
+    sourcePath: cluster-local/coredns
+    buildHash: 8cd9373b4ed8536f286f7b92294f2caf23060ce82032932c51deeacf3d2fc9c0
+    buildHashType: sha256
+    buildPath: builds/local/coredns
+    cluster: local
+    name: coredns

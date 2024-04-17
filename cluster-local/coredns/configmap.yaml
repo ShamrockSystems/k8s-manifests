@@ -6,3 +6,5 @@ metadata:
 data:
   keycloak.override: |
     rewrite name id.dev.lan.shamrock.systems keycloak.keycloak.svc.cluster.local
+  dpg-airflow.override: |
+    rewrite name dpg-processing.dev.lan.shamrock.systems host.k3d.internal

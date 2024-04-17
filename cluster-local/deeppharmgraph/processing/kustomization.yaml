@@ -4,18 +4,21 @@ kind: Kustomization
 namespace: deeppharmgraph
 
 resources:
-  - ./secret.airflow.yaml
-  - ./persistentvolumeclaim.yaml
-  - ./persistentvolume.yaml
+  - ./postgres
   - ./xcom
-  - ./configmap.yaml
-  - ./cluster.postgres.yaml
+  - ./secret.webserver.yaml
+  - ./secret.fernet.yaml
+  - ./secret.env.yaml
+  - ./configmap.web.yaml
+  - ./configmap.env.yaml
+  - ./persistentvolume.yaml
+  - ./persistentvolumeclaim.yaml
   - ./httproute.yaml
 
 helmCharts:
-  - releaseName: dpg-processing-airflow
+  - releaseName: dpg-airflow
     namespace: deeppharmgraph
     name: airflow
-    repo: https://airflow-helm.github.io/charts
-    version: 8.8.0
+    repo: https://airflow.apache.org
+    version: 1.13.1
     valuesFile: values.airflow.yaml

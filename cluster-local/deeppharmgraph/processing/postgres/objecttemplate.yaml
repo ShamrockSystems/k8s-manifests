@@ -1,0 +1,24 @@
+apiVersion: templates.kluctl.io/v1alpha1
+kind: ObjectTemplate
+metadata:
+  name: airflow-postgres-secret-transformer
+  namespace: deeppharmgraph
+spec:
+  serviceAccountName: airflow-postgres-secret-transformer
+  prune: true
+  matrix:
+    - name: secret
+      object:
+        ref:
+          apiVersion: v1
+          kind: Secret
+          name: airflow-postgres-app
+  templates:
+    - object:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: "airflow-postgres-app-transformed"
+        stringData:
+          connection: "{{ matrix.secret.data.uri | b64decode }}"
+  interval: "1m"

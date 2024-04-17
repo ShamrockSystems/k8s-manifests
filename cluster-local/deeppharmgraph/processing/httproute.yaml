@@ -16,5 +16,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: dpg-processing-airflow-web
+        - name: dpg-airflow-webserver
           port: 8080
