@@ -5,7 +5,7 @@ namespace: deeppharmgraph
 
 resources:
   - ./postgres
-  - ./xcom
+  - ./bucket
   - ./secret.webserver.yaml
   - ./secret.fernet.yaml
   - ./secret.env.yaml

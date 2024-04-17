@@ -1,8 +1,8 @@
 apiVersion: objectbucket.io/v1alpha1
 kind: ObjectBucketClaim
 metadata:
-  name: dpg-processing-xcom
+  name: dpg-processing-bucket
   namespace: deeppharmgraph
 spec:
-  generateBucketName: dpg-processing-xcom
+  generateBucketName: dpg-processing-bucket
   storageClassName: noobaa.noobaa.io

@@ -12,6 +12,12 @@ metadata:
   namespace: deeppharmgraph
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bucket-bucket-secret-transformer
+  namespace: deeppharmgraph
+---
+apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
@@ -102,12 +108,6 @@ metadata:
   name: dpg-airflow-worker
   namespace: deeppharmgraph
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: xcom-bucket-secret-transformer
-  namespace: deeppharmgraph
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -121,6 +121,29 @@ rules:
   - airflow-postgres-app-transformed
   resources:
   - secrets
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: bucket-bucket-secret-transformer
+  namespace: deeppharmgraph
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - dpg-processing-bucket-transformed
+  resources:
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resourceNames:
+  - dpg-processing-bucket
+  resources:
+  - configmaps
   verbs:
   - '*'
 ---
@@ -192,29 +215,6 @@ rules:
   verbs:
   - get
   - list
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: xcom-bucket-secret-transformer
-  namespace: deeppharmgraph
-rules:
-- apiGroups:
-  - ""
-  resourceNames:
-  - dpg-processing-xcom-transformed
-  resources:
-  - secrets
-  verbs:
-  - '*'
-- apiGroups:
-  - ""
-  resourceNames:
-  - dpg-processing-xcom
-  resources:
-  - configmaps
-  verbs:
-  - '*'
 ---
 apiVersion: role.keycloak.crossplane.io/v1alpha1
 kind: Role
@@ -298,6 +298,20 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
+  name: bucket-bucket-secret-transformer
+  namespace: deeppharmgraph
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: bucket-bucket-secret-transformer
+subjects:
+- kind: ServiceAccount
+  name: bucket-bucket-secret-transformer
+  namespace: deeppharmgraph
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
   labels:
     chart: airflow-1.13.1
     heritage: Helm
@@ -339,25 +353,13 @@ subjects:
   name: dpg-airflow-triggerer
   namespace: deeppharmgraph
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: xcom-bucket-secret-transformer
-  namespace: deeppharmgraph
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: xcom-bucket-secret-transformer
-subjects:
-- kind: ServiceAccount
-  name: xcom-bucket-secret-transformer
-  namespace: deeppharmgraph
----
 apiVersion: v1
 data:
   AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_COMPRESSION: gzip
   AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_THRESHOLD: "1048576"
   AIRFLOW__CORE__XCOM_BACKEND: airflow.providers.common.io.xcom.backend.XComObjectStoreBackend
+  AIRFLOW__LOGGING__DELETE_LOCAL_LOGS: "true"
+  AIRFLOW__LOGGING__REMOTE_LOGGING: "true"
   AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "true"
   AUTH_KEYCLOAK_ACCESS_TOKEN_URL: http://id.dev.lan.shamrock.systems/realms/deeppharmgraph/protocol/openid-connect/token
   AUTH_KEYCLOAK_AIRFLOW_BASE_URL: http://dpg-processing.dev.lan.shamrock.systems/
@@ -448,48 +450,52 @@ data:
     = /etc/airflow.keytab\nprincipal = airflow@FOO.COM\nreinit_frequency = 3600\n\n[kubernetes]\nairflow_configmap
     = dpg-airflow-config\nairflow_local_settings_configmap = dpg-airflow-config\nmulti_namespace_mode
     = False\nnamespace = deeppharmgraph\npod_template_file = /opt/airflow/pod_templates/pod_template_file.yaml\nworker_container_repository
-    = apache/airflow\nworker_container_tag = 2.9.0-python3.12\n\n[kubernetes_executor]\nmulti_namespace_mode
-    = False\nnamespace = deeppharmgraph\npod_template_file = /opt/airflow/pod_templates/pod_template_file.yaml\nworker_container_repository
-    = apache/airflow\nworker_container_tag = 2.9.0-python3.12\n\n[logging]\ncolored_console_log
-    = False\nremote_logging = False\n\n[metrics]\nstatsd_host = dpg-airflow-statsd\nstatsd_on
-    = True\nstatsd_port = 9125\nstatsd_prefix = airflow\n\n[scheduler]\nrun_duration
-    = 41460\nstandalone_dag_processor = False\nstatsd_host = dpg-airflow-statsd\nstatsd_on
-    = True\nstatsd_port = 9125\nstatsd_prefix = airflow\n\n[triggerer]\ndefault_capacity
-    = 1000\n\n[webserver]\nenable_proxy_fix = True\nrbac = True"
+    = shamrock-local-registry.localhost:44411/library/airflow\nworker_container_tag
+    = 2.9.0-python3.12\n\n[kubernetes_executor]\nmulti_namespace_mode = False\nnamespace
+    = deeppharmgraph\npod_template_file = /opt/airflow/pod_templates/pod_template_file.yaml\nworker_container_repository
+    = shamrock-local-registry.localhost:44411/library/airflow\nworker_container_tag
+    = 2.9.0-python3.12\n\n[logging]\ncolored_console_log = False\nremote_logging =
+    False\n\n[metrics]\nstatsd_host = dpg-airflow-statsd\nstatsd_on = True\nstatsd_port
+    = 9125\nstatsd_prefix = airflow\n\n[scheduler]\nrun_duration = 41460\nstandalone_dag_processor
+    = False\nstatsd_host = dpg-airflow-statsd\nstatsd_on = True\nstatsd_port = 9125\nstatsd_prefix
+    = airflow\n\n[triggerer]\ndefault_capacity = 1000\n\n[webserver]\nenable_proxy_fix
+    = True\nrbac = True"
   airflow_local_settings.py: ""
   pod_template_file.yaml: "\n---\napiVersion: v1\nkind: Pod\nmetadata:\n  name: placeholder-name\n
     \ labels:\n    tier: airflow\n    component: worker\n    release: dpg-airflow\nspec:\n
     \ containers:\n    - envFrom:      \n        - configMapRef:\n            name:
     airflow-env-configmap\n        - secretRef:\n            name: airflow-env-secret\n
-    \       \n      env:\n        - name: AIRFLOW__CORE__EXECUTOR\n          value:
-    LocalExecutor      \n        # Hard Coded Airflow Envs\n        - name: AIRFLOW__CORE__FERNET_KEY\n
-    \         valueFrom:\n            secretKeyRef:\n              name: airflow-fernet-secret\n
-    \             key: fernet-key\n        - name: AIRFLOW_HOME\n          value:
-    /opt/airflow\n        # For Airflow <2.3, backward compatibility; moved to [database]
-    in 2.3\n        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN\n          valueFrom:\n
-    \           secretKeyRef:\n              name: airflow-postgres-app-transformed\n
-    \             key: connection\n        - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN\n
-    \         valueFrom:\n            secretKeyRef:\n              name: airflow-postgres-app-transformed\n
-    \             key: connection\n        - name: AIRFLOW_CONN_AIRFLOW_DB\n          valueFrom:\n
-    \           secretKeyRef:\n              name: airflow-postgres-app-transformed\n
-    \             key: connection\n        - name: AIRFLOW__WEBSERVER__SECRET_KEY\n
-    \         valueFrom:\n            secretKeyRef:\n              name: airflow-webserver-secret\n
-    \             key: webserver-secret-key      \n        # Dynamically created environment
-    variables\n        # Dynamically created secret envs\n        \n        # Extra
-    env      \n      image: apache/airflow:2.9.0-python3.12\n      imagePullPolicy:
-    IfNotPresent\n      securityContext: \n        allowPrivilegeEscalation: false\n
-    \       capabilities:\n          drop:\n            - ALL\n      name: base\n
-    \     resources:\n        {}\n      volumeMounts:\n        - mountPath: \"/opt/airflow/logs\"\n
-    \         name: logs\n        - name: config\n          mountPath: \"/opt/airflow/airflow.cfg\"\n
-    \         subPath: airflow.cfg\n          readOnly: true\n        - name: config\n
-    \         mountPath: \"/opt/airflow/config/airflow_local_settings.py\"\n          subPath:
-    airflow_local_settings.py\n          readOnly: true\n        - name: dags\n          mountPath:
-    /opt/airflow/dags\n          readOnly: False\n  restartPolicy: Never\n  securityContext:
-    \n    runAsUser: 50000\n    fsGroup: 0\n  nodeSelector:\n    {}\n  affinity:\n
-    \   {}\n  terminationGracePeriodSeconds: 600\n  tolerations:\n    []\n  topologySpreadConstraints:\n
-    \   []\n  serviceAccountName: dpg-airflow-worker\n  volumes:\n  - name: dags\n
-    \   persistentVolumeClaim:\n      claimName: dags-host-ro\n  - emptyDir:\n      {}\n
-    \   name: logs\n  - configMap:\n      name: dpg-airflow-config\n    name: config"
+    \       - secretRef:\n            name: dpg-processing-bucket\n        - secretRef:\n
+    \           name: dpg-processing-bucket-transformed\n        \n      env:\n        -
+    name: AIRFLOW__CORE__EXECUTOR\n          value: LocalExecutor      \n        #
+    Hard Coded Airflow Envs\n        - name: AIRFLOW__CORE__FERNET_KEY\n          valueFrom:\n
+    \           secretKeyRef:\n              name: airflow-fernet-secret\n              key:
+    fernet-key\n        - name: AIRFLOW_HOME\n          value: /opt/airflow\n        #
+    For Airflow <2.3, backward compatibility; moved to [database] in 2.3\n        -
+    name: AIRFLOW__CORE__SQL_ALCHEMY_CONN\n          valueFrom:\n            secretKeyRef:\n
+    \             name: airflow-postgres-app-transformed\n              key: connection\n
+    \       - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN\n          valueFrom:\n            secretKeyRef:\n
+    \             name: airflow-postgres-app-transformed\n              key: connection\n
+    \       - name: AIRFLOW_CONN_AIRFLOW_DB\n          valueFrom:\n            secretKeyRef:\n
+    \             name: airflow-postgres-app-transformed\n              key: connection\n
+    \       - name: AIRFLOW__WEBSERVER__SECRET_KEY\n          valueFrom:\n            secretKeyRef:\n
+    \             name: airflow-webserver-secret\n              key: webserver-secret-key
+    \     \n        # Dynamically created environment variables\n        # Dynamically
+    created secret envs\n        \n        # Extra env      \n      image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12\n
+    \     imagePullPolicy: IfNotPresent\n      securityContext: \n        allowPrivilegeEscalation:
+    false\n        capabilities:\n          drop:\n            - ALL\n      name:
+    base\n      resources:\n        {}\n      volumeMounts:\n        - mountPath:
+    \"/opt/airflow/logs\"\n          name: logs\n        - name: config\n          mountPath:
+    \"/opt/airflow/airflow.cfg\"\n          subPath: airflow.cfg\n          readOnly:
+    true\n        - name: config\n          mountPath: \"/opt/airflow/config/airflow_local_settings.py\"\n
+    \         subPath: airflow_local_settings.py\n          readOnly: true\n        -
+    name: dags\n          mountPath: /opt/airflow/dags\n          readOnly: False\n
+    \ restartPolicy: Never\n  securityContext: \n    runAsUser: 50000\n    fsGroup:
+    0\n  nodeSelector:\n    {}\n  affinity:\n    {}\n  terminationGracePeriodSeconds:
+    600\n  tolerations:\n    []\n  topologySpreadConstraints:\n    []\n  serviceAccountName:
+    dpg-airflow-worker\n  volumes:\n  - name: dags\n    persistentVolumeClaim:\n      claimName:
+    dags-host-ro\n  - emptyDir:\n      {}\n    name: logs\n  - configMap:\n      name:
+    dpg-airflow-config\n    name: config"
 kind: ConfigMap
 metadata:
   labels:
@@ -578,7 +584,7 @@ stringData:
 ---
 apiVersion: v1
 data:
-  connection: cmVkaXM6Ly86dExqamhuSHo3T0BkcGctYWlyZmxvdy1yZWRpczo2Mzc5LzA=
+  connection: cmVkaXM6Ly86Q1RXczRaeFVCOUBkcGctYWlyZmxvdy1yZWRpczo2Mzc5LzA=
 kind: Secret
 metadata:
   annotations:
@@ -628,7 +634,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  password: dExqamhuSHo3Tw==
+  password: Q1RXczRaeFVCOQ==
 kind: Secret
 metadata:
   annotations:
@@ -945,7 +951,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/airflow-config: db4aff7a017233caa0b816a06ab94034182dedf7a40c53baa230b8ab059f3ee2
+        checksum/airflow-config: 6b69b4abaedaf23a1c499a0d86057e68aebdaafd75ed03dd0fc42ddc8783b4e9
         checksum/extra-configmaps: e862ea47e13e634cf17d476323784fa27dac20015550c230953b526182f5cac8
         checksum/extra-secrets: e9582fdd622296c976cbc10a5ba7d6702c28a24fe80795ea5b84ba443a56c827
         checksum/metadata-secret: b2fe937560e9635aeb01fce9100c2f836c5880f81c802565ce95fbcc8a56da4c
@@ -1004,7 +1010,11 @@ spec:
             name: airflow-env-configmap
         - secretRef:
             name: airflow-env-secret
-        image: apache/airflow:2.9.0-python3.12
+        - secretRef:
+            name: dpg-processing-bucket
+        - secretRef:
+            name: dpg-processing-bucket-transformed
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -1066,7 +1076,7 @@ spec:
           value: "15"
         - name: AIRFLOW_HOME
           value: /opt/airflow
-        image: apache/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: scheduler-log-groomer
         resources: {}
@@ -1121,7 +1131,11 @@ spec:
             name: airflow-env-configmap
         - secretRef:
             name: airflow-env-secret
-        image: apache/airflow:2.9.0-python3.12
+        - secretRef:
+            name: dpg-processing-bucket
+        - secretRef:
+            name: dpg-processing-bucket-transformed
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-airflow-migrations
         resources: {}
@@ -1265,7 +1279,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/airflow-config: db4aff7a017233caa0b816a06ab94034182dedf7a40c53baa230b8ab059f3ee2
+        checksum/airflow-config: 6b69b4abaedaf23a1c499a0d86057e68aebdaafd75ed03dd0fc42ddc8783b4e9
         checksum/extra-configmaps: e862ea47e13e634cf17d476323784fa27dac20015550c230953b526182f5cac8
         checksum/extra-secrets: e9582fdd622296c976cbc10a5ba7d6702c28a24fe80795ea5b84ba443a56c827
         checksum/metadata-secret: b2fe937560e9635aeb01fce9100c2f836c5880f81c802565ce95fbcc8a56da4c
@@ -1324,7 +1338,11 @@ spec:
             name: airflow-env-configmap
         - secretRef:
             name: airflow-env-secret
-        image: apache/airflow:2.9.0-python3.12
+        - secretRef:
+            name: dpg-processing-bucket
+        - secretRef:
+            name: dpg-processing-bucket-transformed
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 5
@@ -1418,7 +1436,11 @@ spec:
             name: airflow-env-configmap
         - secretRef:
             name: airflow-env-secret
-        image: apache/airflow:2.9.0-python3.12
+        - secretRef:
+            name: dpg-processing-bucket
+        - secretRef:
+            name: dpg-processing-bucket-transformed
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-airflow-migrations
         resources: {}
@@ -1518,7 +1540,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/airflow-config: db4aff7a017233caa0b816a06ab94034182dedf7a40c53baa230b8ab059f3ee2
+        checksum/airflow-config: 6b69b4abaedaf23a1c499a0d86057e68aebdaafd75ed03dd0fc42ddc8783b4e9
         checksum/extra-configmaps: e862ea47e13e634cf17d476323784fa27dac20015550c230953b526182f5cac8
         checksum/extra-secrets: e9582fdd622296c976cbc10a5ba7d6702c28a24fe80795ea5b84ba443a56c827
         checksum/metadata-secret: b2fe937560e9635aeb01fce9100c2f836c5880f81c802565ce95fbcc8a56da4c
@@ -1576,7 +1598,11 @@ spec:
             name: airflow-env-configmap
         - secretRef:
             name: airflow-env-secret
-        image: apache/airflow:2.9.0-python3.12
+        - secretRef:
+            name: dpg-processing-bucket
+        - secretRef:
+            name: dpg-processing-bucket-transformed
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -1626,7 +1652,7 @@ spec:
           value: "15"
         - name: AIRFLOW_HOME
           value: /opt/airflow
-        image: apache/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: triggerer-log-groomer
         resources: {}
@@ -1681,7 +1707,11 @@ spec:
             name: airflow-env-configmap
         - secretRef:
             name: airflow-env-secret
-        image: apache/airflow:2.9.0-python3.12
+        - secretRef:
+            name: dpg-processing-bucket
+        - secretRef:
+            name: dpg-processing-bucket-transformed
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-airflow-migrations
         resources: {}
@@ -1791,7 +1821,7 @@ spec:
             secretKeyRef:
               key: webserver-secret-key
               name: airflow-webserver-secret
-        image: apache/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: run-airflow-migrations
         resources: {}
@@ -2046,10 +2076,10 @@ spec:
 apiVersion: objectbucket.io/v1alpha1
 kind: ObjectBucketClaim
 metadata:
-  name: dpg-processing-xcom
+  name: dpg-processing-bucket
   namespace: deeppharmgraph
 spec:
-  generateBucketName: dpg-processing-xcom
+  generateBucketName: dpg-processing-bucket
   storageClassName: noobaa.noobaa.io
 ---
 apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
@@ -2129,7 +2159,7 @@ spec:
 apiVersion: templates.kluctl.io/v1alpha1
 kind: ObjectTemplate
 metadata:
-  name: xcom-bucket-secret-transformer
+  name: bucket-bucket-secret-transformer
   namespace: deeppharmgraph
 spec:
   interval: 1m
@@ -2139,18 +2169,20 @@ spec:
       ref:
         apiVersion: v1
         kind: ConfigMap
-        name: dpg-processing-xcom
+        name: dpg-processing-bucket
   prune: true
-  serviceAccountName: xcom-bucket-secret-transformer
+  serviceAccountName: bucket-bucket-secret-transformer
   templates:
   - object:
       apiVersion: v1
       kind: Secret
       metadata:
-        name: dpg-processing-xcom-transformed
+        name: dpg-processing-bucket-transformed
       stringData:
         AIRFLOW__COMMON_IO__XCOM_OBJECTSTORE_PATH: s3://{{ matrix.configmap.data.BUCKET_NAME
-          }}
+          }}/xcom
+        AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER: s3://{{ matrix.configmap.data.BUCKET_NAME
+          }}/logs
         AWS_ENDPOINT_URL: http://{{ matrix.configmap.data.BUCKET_HOST }}
 ---
 apiVersion: user.keycloak.crossplane.io/v1alpha1
