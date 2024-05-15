@@ -20,11 +20,11 @@ status:
       buildHash: 1722b8e27eb6b53bad2562655b51a7bcf518daff983f6ffe7880069f8d187f5f
       buildHashType: sha256
       buildPath: builds/in-cluster/cloudflared
-    - timestamp: "2024-01-17T16:40:16Z"
-      sourceHash: 37a87588e6f0f84159ca797e9bfd6930edf0361e0a71828472aacefa6d3aa895
+    - timestamp: "2024-05-14T21:12:32-05:00"
+      sourceHash: 86fdd4d4ff4abb5175c9313915bf025a9b59359f313c458a4d338f6fffe15679
       sourceHashType: sha256
       sourcePath: cluster-metal/gateway-api
-      buildHash: 4134ec0fb14ef573245ea1087acd5d4c52921a33fc7fe230a95b3c284c930a98
+      buildHash: 86fdd4d4ff4abb5175c9313915bf025a9b59359f313c458a4d338f6fffe15679
       buildHashType: sha256
       buildPath: builds/in-cluster/gateway-api
     - timestamp: "2024-01-17T16:40:26Z"
