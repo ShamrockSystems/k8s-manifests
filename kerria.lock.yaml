@@ -104,11 +104,11 @@ status:
       buildHash: 348ff63e4efd1818d9d2e85ee25bc1bf0536dab9443737135b94684da68e2696
       buildHashType: sha256
       buildPath: builds/in-cluster/rabbitmq-cluster-operator
-    - timestamp: "2024-02-07T10:11:41Z"
-      sourceHash: d122c11416d615d2e8aec6525057d72aa8d6879afeb896aee0d2b8def2ea79db
+    - timestamp: "2024-05-14T21:14:44-05:00"
+      sourceHash: 8f4e056d48edaf80ceb1a7bf201863f1242340d5a7a955e51d8fc63520705f52
       sourceHashType: sha256
       sourcePath: cluster-metal/kured
-      buildHash: e25540f5ea34e3ffaf9eaee33b3cd62878e99fe403f251a9da0efcb0c475a7f5
+      buildHash: 8f4e056d48edaf80ceb1a7bf201863f1242340d5a7a955e51d8fc63520705f52
       buildHashType: sha256
       buildPath: builds/in-cluster/kured
     - timestamp: "2024-02-07T15:34:08Z"
