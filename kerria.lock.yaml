@@ -6,11 +6,11 @@ spec:
   defaultHash: sha256
 status:
   builds:
-    - timestamp: "2024-01-17T16:40:03Z"
-      sourceHash: a9a5b74d0853d19ec0f52fd90fe5245e6640df09f32f045b3085d016248c0745
+    - timestamp: "2024-05-14T21:08:52-05:00"
+      sourceHash: 6d5fdc189f7b076bf193d96f3530d398f8d03eeafd74b250a672092d870340b9
       sourceHashType: sha256
       sourcePath: cluster-metal/cert-manager
-      buildHash: 76541462d2a4ee234f809613add582071a80ec0ae8acf97234ea0754c7aa49e9
+      buildHash: 6d5fdc189f7b076bf193d96f3530d398f8d03eeafd74b250a672092d870340b9
       buildHashType: sha256
       buildPath: builds/in-cluster/cert-manager
     - timestamp: "2024-01-17T16:40:11Z"
