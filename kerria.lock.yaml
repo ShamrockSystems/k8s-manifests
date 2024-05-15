@@ -1,0 +1,337 @@
+apiVersion: kerria.dev/v1alpha1
+kind: Lockfile
+metadata:
+  name: k8s-manifests
+spec:
+  defaultHash: sha256
+status:
+  builds:
+    - timestamp: "2024-01-17T16:40:03Z"
+      sourceHash: a9a5b74d0853d19ec0f52fd90fe5245e6640df09f32f045b3085d016248c0745
+      sourceHashType: sha256
+      sourcePath: cluster-metal/cert-manager
+      buildHash: 76541462d2a4ee234f809613add582071a80ec0ae8acf97234ea0754c7aa49e9
+      buildHashType: sha256
+      buildPath: builds/in-cluster/cert-manager
+    - timestamp: "2024-01-17T16:40:11Z"
+      sourceHash: 910fba04e99536e03e79a53aa61d5c130947911309921222902847569ac4059a
+      sourceHashType: sha256
+      sourcePath: cluster-metal/cloudflared
+      buildHash: 1722b8e27eb6b53bad2562655b51a7bcf518daff983f6ffe7880069f8d187f5f
+      buildHashType: sha256
+      buildPath: builds/in-cluster/cloudflared
+    - timestamp: "2024-01-17T16:40:16Z"
+      sourceHash: 37a87588e6f0f84159ca797e9bfd6930edf0361e0a71828472aacefa6d3aa895
+      sourceHashType: sha256
+      sourcePath: cluster-metal/gateway-api
+      buildHash: 4134ec0fb14ef573245ea1087acd5d4c52921a33fc7fe230a95b3c284c930a98
+      buildHashType: sha256
+      buildPath: builds/in-cluster/gateway-api
+    - timestamp: "2024-01-17T16:40:26Z"
+      sourceHash: f20a39bc9286c25d4070edef0961910929bdff31c6910df816f64bfc8a11b781
+      sourceHashType: sha256
+      sourcePath: cluster-metal/multus
+      buildHash: 8542d7e698a8ad80b5c7c90803c655ef6a268361e1d5b752173018fb57e8de33
+      buildHashType: sha256
+      buildPath: builds/in-cluster/multus
+    - timestamp: "2024-01-17T16:40:29Z"
+      sourceHash: 05770aea3ff45ab3bfab934a524f65c65c93dd3b0256ce71b383c75c157459b5
+      sourceHashType: sha256
+      sourcePath: cluster-metal/rbac
+      buildHash: a2a8a3e21a318fc40ecbdf06a484b22ac58125f51546bd72de5cfb38b6e64c76
+      buildHashType: sha256
+      buildPath: builds/in-cluster/rbac
+    - timestamp: "2024-01-17T16:40:38Z"
+      sourceHash: 037c0eba23ebefeafb1f83eaf62c4296340e6684c65c89e45d81a9f5e8323032
+      sourceHashType: sha256
+      sourcePath: cluster-metal/sealed-secrets
+      buildHash: c0e307e7a6d226329f1b92909195fdb497cae3093f552b90607d06793b1e4d3a
+      buildHashType: sha256
+      buildPath: builds/in-cluster/sealed-secrets
+    - timestamp: "2024-01-17T16:40:43Z"
+      sourceHash: 3f0fc30018c4882ed0c7e754a1e5ad27e62488540e4123d50e0c34f55892d942
+      sourceHashType: sha256
+      sourcePath: cluster-metal/whereabouts
+      buildHash: 4ac71987ab6a2c9558971de96ddadab251be619c2197b2613d702467fba34c06
+      buildHashType: sha256
+      buildPath: builds/in-cluster/whereabouts
+    - timestamp: "2024-01-17T17:56:36Z"
+      sourceHash: 60e39a27724e5fe0f4b9550b2edc88f6a4f32ea5b64b7a4ef2b3e0a388ea6f63
+      sourceHashType: sha256
+      sourcePath: cluster-metal/dpg-meta
+      buildHash: 1a9c9f44f4a26bf2cc6652dd69833ad18fa659a4ba00cdb841f162a85365a333
+      buildHashType: sha256
+      buildPath: builds/in-cluster/dpg-meta
+    - timestamp: "2024-01-24T15:42:05Z"
+      sourceHash: fb840b9f593322451c7e0468dffd7dc7e603cf0783bc27699a96ba72a3fb0b5b
+      sourceHashType: sha256
+      sourcePath: cluster-metal/olm
+      buildHash: 01298f1df96ae31351bc96073fb93c9824ca0df1b23fea9a96c8833f1e48e381
+      buildHashType: sha256
+      buildPath: builds/in-cluster/olm
+    - timestamp: "2024-01-31T08:37:50Z"
+      sourceHash: ca88f03f0903fee9de57ed256c6ae0eb86e23880fc6b5b493837d01791b5d196
+      sourceHashType: sha256
+      sourcePath: cluster-metal/cloudnative-pg
+      buildHash: c32f7fea4e23f1342404b4efced4b18f61b438276829b0283f539e5c6fb28acc
+      buildHashType: sha256
+      buildPath: builds/in-cluster/cloudnative-pg
+    - timestamp: "2024-01-31T10:59:17Z"
+      sourceHash: 7d9c7031bc9d552c2a47d57fbe8c74b4248a7828f3284a243e99164cbc38f223
+      sourceHashType: sha256
+      sourcePath: cluster-metal/redis-operator
+      buildHash: 25aaed3c781bc7c1027ec9fff452823e7aa682b5e1fc7377bad4040a739a0aba
+      buildHashType: sha256
+      buildPath: builds/in-cluster/redis-operator
+    - timestamp: "2024-02-02T07:00:37Z"
+      sourceHash: c7bf3e760c8e441da45a322161959adc5e038f50a28fed0c16c8ed62f5126f85
+      sourceHashType: sha256
+      sourcePath: cluster-metal/grafana-operator
+      buildHash: 026b2b23cbfb324e50f66c6fbed827ee866814f4a0e3b995cc58454fb1ab57f6
+      buildHashType: sha256
+      buildPath: builds/in-cluster/grafana-operator
+    - timestamp: "2024-02-04T00:14:16Z"
+      sourceHash: c64ec258fe25a51bbcf378f4d740c0f3890aac3f85793f94e9a680577c2ee60e
+      sourceHashType: sha256
+      sourcePath: cluster-metal/whoami
+      buildHash: 38dd131f47f61b1d81bb861f5364154ebc5dc3fcc62cfb52b58283f5f634e350
+      buildHashType: sha256
+      buildPath: builds/in-cluster/whoami
+    - timestamp: "2024-02-07T08:33:57Z"
+      sourceHash: db4694f4c00288e5592c7ca926c294c070af5a18322a01f87bcc61977dab9a48
+      sourceHashType: sha256
+      sourcePath: cluster-metal/rabbitmq-cluster-operator
+      buildHash: 348ff63e4efd1818d9d2e85ee25bc1bf0536dab9443737135b94684da68e2696
+      buildHashType: sha256
+      buildPath: builds/in-cluster/rabbitmq-cluster-operator
+    - timestamp: "2024-02-07T10:11:41Z"
+      sourceHash: d122c11416d615d2e8aec6525057d72aa8d6879afeb896aee0d2b8def2ea79db
+      sourceHashType: sha256
+      sourcePath: cluster-metal/kured
+      buildHash: e25540f5ea34e3ffaf9eaee33b3cd62878e99fe403f251a9da0efcb0c475a7f5
+      buildHashType: sha256
+      buildPath: builds/in-cluster/kured
+    - timestamp: "2024-02-07T15:34:08Z"
+      sourceHash: 52f828abbe6a552bdd3b5d6db3fa983629656d05b11be7c66ba9093104a3bd3a
+      sourceHashType: sha256
+      sourcePath: cluster-metal/dpg-datastore
+      buildHash: 5cc31377de418a7c8762b0da42f8c59ce7e8b933dd0949248b7a84116773317c
+      buildHashType: sha256
+      buildPath: builds/in-cluster/dpg-datastore
+    - timestamp: "2024-02-09T13:47:50Z"
+      sourceHash: 173161240d6e38ab402234f949d3a8decce3cf5aa38988fe90207f4dc0053cd5
+      sourceHashType: sha256
+      sourcePath: cluster-metal/grafana
+      buildHash: 84bb0cacff5ecd29e995d7b36a9c9a1fe5d0a296097869cf02e836f285b47cf5
+      buildHashType: sha256
+      buildPath: builds/in-cluster/grafana
+    - timestamp: "2024-02-12T23:20:44Z"
+      sourceHash: 579da69d73171ba580b9e5d39faf796b596814427bdd1c24830e343995751085
+      sourceHashType: sha256
+      sourcePath: cluster-metal/rook
+      buildHash: 88e66a7e4083a2dac9bb668e306bdda7a5d28fe1d4305abb405eba2dc116c481
+      buildHashType: sha256
+      buildPath: builds/in-cluster/rook
+    - timestamp: "2024-02-12T23:30:31Z"
+      sourceHash: 156839e040185285e9079fa98ebac7e1ac7157a0dc24144f6fe21980b55137e1
+      sourceHashType: sha256
+      sourcePath: cluster-metal/kube-prometheus
+      buildHash: 99f69db66bf64b111a774a5a0ce0e4387888f8f484d2bc7ee412997bf17ee870
+      buildHashType: sha256
+      buildPath: builds/in-cluster/kube-prometheus
+    - timestamp: "2024-02-13T01:56:27Z"
+      sourceHash: 841e6668c5e40151e63e2dc29217124c0cf2afc0104c71e49b6a6e08eb7ffb59
+      sourceHashType: sha256
+      sourcePath: cluster-metal/grafana-loki
+      buildHash: 66a438a59ff8b20ceeae7d922608d606df7f4435a66a9e2310637e02e42b4740
+      buildHashType: sha256
+      buildPath: builds/in-cluster/grafana-loki
+    - timestamp: "2024-02-13T17:43:51Z"
+      sourceHash: c0f79783bcf08605916e3ce93a9764904f2ca7faa5599671210ec17e084d2de8
+      sourceHashType: sha256
+      sourcePath: cluster-metal/marin3r
+      buildHash: 1df5177371807ac28f5cb7ff6c8138bfad6727873b86f7b117fb501f0300ad39
+      buildHashType: sha256
+      buildPath: builds/in-cluster/marin3r
+    - timestamp: "2024-02-14T12:15:01Z"
+      sourceHash: ad1ae7c44ff2e4fd623468bcf88d3ada7602142567b5216c12ec055bf11086b0
+      sourceHashType: sha256
+      sourcePath: cluster-metal/dpg-processing
+      buildHash: 0de9e235957f68321f9d00562a1fc3fb074fa49c77d03220e72d6217c76fc0e8
+      buildHashType: sha256
+      buildPath: builds/in-cluster/dpg-processing
+    - timestamp: "2024-03-04T03:19:05Z"
+      sourceHash: a94df23c0711afc39bf446ef7dd71766056fa8f43281f8751be03b2ff6a0edb2
+      sourceHashType: sha256
+      sourcePath: cluster-metal/argocd
+      buildHash: ed8c7f7b10d9d54d2991376a532d5a88502df76da510619bb4c9cb4e33264dbd
+      buildHashType: sha256
+      buildPath: builds/in-cluster/argocd
+    - timestamp: "2024-03-07T23:30:06Z"
+      sourceHash: a6f5111ee47b78d988320c0801ab89e459d4971cd581d9b03ae481d23c8a6307
+      sourceHashType: sha256
+      sourcePath: cluster-metal/crossplane
+      buildHash: 983fa4a6f0ac1417a80f328f20523b5536eb5b868bd440263999e5be63603656
+      buildHashType: sha256
+      buildPath: builds/in-cluster/crossplane
+    - timestamp: "2024-03-08T02:10:27Z"
+      sourceHash: 71f7fe8d9da8cf8ef3425e32122a4d0884c5b81bab1cd8556d7d12fa1c064f67
+      sourceHashType: sha256
+      sourcePath: cluster-metal/reflector
+      buildHash: a2d6c76189185e3cdf3d561f27f827e0351c0c29e05b399807af763789aede70
+      buildHashType: sha256
+      buildPath: builds/in-cluster/reflector
+    - timestamp: "2024-03-08T02:20:54Z"
+      sourceHash: 1836f912ff6b78bdffb5c85f9c9a915623966c28ae9d0887c9d061afa1a378ef
+      sourceHashType: sha256
+      sourcePath: cluster-metal/dpg-authentication
+      buildHash: 59f5c5dcab26e018f6143c05524359e083b6fb078b74ace9680a771ab5611adb
+      buildHashType: sha256
+      buildPath: builds/in-cluster/dpg-authentication
+    - timestamp: "2024-03-17T08:43:48Z"
+      sourceHash: a830d0326e4851c2bb18f306d0b5cf0b7e4f8f82988379cb01a350980286030b
+      sourceHashType: sha256
+      sourcePath: cluster-metal/keycloak
+      buildHash: a06b6f71e255ae24f5920e11e3c5c05df97b21791f35c84a6489e1aaf58e0cf5
+      buildHashType: sha256
+      buildPath: builds/in-cluster/keycloak
+    - timestamp: "2024-03-17T19:38:21Z"
+      sourceHash: 6421a6961e640cded30a9f9043b3c9ca46dc3cfc0c84052690cb6a59e7570471
+      sourceHashType: sha256
+      sourcePath: cluster-metal/immich
+      buildHash: fffb0e63d990429c453e5c95e43ca8ed411b05635dcde53fd904150ee8fe5414
+      buildHashType: sha256
+      buildPath: builds/in-cluster/immich
+    - timestamp: "2024-03-22T03:42:32Z"
+      sourceHash: 70c6521f97ccce8bb294e69d24744a10dea56acdf8934579f694eec351593949
+      sourceHashType: sha256
+      sourcePath: cluster-metal/kubernetes-dashboard
+      buildHash: 346ff056162c2a03672fa6ee8ea4d27b729087ac5496ab758a9029463e0618ba
+      buildHashType: sha256
+      buildPath: builds/in-cluster/kubernetes-dashboard
+    - timestamp: "2024-03-22T06:39:50Z"
+      sourceHash: ddb09b0e9b7485570482dc2ef78631a8cfd78c57c46ae7f215a178237529597b
+      sourceHashType: sha256
+      sourcePath: cluster-metal/cilium
+      buildHash: c51d8e0d624b5b63c99f20afb8493316bb9f1dd9fe40fa29469d20d8035741f5
+      buildHashType: sha256
+      buildPath: builds/in-cluster/cilium
+    - timestamp: "2024-04-10T03:05:51Z"
+      sourceHash: c37ef69c36a748b1546d6eaf546e26e113d92c828e63d3672ffbffbc97c91197
+      sourceHashType: sha256
+      sourcePath: cluster-local/cloudnative-pg
+      buildHash: bf290692a9b4bd425a7d2a8f8dd3099f927024d0c825d88257d54d56faea7ed0
+      buildHashType: sha256
+      buildPath: builds/local/cloudnative-pg
+    - timestamp: "2024-04-10T03:57:56Z"
+      sourceHash: c36e5197d6fa977de1fafb8514c09607ade69ef17dcdd2269d8bb66b1c8396d7
+      sourceHashType: sha256
+      sourcePath: cluster-local/redis-operator
+      buildHash: 27e305bcec61dcc3a1fd9c2550236ad0c9d1446ca40fd9c3182aa7153f098e5f
+      buildHashType: sha256
+      buildPath: builds/local/redis-operator
+    - timestamp: "2024-04-10T04:09:06Z"
+      sourceHash: d352e802b46172f06055ee775ec23e35cef85bd091ab1a3ad9726e5ad63db3c4
+      sourceHashType: sha256
+      sourcePath: cluster-local/envoy-gateway
+      buildHash: 9d7525ff614758e858480a7c4612dfba6c04a5b0fdd85c2810a0380199a429ba
+      buildHashType: sha256
+      buildPath: builds/local/envoy-gateway
+    - timestamp: "2024-04-10T05:28:50Z"
+      sourceHash: 49220044e13ac3331bc71d1c8f89e259a6e06e28e91ea5fbfee04b19180a2553
+      sourceHashType: sha256
+      sourcePath: cluster-local/gateway
+      buildHash: 43abbc46f72ebc492d64cc9a05b6c4a8c4c3d6b10fd8d034eb882ff013b63f85
+      buildHashType: sha256
+      buildPath: builds/local/gateway
+    - timestamp: "2024-04-10T06:44:47Z"
+      sourceHash: 97beec5fb6851a8fb2114c3c7dd7519cbb4fd5ca06bf826e7cfc05808f75bfe6
+      sourceHashType: sha256
+      sourcePath: cluster-local/reflector
+      buildHash: ad096c7f5e6b2f5cd466f38bff90c551eee6a3af0839652b2ccbcc695a4def71
+      buildHashType: sha256
+      buildPath: builds/local/reflector
+    - timestamp: "2024-04-10T06:44:55Z"
+      sourceHash: 24569d9e7e97c298c282a2373d643b0de84684c72598299faa3caace16da797c
+      sourceHashType: sha256
+      sourcePath: cluster-local/crossplane
+      buildHash: 9fb85898d80950c708d3d46845cd6b6c0481d429c19f5f440fcfc8cf49af0756
+      buildHashType: sha256
+      buildPath: builds/local/crossplane
+    - timestamp: "2024-04-10T07:17:41Z"
+      sourceHash: 297e1c519318064b1e7153c6a9757030b92fbec07fb66e360ad0e77384ceb969
+      sourceHashType: sha256
+      sourcePath: cluster-local/argocd
+      buildHash: 7972e8ffd639f7a1ab9b60e6ae271eb85c16275da9efec0c8e1a0a6cd08b7dbb
+      buildHashType: sha256
+      buildPath: builds/local/argocd
+    - timestamp: "2024-04-10T08:35:00Z"
+      sourceHash: 28cc87faa5b6cf853aac1f36b1affa688adc81a837f7a4bb32d988e136b53381
+      sourceHashType: sha256
+      sourcePath: cluster-local/keycloak
+      buildHash: 707d98f6ffa862540c7e14cef95a853886d71d1a1fcf7026ffc1fa8c81f143cc
+      buildHashType: sha256
+      buildPath: builds/local/keycloak
+    - timestamp: "2024-04-10T08:35:00Z"
+      sourceHash: 1d963b880ab57521602a8dc5141a53d2723651eb16a9f9fded52d77d548eb5cd
+      sourceHashType: sha256
+      sourcePath: cluster-local/keycloak-provider
+      buildHash: 89f5d2c352c304da1c4e4113d3236a6f5d9b056f4eba23d3cd7eaecea7cce90e
+      buildHashType: sha256
+      buildPath: builds/local/keycloak-provider
+    - timestamp: "2024-04-10T08:52:25Z"
+      sourceHash: bac871a181b2998769e2c4330f99d63b175f7d640e658b4b39969679b31441d3
+      sourceHashType: sha256
+      sourcePath: cluster-local/whoami
+      buildHash: c9476984c1290eb30c3c108dfc0deb8dc796846f4eb69325f80831075231afe9
+      buildHashType: sha256
+      buildPath: builds/local/whoami
+    - timestamp: "2024-04-11T06:23:01Z"
+      sourceHash: 9c6812ac64ba0d1c0eb6e42703e1df66b8c2d7a472524513cce616f009033a26
+      sourceHashType: sha256
+      sourcePath: cluster-local/debug
+      buildHash: 53ed762f83a730c6a8f3b7f58d6876a711e3805b1c5aa8745f50f9ee6c39cf3b
+      buildHashType: sha256
+      buildPath: builds/local/debug
+    - timestamp: "2024-04-14T23:07:16Z"
+      sourceHash: 42a214e24339383724147ce88ed5dad6a8cdcf71b4f024f05815b791fbbe1c5d
+      sourceHashType: sha256
+      sourcePath: cluster-local/noobaa
+      buildHash: fdeac70cddf1e4027bc2297d6c251d49c7f3628922f041e118990359f727362c
+      buildHashType: sha256
+      buildPath: builds/local/noobaa
+    - timestamp: "2024-04-14T23:33:35Z"
+      sourceHash: 67b9ca39b700b0b89b1b95eff2deb4b90aa6246212cc229411b4ea000f3e797f
+      sourceHashType: sha256
+      sourcePath: cluster-local/template-controller
+      buildHash: 48ea3e31ff025af27112d3e4b75e613a373d0baf3916d8d850fa22d8c1d92746
+      buildHashType: sha256
+      buildPath: builds/local/template-controller
+    - timestamp: "2024-04-17T07:42:14Z"
+      sourceHash: 5ae9fb1e8cf1ab1a909d8bb718eacfc5e1a9c9405c86ef87c37692865e792068
+      sourceHashType: sha256
+      sourcePath: cluster-local/coredns
+      buildHash: 9069be48999b847d59be9b33245770d9fac88f814b432bcd8f2ba4f1da5d577e
+      buildHashType: sha256
+      buildPath: builds/local/coredns
+    - timestamp: "2024-05-14T17:10:23-05:00"
+      sourceHash: a9c78bcb7fd6d9d0c28d6a9662cac08194d097d1fea66ef2307c0b1a916e3d7c
+      sourceHashType: sha256
+      sourcePath: cluster-local/deeppharmgraph
+      buildHash: a9c78bcb7fd6d9d0c28d6a9662cac08194d097d1fea66ef2307c0b1a916e3d7c
+      buildHashType: sha256
+      buildPath: builds/local/deeppharmgraph
+    - timestamp: "2024-05-14T17:11:45-05:00"
+      sourceHash: 17a690771241a11ba81f1f4d9891028fd943c8f48bde368ef5a2510272648d96
+      sourceHashType: sha256
+      sourcePath: cluster-local/applicationset
+      buildHash: 17a690771241a11ba81f1f4d9891028fd943c8f48bde368ef5a2510272648d96
+      buildHashType: sha256
+      buildPath: build/cluster-local/applicationset
+    - timestamp: "2024-05-14T17:11:47-05:00"
+      sourceHash: 4e7d2e8891484b9c2abf48776cb5cd8aff09c7ab8d08b8efa02c687f225eacd9
+      sourceHashType: sha256
+      sourcePath: cluster-local/cosi
+      buildHash: 4e7d2e8891484b9c2abf48776cb5cd8aff09c7ab8d08b8efa02c687f225eacd9
+      buildHashType: sha256
+      buildPath: build/cluster-local/cosi

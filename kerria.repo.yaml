@@ -1,0 +1,8 @@
+apiVersion: kerria.dev/v1alpha1
+kind: Repository
+metadata:
+  name: k8s-manifests
+spec:
+  sources:
+    - glob: cluster-metal/*
+    - glob: cluster-local/*

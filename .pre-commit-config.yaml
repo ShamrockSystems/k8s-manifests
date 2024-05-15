@@ -37,8 +37,8 @@ repos:
       - id: pdm-lock-check
   - repo: local
     hooks:
-      - id: kustomanager
-        name: kustomanager-build
-        entry: pdm run kustomanager build
+      - id: kerria
+        name: kerria-build
+        entry: kerria build
         language: system
         pass_filenames: false
