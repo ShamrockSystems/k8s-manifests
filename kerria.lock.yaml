@@ -69,11 +69,11 @@ status:
       buildHash: 01298f1df96ae31351bc96073fb93c9824ca0df1b23fea9a96c8833f1e48e381
       buildHashType: sha256
       buildPath: builds/in-cluster/olm
-    - timestamp: "2024-01-31T08:37:50Z"
-      sourceHash: ca88f03f0903fee9de57ed256c6ae0eb86e23880fc6b5b493837d01791b5d196
+    - timestamp: "2024-05-14T21:11:33-05:00"
+      sourceHash: 1f774e8542821455e73b32a97b8316e8328fc43922de33106ebcf5e2400959a9
       sourceHashType: sha256
       sourcePath: cluster-metal/cloudnative-pg
-      buildHash: c32f7fea4e23f1342404b4efced4b18f61b438276829b0283f539e5c6fb28acc
+      buildHash: 1f774e8542821455e73b32a97b8316e8328fc43922de33106ebcf5e2400959a9
       buildHashType: sha256
       buildPath: builds/in-cluster/cloudnative-pg
     - timestamp: "2024-01-31T10:59:17Z"
