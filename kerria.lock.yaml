@@ -6,11 +6,11 @@ spec:
   defaultHash: sha256
 status:
   builds:
-    - timestamp: "2024-05-14T21:08:52-05:00"
+    - timestamp: "2024-05-15T19:20:29-05:00"
       sourceHash: 6d5fdc189f7b076bf193d96f3530d398f8d03eeafd74b250a672092d870340b9
       sourceHashType: sha256
       sourcePath: cluster-metal/cert-manager
-      buildHash: 6d5fdc189f7b076bf193d96f3530d398f8d03eeafd74b250a672092d870340b9
+      buildHash: 673f727817f00ed409171184f47c524df2ad46dbbd55008a1c785edc5607e3ce
       buildHashType: sha256
       buildPath: builds/in-cluster/cert-manager
     - timestamp: "2024-01-17T16:40:11Z"
@@ -20,11 +20,11 @@ status:
       buildHash: 1722b8e27eb6b53bad2562655b51a7bcf518daff983f6ffe7880069f8d187f5f
       buildHashType: sha256
       buildPath: builds/in-cluster/cloudflared
-    - timestamp: "2024-05-14T21:12:32-05:00"
+    - timestamp: "2024-05-15T19:20:32-05:00"
       sourceHash: 86fdd4d4ff4abb5175c9313915bf025a9b59359f313c458a4d338f6fffe15679
       sourceHashType: sha256
       sourcePath: cluster-metal/gateway-api
-      buildHash: 86fdd4d4ff4abb5175c9313915bf025a9b59359f313c458a4d338f6fffe15679
+      buildHash: 88a22a1eb66af1e07126e70d61c090791e416503c692c2394e426e225571b001
       buildHashType: sha256
       buildPath: builds/in-cluster/gateway-api
     - timestamp: "2024-01-17T16:40:26Z"
@@ -69,11 +69,11 @@ status:
       buildHash: 01298f1df96ae31351bc96073fb93c9824ca0df1b23fea9a96c8833f1e48e381
       buildHashType: sha256
       buildPath: builds/in-cluster/olm
-    - timestamp: "2024-05-14T21:11:33-05:00"
+    - timestamp: "2024-05-15T19:20:32-05:00"
       sourceHash: 1f774e8542821455e73b32a97b8316e8328fc43922de33106ebcf5e2400959a9
       sourceHashType: sha256
       sourcePath: cluster-metal/cloudnative-pg
-      buildHash: 1f774e8542821455e73b32a97b8316e8328fc43922de33106ebcf5e2400959a9
+      buildHash: 723478e8d2f343ba8e56c67a53f961e4faf21b216ca1d75967e63d036fbdc0f2
       buildHashType: sha256
       buildPath: builds/in-cluster/cloudnative-pg
     - timestamp: "2024-01-31T10:59:17Z"
@@ -160,11 +160,11 @@ status:
       buildHash: 0de9e235957f68321f9d00562a1fc3fb074fa49c77d03220e72d6217c76fc0e8
       buildHashType: sha256
       buildPath: builds/in-cluster/dpg-processing
-    - timestamp: "2024-05-14T21:06:40-05:00"
+    - timestamp: "2024-05-15T19:20:33-05:00"
       sourceHash: 4ad6777feb15b4ca6dc679afb03ea13461858bff211ae35281ae70f36a9f0eeb
       sourceHashType: sha256
       sourcePath: cluster-metal/argocd
-      buildHash: 4ad6777feb15b4ca6dc679afb03ea13461858bff211ae35281ae70f36a9f0eeb
+      buildHash: ff5cd32a79c35d39620ed63d5a59df7111720862441ec46dd3a832dea1c7307e
       buildHashType: sha256
       buildPath: builds/in-cluster/argocd
     - timestamp: "2024-03-07T23:30:06Z"
@@ -314,11 +314,11 @@ status:
       buildHash: 9069be48999b847d59be9b33245770d9fac88f814b432bcd8f2ba4f1da5d577e
       buildHashType: sha256
       buildPath: builds/local/coredns
-    - timestamp: "2024-05-14T17:10:23-05:00"
+    - timestamp: "2024-05-15T19:20:34-05:00"
       sourceHash: a9c78bcb7fd6d9d0c28d6a9662cac08194d097d1fea66ef2307c0b1a916e3d7c
       sourceHashType: sha256
       sourcePath: cluster-local/deeppharmgraph
-      buildHash: a9c78bcb7fd6d9d0c28d6a9662cac08194d097d1fea66ef2307c0b1a916e3d7c
+      buildHash: e7f14a67b981fbe20d13c1b8879df77ae13143c0581072ca55d71758fe365ee3
       buildHashType: sha256
       buildPath: builds/local/deeppharmgraph
     - timestamp: "2024-05-14T17:11:45-05:00"

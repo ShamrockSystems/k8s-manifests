@@ -584,7 +584,7 @@ stringData:
 ---
 apiVersion: v1
 data:
-  connection: cmVkaXM6Ly86Q1RXczRaeFVCOUBkcGctYWlyZmxvdy1yZWRpczo2Mzc5LzA=
+  connection: cmVkaXM6Ly86dHdzVnpOQVhVN0BkcGctYWlyZmxvdy1yZWRpczo2Mzc5LzA=
 kind: Secret
 metadata:
   annotations:
@@ -634,7 +634,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  password: Q1RXczRaeFVCOQ==
+  password: dHdzVnpOQVhVNw==
 kind: Secret
 metadata:
   annotations:
