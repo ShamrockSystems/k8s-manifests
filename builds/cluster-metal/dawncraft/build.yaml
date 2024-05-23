@@ -1,4 +1,11 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: mc
+  name: mc
+---
+apiVersion: v1
 data:
   ALLOW_FLIGHT: "true"
   ALLOW_NETHER: "true"

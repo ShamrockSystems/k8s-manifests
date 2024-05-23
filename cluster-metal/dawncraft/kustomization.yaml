@@ -3,7 +3,8 @@ kind: Kustomization
 
 namespace: mc
 resources:
+  - ./namespace.yaml
   - ./sealedsecret.yaml
   - ./configmap.yaml
-  - ./service.yaml
   - ./statefulset.yaml
+  - ./service.yaml
