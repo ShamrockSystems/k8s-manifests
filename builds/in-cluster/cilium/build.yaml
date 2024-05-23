@@ -15562,8 +15562,8 @@ data:
   ipam: cluster-pool
   ipam-cilium-node-update-rate: 15s
   ipv4-native-routing-cidr: 10.83.86.0/24
-  k8s-client-burst: "20"
-  k8s-client-qps: "10"
+  k8s-client-burst: "10"
+  k8s-client-qps: "5"
   kube-proxy-replacement: "true"
   kube-proxy-replacement-healthz-bind-address: ""
   max-connected-clusters: "255"
@@ -15753,7 +15753,6 @@ metadata:
   name: hubble-peer
   namespace: kube-system
 spec:
-  internalTrafficPolicy: Local
   ports:
   - name: peer-service
     port: 443
@@ -15969,8 +15968,10 @@ spec:
         image: quay.io/cilium/hubble-relay:v1.15.2@sha256:48480053930e884adaeb4141259ff1893a22eb59707906c6d38de2fe01916cb0
         imagePullPolicy: IfNotPresent
         livenessProbe:
-          grpc:
-            port: 4222
+          exec:
+            command:
+            - grpc_health_probe
+            - -addr=localhost:4222
           timeoutSeconds: 3
         name: hubble-relay
         ports:
@@ -15980,8 +15981,10 @@ spec:
           name: prometheus
           protocol: TCP
         readinessProbe:
-          grpc:
-            port: 4222
+          exec:
+            command:
+            - grpc_health_probe
+            - -addr=localhost:4222
           timeoutSeconds: 3
         securityContext:
           capabilities:
@@ -15991,9 +15994,11 @@ spec:
           runAsNonRoot: true
           runAsUser: 65532
         startupProbe:
+          exec:
+            command:
+            - grpc_health_probe
+            - -addr=localhost:4222
           failureThreshold: 20
-          grpc:
-            port: 4222
           periodSeconds: 3
           timeoutSeconds: 3
         terminationMessagePolicy: FallbackToLogsOnError
