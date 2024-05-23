@@ -12,210 +12,210 @@ status:
       discoPath: cluster-metal/cert-manager
       buildHash: 673f727817f00ed409171184f47c524df2ad46dbbd55008a1c785edc5607e3ce
       buildHashType: sha256
-      buildPath: builds/in-cluster/cert-manager
+      buildPath: builds/cluster-metal/cert-manager
     - timestamp: "2024-01-17T16:40:11Z"
       discoHash: 910fba04e99536e03e79a53aa61d5c130947911309921222902847569ac4059a
       discoHashType: sha256
       discoPath: cluster-metal/cloudflared
       buildHash: 1722b8e27eb6b53bad2562655b51a7bcf518daff983f6ffe7880069f8d187f5f
       buildHashType: sha256
-      buildPath: builds/in-cluster/cloudflared
+      buildPath: builds/cluster-metal/cloudflared
     - timestamp: "2024-05-15T19:20:32-05:00"
       discoHash: 86fdd4d4ff4abb5175c9313915bf025a9b59359f313c458a4d338f6fffe15679
       discoHashType: sha256
       discoPath: cluster-metal/gateway-api
       buildHash: 88a22a1eb66af1e07126e70d61c090791e416503c692c2394e426e225571b001
       buildHashType: sha256
-      buildPath: builds/in-cluster/gateway-api
+      buildPath: builds/cluster-metal/gateway-api
     - timestamp: "2024-01-17T16:40:26Z"
       discoHash: f20a39bc9286c25d4070edef0961910929bdff31c6910df816f64bfc8a11b781
       discoHashType: sha256
       discoPath: cluster-metal/multus
       buildHash: 8542d7e698a8ad80b5c7c90803c655ef6a268361e1d5b752173018fb57e8de33
       buildHashType: sha256
-      buildPath: builds/in-cluster/multus
+      buildPath: builds/cluster-metal/multus
     - timestamp: "2024-01-17T16:40:29Z"
       discoHash: 05770aea3ff45ab3bfab934a524f65c65c93dd3b0256ce71b383c75c157459b5
       discoHashType: sha256
       discoPath: cluster-metal/rbac
       buildHash: a2a8a3e21a318fc40ecbdf06a484b22ac58125f51546bd72de5cfb38b6e64c76
       buildHashType: sha256
-      buildPath: builds/in-cluster/rbac
+      buildPath: builds/cluster-metal/rbac
     - timestamp: "2024-01-17T16:40:38Z"
       discoHash: 037c0eba23ebefeafb1f83eaf62c4296340e6684c65c89e45d81a9f5e8323032
       discoHashType: sha256
       discoPath: cluster-metal/sealed-secrets
       buildHash: c0e307e7a6d226329f1b92909195fdb497cae3093f552b90607d06793b1e4d3a
       buildHashType: sha256
-      buildPath: builds/in-cluster/sealed-secrets
+      buildPath: builds/cluster-metal/sealed-secrets
     - timestamp: "2024-01-17T16:40:43Z"
       discoHash: 3f0fc30018c4882ed0c7e754a1e5ad27e62488540e4123d50e0c34f55892d942
       discoHashType: sha256
       discoPath: cluster-metal/whereabouts
       buildHash: 4ac71987ab6a2c9558971de96ddadab251be619c2197b2613d702467fba34c06
       buildHashType: sha256
-      buildPath: builds/in-cluster/whereabouts
+      buildPath: builds/cluster-metal/whereabouts
     - timestamp: "2024-01-17T17:56:36Z"
       discoHash: 60e39a27724e5fe0f4b9550b2edc88f6a4f32ea5b64b7a4ef2b3e0a388ea6f63
       discoHashType: sha256
       discoPath: cluster-metal/dpg-meta
       buildHash: 1a9c9f44f4a26bf2cc6652dd69833ad18fa659a4ba00cdb841f162a85365a333
       buildHashType: sha256
-      buildPath: builds/in-cluster/dpg-meta
+      buildPath: builds/cluster-metal/dpg-meta
     - timestamp: "2024-01-24T15:42:05Z"
       discoHash: fb840b9f593322451c7e0468dffd7dc7e603cf0783bc27699a96ba72a3fb0b5b
       discoHashType: sha256
       discoPath: cluster-metal/olm
       buildHash: 01298f1df96ae31351bc96073fb93c9824ca0df1b23fea9a96c8833f1e48e381
       buildHashType: sha256
-      buildPath: builds/in-cluster/olm
+      buildPath: builds/cluster-metal/olm
     - timestamp: "2024-05-15T19:20:32-05:00"
       discoHash: 1f774e8542821455e73b32a97b8316e8328fc43922de33106ebcf5e2400959a9
       discoHashType: sha256
       discoPath: cluster-metal/cloudnative-pg
       buildHash: 723478e8d2f343ba8e56c67a53f961e4faf21b216ca1d75967e63d036fbdc0f2
       buildHashType: sha256
-      buildPath: builds/in-cluster/cloudnative-pg
+      buildPath: builds/cluster-metal/cloudnative-pg
     - timestamp: "2024-01-31T10:59:17Z"
       discoHash: 7d9c7031bc9d552c2a47d57fbe8c74b4248a7828f3284a243e99164cbc38f223
       discoHashType: sha256
       discoPath: cluster-metal/redis-operator
       buildHash: 25aaed3c781bc7c1027ec9fff452823e7aa682b5e1fc7377bad4040a739a0aba
       buildHashType: sha256
-      buildPath: builds/in-cluster/redis-operator
+      buildPath: builds/cluster-metal/redis-operator
     - timestamp: "2024-02-02T07:00:37Z"
       discoHash: c7bf3e760c8e441da45a322161959adc5e038f50a28fed0c16c8ed62f5126f85
       discoHashType: sha256
       discoPath: cluster-metal/grafana-operator
       buildHash: 026b2b23cbfb324e50f66c6fbed827ee866814f4a0e3b995cc58454fb1ab57f6
       buildHashType: sha256
-      buildPath: builds/in-cluster/grafana-operator
+      buildPath: builds/cluster-metal/grafana-operator
     - timestamp: "2024-02-04T00:14:16Z"
       discoHash: c64ec258fe25a51bbcf378f4d740c0f3890aac3f85793f94e9a680577c2ee60e
       discoHashType: sha256
       discoPath: cluster-metal/whoami
       buildHash: 38dd131f47f61b1d81bb861f5364154ebc5dc3fcc62cfb52b58283f5f634e350
       buildHashType: sha256
-      buildPath: builds/in-cluster/whoami
+      buildPath: builds/cluster-metal/whoami
     - timestamp: "2024-02-07T08:33:57Z"
       discoHash: db4694f4c00288e5592c7ca926c294c070af5a18322a01f87bcc61977dab9a48
       discoHashType: sha256
       discoPath: cluster-metal/rabbitmq-cluster-operator
       buildHash: 348ff63e4efd1818d9d2e85ee25bc1bf0536dab9443737135b94684da68e2696
       buildHashType: sha256
-      buildPath: builds/in-cluster/rabbitmq-cluster-operator
+      buildPath: builds/cluster-metal/rabbitmq-cluster-operator
     - timestamp: "2024-05-14T21:14:44-05:00"
       discoHash: 8f4e056d48edaf80ceb1a7bf201863f1242340d5a7a955e51d8fc63520705f52
       discoHashType: sha256
       discoPath: cluster-metal/kured
       buildHash: 8f4e056d48edaf80ceb1a7bf201863f1242340d5a7a955e51d8fc63520705f52
       buildHashType: sha256
-      buildPath: builds/in-cluster/kured
+      buildPath: builds/cluster-metal/kured
     - timestamp: "2024-02-07T15:34:08Z"
       discoHash: 52f828abbe6a552bdd3b5d6db3fa983629656d05b11be7c66ba9093104a3bd3a
       discoHashType: sha256
       discoPath: cluster-metal/dpg-datastore
       buildHash: 5cc31377de418a7c8762b0da42f8c59ce7e8b933dd0949248b7a84116773317c
       buildHashType: sha256
-      buildPath: builds/in-cluster/dpg-datastore
+      buildPath: builds/cluster-metal/dpg-datastore
     - timestamp: "2024-02-09T13:47:50Z"
       discoHash: 173161240d6e38ab402234f949d3a8decce3cf5aa38988fe90207f4dc0053cd5
       discoHashType: sha256
       discoPath: cluster-metal/grafana
       buildHash: 84bb0cacff5ecd29e995d7b36a9c9a1fe5d0a296097869cf02e836f285b47cf5
       buildHashType: sha256
-      buildPath: builds/in-cluster/grafana
+      buildPath: builds/cluster-metal/grafana
     - timestamp: "2024-02-12T23:20:44Z"
       discoHash: 579da69d73171ba580b9e5d39faf796b596814427bdd1c24830e343995751085
       discoHashType: sha256
       discoPath: cluster-metal/rook
       buildHash: 88e66a7e4083a2dac9bb668e306bdda7a5d28fe1d4305abb405eba2dc116c481
       buildHashType: sha256
-      buildPath: builds/in-cluster/rook
+      buildPath: builds/cluster-metal/rook
     - timestamp: "2024-02-12T23:30:31Z"
       discoHash: 156839e040185285e9079fa98ebac7e1ac7157a0dc24144f6fe21980b55137e1
       discoHashType: sha256
       discoPath: cluster-metal/kube-prometheus
       buildHash: 99f69db66bf64b111a774a5a0ce0e4387888f8f484d2bc7ee412997bf17ee870
       buildHashType: sha256
-      buildPath: builds/in-cluster/kube-prometheus
+      buildPath: builds/cluster-metal/kube-prometheus
     - timestamp: "2024-02-13T01:56:27Z"
       discoHash: 841e6668c5e40151e63e2dc29217124c0cf2afc0104c71e49b6a6e08eb7ffb59
       discoHashType: sha256
       discoPath: cluster-metal/grafana-loki
       buildHash: 66a438a59ff8b20ceeae7d922608d606df7f4435a66a9e2310637e02e42b4740
       buildHashType: sha256
-      buildPath: builds/in-cluster/grafana-loki
+      buildPath: builds/cluster-metal/grafana-loki
     - timestamp: "2024-02-13T17:43:51Z"
       discoHash: c0f79783bcf08605916e3ce93a9764904f2ca7faa5599671210ec17e084d2de8
       discoHashType: sha256
       discoPath: cluster-metal/marin3r
       buildHash: 1df5177371807ac28f5cb7ff6c8138bfad6727873b86f7b117fb501f0300ad39
       buildHashType: sha256
-      buildPath: builds/in-cluster/marin3r
+      buildPath: builds/cluster-metal/marin3r
     - timestamp: "2024-02-14T12:15:01Z"
       discoHash: ad1ae7c44ff2e4fd623468bcf88d3ada7602142567b5216c12ec055bf11086b0
       discoHashType: sha256
       discoPath: cluster-metal/dpg-processing
       buildHash: 0de9e235957f68321f9d00562a1fc3fb074fa49c77d03220e72d6217c76fc0e8
       buildHashType: sha256
-      buildPath: builds/in-cluster/dpg-processing
+      buildPath: builds/cluster-metal/dpg-processing
     - timestamp: "2024-05-15T19:20:33-05:00"
       discoHash: 4ad6777feb15b4ca6dc679afb03ea13461858bff211ae35281ae70f36a9f0eeb
       discoHashType: sha256
       discoPath: cluster-metal/argocd
       buildHash: ff5cd32a79c35d39620ed63d5a59df7111720862441ec46dd3a832dea1c7307e
       buildHashType: sha256
-      buildPath: builds/in-cluster/argocd
+      buildPath: builds/cluster-metal/argocd
     - timestamp: "2024-03-07T23:30:06Z"
       discoHash: a6f5111ee47b78d988320c0801ab89e459d4971cd581d9b03ae481d23c8a6307
       discoHashType: sha256
       discoPath: cluster-metal/crossplane
       buildHash: 983fa4a6f0ac1417a80f328f20523b5536eb5b868bd440263999e5be63603656
       buildHashType: sha256
-      buildPath: builds/in-cluster/crossplane
+      buildPath: builds/cluster-metal/crossplane
     - timestamp: "2024-03-08T02:10:27Z"
       discoHash: 71f7fe8d9da8cf8ef3425e32122a4d0884c5b81bab1cd8556d7d12fa1c064f67
       discoHashType: sha256
       discoPath: cluster-metal/reflector
       buildHash: a2d6c76189185e3cdf3d561f27f827e0351c0c29e05b399807af763789aede70
       buildHashType: sha256
-      buildPath: builds/in-cluster/reflector
+      buildPath: builds/cluster-metal/reflector
     - timestamp: "2024-03-08T02:20:54Z"
       discoHash: 1836f912ff6b78bdffb5c85f9c9a915623966c28ae9d0887c9d061afa1a378ef
       discoHashType: sha256
       discoPath: cluster-metal/dpg-authentication
       buildHash: 59f5c5dcab26e018f6143c05524359e083b6fb078b74ace9680a771ab5611adb
       buildHashType: sha256
-      buildPath: builds/in-cluster/dpg-authentication
+      buildPath: builds/cluster-metal/dpg-authentication
     - timestamp: "2024-03-17T08:43:48Z"
       discoHash: a830d0326e4851c2bb18f306d0b5cf0b7e4f8f82988379cb01a350980286030b
       discoHashType: sha256
       discoPath: cluster-metal/keycloak
       buildHash: a06b6f71e255ae24f5920e11e3c5c05df97b21791f35c84a6489e1aaf58e0cf5
       buildHashType: sha256
-      buildPath: builds/in-cluster/keycloak
+      buildPath: builds/cluster-metal/keycloak
     - timestamp: "2024-03-17T19:38:21Z"
       discoHash: 6421a6961e640cded30a9f9043b3c9ca46dc3cfc0c84052690cb6a59e7570471
       discoHashType: sha256
       discoPath: cluster-metal/immich
       buildHash: fffb0e63d990429c453e5c95e43ca8ed411b05635dcde53fd904150ee8fe5414
       buildHashType: sha256
-      buildPath: builds/in-cluster/immich
+      buildPath: builds/cluster-metal/immich
     - timestamp: "2024-03-22T03:42:32Z"
       discoHash: 70c6521f97ccce8bb294e69d24744a10dea56acdf8934579f694eec351593949
       discoHashType: sha256
       discoPath: cluster-metal/kubernetes-dashboard
       buildHash: 346ff056162c2a03672fa6ee8ea4d27b729087ac5496ab758a9029463e0618ba
       buildHashType: sha256
-      buildPath: builds/in-cluster/kubernetes-dashboard
+      buildPath: builds/cluster-metal/kubernetes-dashboard
     - timestamp: "2024-05-21T00:10:18-05:00"
       discoHash: 45899e760d05f71de2158d16c845d7414edfac0a239686b9826e8308bf2568be
       discoHashType: sha256
       discoPath: cluster-metal/cilium
       buildHash: 1d8b61c7fc9670b98cf4582337022631e565be62e4a84c02c936b0f7bc86c99c
       buildHashType: sha256
-      buildPath: builds/in-cluster/cilium
+      buildPath: builds/cluster-metal/cilium
     - timestamp: "2024-04-10T03:05:51Z"
       discoHash: c37ef69c36a748b1546d6eaf546e26e113d92c828e63d3672ffbffbc97c91197
       discoHashType: sha256

@@ -11,10 +11,10 @@ spec:
         repoURL: https://github.com/ShamrockSystems/k8s-manifests.git
         revision: HEAD
         directories:
-          - path: builds/in-cluster/*
+          - path: builds/cluster-metal/*
   template:
     metadata:
-      name: '{{ index .path.segments 1 }}-{{.path.basename}}'
+      name: 'in-cluster-{{.path.basename}}'
       namespace: argocd
     spec:
       project: "kustomanager"
@@ -23,4 +23,4 @@ spec:
         targetRevision: HEAD
         path: '{{.path.path}}'
       destination:
-        name: '{{ index .path.segments 1 }}'
+        name: in-cluster
