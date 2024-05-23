@@ -10,8 +10,7 @@ data:
   VERSION: "1.18.2"
   FORGE_VERISON: "40.2.17"
   CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/dawn-craft/files/5339411
-  CF_OVERRIDES_EXCLUSIONS: |
-    mods/CompassCoords*.jar
+  CF_EXCLUDE_MODS: "368398"
   OVERRIDE_SERVER_PROPERTIES: "true"
   MOTD: "☆*: .｡. o(≧▽≦)o .｡.:*☆"
   DIFFICULTY: hard

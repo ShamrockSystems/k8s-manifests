@@ -10,8 +10,7 @@ data:
   ALLOW_FLIGHT: "true"
   ALLOW_NETHER: "true"
   ANNOUNCE_PLAYER_ACHIEVEMENTS: "true"
-  CF_OVERRIDES_EXCLUSIONS: |
-    mods/CompassCoords*.jar
+  CF_EXCLUDE_MODS: "368398"
   CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/dawn-craft/files/5339411
   DIFFICULTY: hard
   ENABLE_COMMAND_BLOCK: "true"
