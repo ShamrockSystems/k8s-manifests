@@ -209,11 +209,11 @@ status:
       buildHash: 346ff056162c2a03672fa6ee8ea4d27b729087ac5496ab758a9029463e0618ba
       buildHashType: sha256
       buildPath: builds/cluster-metal/kubernetes-dashboard
-    - timestamp: "2024-05-21T00:10:18-05:00"
-      discoHash: 45899e760d05f71de2158d16c845d7414edfac0a239686b9826e8308bf2568be
+    - timestamp: "2024-05-22T20:01:05-05:00"
+      discoHash: 79b1054acd50a9a8551e63f08cebd651ff7cca8069778fe9924957ebc768a372
       discoHashType: sha256
       discoPath: cluster-metal/cilium
-      buildHash: 1d8b61c7fc9670b98cf4582337022631e565be62e4a84c02c936b0f7bc86c99c
+      buildHash: 678798ced14aa1bdf93f67c97c88b9402ba8e9ec0b2133070ccf34c5794387b9
       buildHashType: sha256
       buildPath: builds/cluster-metal/cilium
     - timestamp: "2024-04-10T03:05:51Z"
@@ -335,10 +335,10 @@ status:
       buildHash: 4e7d2e8891484b9c2abf48776cb5cd8aff09c7ab8d08b8efa02c687f225eacd9
       buildHashType: sha256
       buildPath: build/cluster-local/cosi
-    - timestamp: "2024-05-22T19:49:39-05:00"
-      discoHash: 2575a798f3586448e9af6b4b52d34cb8743b22ed6cb0cb4b32ece39d518c83aa
+    - timestamp: "2024-05-22T20:08:23-05:00"
+      discoHash: 589ce118f57661e70fe19a419f5286778ec268ded8ce67dc43dbf5538fa4a917
       discoHashType: sha256
       discoPath: cluster-metal/dawncraft
-      buildHash: 7148bcbe50b844826d8a2aa588f68486acc5595ed48b6ae99c303dfc6338e1d5
+      buildHash: a8f9161d35f35b47e857400e0615deff90ce19de286b621a8a9a2b05a33e7b6a
       buildHashType: sha256
       buildPath: builds/cluster-metal/dawncraft

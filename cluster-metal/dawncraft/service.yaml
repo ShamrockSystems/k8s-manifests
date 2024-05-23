@@ -3,11 +3,12 @@ kind: Service
 metadata:
   name: mc-dawncraft
   namespace: mc
+  labels:
+    ipPool: metal-homenet
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: mc-dawncraft
   ports:
     - port: 25565
       targetPort: 25565
-      nodePort: 32767

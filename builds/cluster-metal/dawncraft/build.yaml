@@ -49,16 +49,17 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
+    ipPool: metal-homenet
   name: mc-dawncraft
   namespace: mc
 spec:
   ports:
-  - nodePort: 32767
-    port: 25565
+  - port: 25565
     targetPort: 25565
   selector:
     app: mc-dawncraft
-  type: NodePort
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: StatefulSet

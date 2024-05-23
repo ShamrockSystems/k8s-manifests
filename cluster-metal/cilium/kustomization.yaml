@@ -5,7 +5,8 @@ metadata:
   annotations:
     argo-aoa.proc.kerria.dev/filter/syncOptions: "['ServerSideApply=false']"
 resources:
-  - ./ciliumloadbalancerpool.yaml
+  - ./ciliumloadbalancerpool.services.yaml
+  - ./ciliumloadbalancerpool.home.yaml
   - ./certificate.yaml
   - ./gatewayclass.yaml
   - ./gateway.yaml
