@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mc-dawncraft-config
+  namespace: mc
+data:
+  EULA: "true"
+  MEMORY: 16G
+  TYPE: AUTO_CURSEFORGE
+  VERSION: "1.18.2"
+  FORGE_VERISON: "40.2.17"
+  CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/dawn-craft/files/5339411
+  CF_OVERRIDES_EXCLUSIONS: |
+    mods/CompassCoords*.jar
+  OVERRIDE_SERVER_PROPERTIES: "true"
+  MOTD: "☆*: .｡. o(≧▽≦)o .｡.:*☆"
+  DIFFICULTY: hard
+  OPS: GreenCappuccino
+  MAX_PLAYERS: "100"
+  ALLOW_NETHER: "true"
+  ANNOUNCE_PLAYER_ACHIEVEMENTS: "true"
+  ENABLE_COMMAND_BLOCK: "true"
+  FORCE_GAMEMODE: "false"
+  GENERATE_STRUCTURES: "true"
+  HARDCORE: "false"
+  SNOOPER_ENABLED: "false"
+  MAX_BUILD_HEIGHT: "256"
+  MAX_TICK_TIME: "-1"
+  SPAWN_ANIMALS: "true"
+  SPAWN_MONSTERS: "true"
+  SPAWN_NPCS: "true"
+  SPAWN_PROTECTION: "0"
+  VIEW_DISTANCE: "12"
+  MODE: survival
+  PVP: "true"
+  LEVEL_TYPE: default
+  LEVEL: world
+  ONLINE_MODE: "true"
+  ALLOW_FLIGHT: "true"
+  SERVER_NAME: DawnCraft
+  SERVER_PORT: "25565"

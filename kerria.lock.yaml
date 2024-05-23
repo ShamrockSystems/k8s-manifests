@@ -335,3 +335,10 @@ status:
       buildHash: 4e7d2e8891484b9c2abf48776cb5cd8aff09c7ab8d08b8efa02c687f225eacd9
       buildHashType: sha256
       buildPath: build/cluster-local/cosi
+    - timestamp: "2024-05-22T19:38:41-05:00"
+      discoHash: 885a350dde402542ee7137b0aebf314f10e4af4508acc311c285842fc7a7be38
+      discoHashType: sha256
+      discoPath: cluster-metal/dawncraft
+      buildHash: 4670a12e41b36187aadf758fd9d3e5960d9fe27ee3278ff6bd2e827e5d488eaa
+      buildHashType: sha256
+      buildPath: builds/cluster-metal/dawncraft

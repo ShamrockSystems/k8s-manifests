@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mc-dawncraft
+  namespace: mc
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  serviceName: mc-dawncraft
+  selector:
+    matchLabels:
+      app: mc-dawncraft
+  template:
+    metadata:
+      labels:
+        app: mc-dawncraft
+    spec:
+      containers:
+        - name: mc-dawncraft
+          image: itzg/minecraft-server:java17
+          imagePullPolicy: Always
+          readinessProbe:
+            exec:
+              command:
+                - mc-monitor
+                - status
+                - --host
+                - localhost
+                - --port
+                - "25565"
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            failureThreshold: 18
+          resources:
+            requests:
+              cpu: 2000m
+              memory: 8Gi
+            limits:
+              cpu: 4000m
+              memory: 16Gi
+          ports:
+            - containerPort: 25565
+          envFrom:
+            - configMapRef:
+                name: mc-dawncraft-config
+            - secretRef:
+                name: curseforge-secret
+          volumeMounts:
+            - name: mc-dawncraft-storage
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: mc-dawncraft-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
