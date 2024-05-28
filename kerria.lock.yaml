@@ -342,10 +342,10 @@ status:
       buildHash: a8f9161d35f35b47e857400e0615deff90ce19de286b621a8a9a2b05a33e7b6a
       buildHashType: sha256
       buildPath: builds/cluster-metal/dawncraft
-    - timestamp: "2024-05-28T16:41:08-05:00"
-      discoHash: 8ca12f710acf1e4bb688e5fc6a42b77fb84a28c42d3b543988849072a659bf15
+    - timestamp: "2024-05-28T16:49:22-05:00"
+      discoHash: 627a626c2097f4784961be161fa83f7a897403ce06e147423d583b6ae6eb47e7
       discoHashType: sha256
       discoPath: cluster-metal/system-upgrade
-      buildHash: 019bfbcab9edf77f9a67386a437a7c20278b06635ea922f55688b757672f77a9
+      buildHash: 56417dc5d828b756609df215d5c0513897449a04350c9616f540d65254d9f928
       buildHashType: sha256
       buildPath: builds/cluster-metal/system-upgrade
