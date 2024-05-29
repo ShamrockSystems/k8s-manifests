@@ -65,7 +65,7 @@ containerLifecycleHooks: {}
 airflowHome: /opt/airflow
 
 # Default airflow repository -- overridden by all the specific images below
-defaultAirflowRepository: shamrock-local-registry.localhost:44411/library/airflow
+defaultAirflowRepository: shamrock-local-registry.localhost:37311/library/airflow
 
 # Default airflow tag to deploy
 defaultAirflowTag: "2.9.0-python3.12"

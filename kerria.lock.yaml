@@ -222,110 +222,110 @@ status:
       discoPath: cluster-local/cloudnative-pg
       buildHash: bf290692a9b4bd425a7d2a8f8dd3099f927024d0c825d88257d54d56faea7ed0
       buildHashType: sha256
-      buildPath: builds/local/cloudnative-pg
+      buildPath: builds/cluster-local/cloudnative-pg
     - timestamp: "2024-04-10T03:57:56Z"
       discoHash: c36e5197d6fa977de1fafb8514c09607ade69ef17dcdd2269d8bb66b1c8396d7
       discoHashType: sha256
       discoPath: cluster-local/redis-operator
       buildHash: 27e305bcec61dcc3a1fd9c2550236ad0c9d1446ca40fd9c3182aa7153f098e5f
       buildHashType: sha256
-      buildPath: builds/local/redis-operator
+      buildPath: builds/cluster-local/redis-operator
     - timestamp: "2024-04-10T04:09:06Z"
       discoHash: d352e802b46172f06055ee775ec23e35cef85bd091ab1a3ad9726e5ad63db3c4
       discoHashType: sha256
       discoPath: cluster-local/envoy-gateway
       buildHash: 9d7525ff614758e858480a7c4612dfba6c04a5b0fdd85c2810a0380199a429ba
       buildHashType: sha256
-      buildPath: builds/local/envoy-gateway
+      buildPath: builds/cluster-local/envoy-gateway
     - timestamp: "2024-04-10T05:28:50Z"
       discoHash: 49220044e13ac3331bc71d1c8f89e259a6e06e28e91ea5fbfee04b19180a2553
       discoHashType: sha256
       discoPath: cluster-local/gateway
       buildHash: 43abbc46f72ebc492d64cc9a05b6c4a8c4c3d6b10fd8d034eb882ff013b63f85
       buildHashType: sha256
-      buildPath: builds/local/gateway
+      buildPath: builds/cluster-local/gateway
     - timestamp: "2024-04-10T06:44:47Z"
       discoHash: 97beec5fb6851a8fb2114c3c7dd7519cbb4fd5ca06bf826e7cfc05808f75bfe6
       discoHashType: sha256
       discoPath: cluster-local/reflector
       buildHash: ad096c7f5e6b2f5cd466f38bff90c551eee6a3af0839652b2ccbcc695a4def71
       buildHashType: sha256
-      buildPath: builds/local/reflector
+      buildPath: builds/cluster-local/reflector
     - timestamp: "2024-04-10T06:44:55Z"
       discoHash: 24569d9e7e97c298c282a2373d643b0de84684c72598299faa3caace16da797c
       discoHashType: sha256
       discoPath: cluster-local/crossplane
       buildHash: 9fb85898d80950c708d3d46845cd6b6c0481d429c19f5f440fcfc8cf49af0756
       buildHashType: sha256
-      buildPath: builds/local/crossplane
+      buildPath: builds/cluster-local/crossplane
     - timestamp: "2024-04-10T07:17:41Z"
       discoHash: 297e1c519318064b1e7153c6a9757030b92fbec07fb66e360ad0e77384ceb969
       discoHashType: sha256
       discoPath: cluster-local/argocd
       buildHash: 7972e8ffd639f7a1ab9b60e6ae271eb85c16275da9efec0c8e1a0a6cd08b7dbb
       buildHashType: sha256
-      buildPath: builds/local/argocd
+      buildPath: builds/cluster-local/argocd
     - timestamp: "2024-04-10T08:35:00Z"
       discoHash: 28cc87faa5b6cf853aac1f36b1affa688adc81a837f7a4bb32d988e136b53381
       discoHashType: sha256
       discoPath: cluster-local/keycloak
       buildHash: 707d98f6ffa862540c7e14cef95a853886d71d1a1fcf7026ffc1fa8c81f143cc
       buildHashType: sha256
-      buildPath: builds/local/keycloak
+      buildPath: builds/cluster-local/keycloak
     - timestamp: "2024-04-10T08:35:00Z"
       discoHash: 1d963b880ab57521602a8dc5141a53d2723651eb16a9f9fded52d77d548eb5cd
       discoHashType: sha256
       discoPath: cluster-local/keycloak-provider
       buildHash: 89f5d2c352c304da1c4e4113d3236a6f5d9b056f4eba23d3cd7eaecea7cce90e
       buildHashType: sha256
-      buildPath: builds/local/keycloak-provider
+      buildPath: builds/cluster-local/keycloak-provider
     - timestamp: "2024-04-10T08:52:25Z"
       discoHash: bac871a181b2998769e2c4330f99d63b175f7d640e658b4b39969679b31441d3
       discoHashType: sha256
       discoPath: cluster-local/whoami
       buildHash: c9476984c1290eb30c3c108dfc0deb8dc796846f4eb69325f80831075231afe9
       buildHashType: sha256
-      buildPath: builds/local/whoami
+      buildPath: builds/cluster-local/whoami
     - timestamp: "2024-04-11T06:23:01Z"
       discoHash: 9c6812ac64ba0d1c0eb6e42703e1df66b8c2d7a472524513cce616f009033a26
       discoHashType: sha256
       discoPath: cluster-local/debug
       buildHash: 53ed762f83a730c6a8f3b7f58d6876a711e3805b1c5aa8745f50f9ee6c39cf3b
       buildHashType: sha256
-      buildPath: builds/local/debug
+      buildPath: builds/cluster-local/debug
     - timestamp: "2024-04-14T23:07:16Z"
       discoHash: 42a214e24339383724147ce88ed5dad6a8cdcf71b4f024f05815b791fbbe1c5d
       discoHashType: sha256
       discoPath: cluster-local/noobaa
       buildHash: fdeac70cddf1e4027bc2297d6c251d49c7f3628922f041e118990359f727362c
       buildHashType: sha256
-      buildPath: builds/local/noobaa
+      buildPath: builds/cluster-local/noobaa
     - timestamp: "2024-04-14T23:33:35Z"
       discoHash: 67b9ca39b700b0b89b1b95eff2deb4b90aa6246212cc229411b4ea000f3e797f
       discoHashType: sha256
       discoPath: cluster-local/template-controller
       buildHash: 48ea3e31ff025af27112d3e4b75e613a373d0baf3916d8d850fa22d8c1d92746
       buildHashType: sha256
-      buildPath: builds/local/template-controller
+      buildPath: builds/cluster-local/template-controller
     - timestamp: "2024-04-17T07:42:14Z"
       discoHash: 5ae9fb1e8cf1ab1a909d8bb718eacfc5e1a9c9405c86ef87c37692865e792068
       discoHashType: sha256
       discoPath: cluster-local/coredns
       buildHash: 9069be48999b847d59be9b33245770d9fac88f814b432bcd8f2ba4f1da5d577e
       buildHashType: sha256
-      buildPath: builds/local/coredns
-    - timestamp: "2024-05-15T19:20:34-05:00"
-      discoHash: a9c78bcb7fd6d9d0c28d6a9662cac08194d097d1fea66ef2307c0b1a916e3d7c
+      buildPath: builds/cluster-local/coredns
+    - timestamp: "2024-05-29T12:55:02-05:00"
+      discoHash: 4e5d857f3e0f4ed6e94eac657c5edbd2b768dbd59f8d5db4b016d49004c525ff
       discoHashType: sha256
       discoPath: cluster-local/deeppharmgraph
-      buildHash: e7f14a67b981fbe20d13c1b8879df77ae13143c0581072ca55d71758fe365ee3
+      buildHash: 00d117e34d2c467a9db947e1ceb564c5927fbcbe8b6b3183e9528c467346bf3a
       buildHashType: sha256
-      buildPath: builds/local/deeppharmgraph
-    - timestamp: "2024-05-14T17:11:45-05:00"
-      discoHash: 17a690771241a11ba81f1f4d9891028fd943c8f48bde368ef5a2510272648d96
+      buildPath: builds/cluster-local/deeppharmgraph
+    - timestamp: "2024-05-29T12:48:32-05:00"
+      discoHash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       discoHashType: sha256
       discoPath: cluster-local/applicationset
-      buildHash: 17a690771241a11ba81f1f4d9891028fd943c8f48bde368ef5a2510272648d96
+      buildHash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       buildHashType: sha256
       buildPath: build/cluster-local/applicationset
     - timestamp: "2024-05-14T17:11:47-05:00"

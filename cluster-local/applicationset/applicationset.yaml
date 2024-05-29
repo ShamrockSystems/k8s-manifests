@@ -11,10 +11,10 @@ spec:
         repoURL: file:///mnt/argo-cd-manifests
         revision: HEAD
         directories:
-          - path: builds/local/*
+          - path: builds/cluster-local/*
   template:
     metadata:
-      name: '{{ index .path.segments 1 }}-{{.path.basename}}'
+      name: 'local-{{.path.basename}}'
       namespace: argocd
     spec:
       project: "kustomanager"

@@ -450,10 +450,10 @@ data:
     = /etc/airflow.keytab\nprincipal = airflow@FOO.COM\nreinit_frequency = 3600\n\n[kubernetes]\nairflow_configmap
     = dpg-airflow-config\nairflow_local_settings_configmap = dpg-airflow-config\nmulti_namespace_mode
     = False\nnamespace = deeppharmgraph\npod_template_file = /opt/airflow/pod_templates/pod_template_file.yaml\nworker_container_repository
-    = shamrock-local-registry.localhost:44411/library/airflow\nworker_container_tag
+    = shamrock-local-registry.localhost:37311/library/airflow\nworker_container_tag
     = 2.9.0-python3.12\n\n[kubernetes_executor]\nmulti_namespace_mode = False\nnamespace
     = deeppharmgraph\npod_template_file = /opt/airflow/pod_templates/pod_template_file.yaml\nworker_container_repository
-    = shamrock-local-registry.localhost:44411/library/airflow\nworker_container_tag
+    = shamrock-local-registry.localhost:37311/library/airflow\nworker_container_tag
     = 2.9.0-python3.12\n\n[logging]\ncolored_console_log = False\nremote_logging =
     False\n\n[metrics]\nstatsd_host = dpg-airflow-statsd\nstatsd_on = True\nstatsd_port
     = 9125\nstatsd_prefix = airflow\n\n[scheduler]\nrun_duration = 41460\nstandalone_dag_processor
@@ -481,7 +481,7 @@ data:
     \       - name: AIRFLOW__WEBSERVER__SECRET_KEY\n          valueFrom:\n            secretKeyRef:\n
     \             name: airflow-webserver-secret\n              key: webserver-secret-key
     \     \n        # Dynamically created environment variables\n        # Dynamically
-    created secret envs\n        \n        # Extra env      \n      image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12\n
+    created secret envs\n        \n        # Extra env      \n      image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12\n
     \     imagePullPolicy: IfNotPresent\n      securityContext: \n        allowPrivilegeEscalation:
     false\n        capabilities:\n          drop:\n            - ALL\n      name:
     base\n      resources:\n        {}\n      volumeMounts:\n        - mountPath:
@@ -584,7 +584,7 @@ stringData:
 ---
 apiVersion: v1
 data:
-  connection: cmVkaXM6Ly86dHdzVnpOQVhVN0BkcGctYWlyZmxvdy1yZWRpczo2Mzc5LzA=
+  connection: cmVkaXM6Ly86c2pHRVl0NU5ITkBkcGctYWlyZmxvdy1yZWRpczo2Mzc5LzA=
 kind: Secret
 metadata:
   annotations:
@@ -634,7 +634,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  password: dHdzVnpOQVhVNw==
+  password: c2pHRVl0NU5ITg==
 kind: Secret
 metadata:
   annotations:
@@ -951,7 +951,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/airflow-config: 6b69b4abaedaf23a1c499a0d86057e68aebdaafd75ed03dd0fc42ddc8783b4e9
+        checksum/airflow-config: 8466459dc49a480308efebd899b2811264efe140785d4b0f42e66f504d995c56
         checksum/extra-configmaps: e862ea47e13e634cf17d476323784fa27dac20015550c230953b526182f5cac8
         checksum/extra-secrets: e9582fdd622296c976cbc10a5ba7d6702c28a24fe80795ea5b84ba443a56c827
         checksum/metadata-secret: b2fe937560e9635aeb01fce9100c2f836c5880f81c802565ce95fbcc8a56da4c
@@ -1014,7 +1014,7 @@ spec:
             name: dpg-processing-bucket
         - secretRef:
             name: dpg-processing-bucket-transformed
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -1076,7 +1076,7 @@ spec:
           value: "15"
         - name: AIRFLOW_HOME
           value: /opt/airflow
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: scheduler-log-groomer
         resources: {}
@@ -1135,7 +1135,7 @@ spec:
             name: dpg-processing-bucket
         - secretRef:
             name: dpg-processing-bucket-transformed
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-airflow-migrations
         resources: {}
@@ -1279,7 +1279,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/airflow-config: 6b69b4abaedaf23a1c499a0d86057e68aebdaafd75ed03dd0fc42ddc8783b4e9
+        checksum/airflow-config: 8466459dc49a480308efebd899b2811264efe140785d4b0f42e66f504d995c56
         checksum/extra-configmaps: e862ea47e13e634cf17d476323784fa27dac20015550c230953b526182f5cac8
         checksum/extra-secrets: e9582fdd622296c976cbc10a5ba7d6702c28a24fe80795ea5b84ba443a56c827
         checksum/metadata-secret: b2fe937560e9635aeb01fce9100c2f836c5880f81c802565ce95fbcc8a56da4c
@@ -1342,7 +1342,7 @@ spec:
             name: dpg-processing-bucket
         - secretRef:
             name: dpg-processing-bucket-transformed
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 5
@@ -1440,7 +1440,7 @@ spec:
             name: dpg-processing-bucket
         - secretRef:
             name: dpg-processing-bucket-transformed
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-airflow-migrations
         resources: {}
@@ -1540,7 +1540,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/airflow-config: 6b69b4abaedaf23a1c499a0d86057e68aebdaafd75ed03dd0fc42ddc8783b4e9
+        checksum/airflow-config: 8466459dc49a480308efebd899b2811264efe140785d4b0f42e66f504d995c56
         checksum/extra-configmaps: e862ea47e13e634cf17d476323784fa27dac20015550c230953b526182f5cac8
         checksum/extra-secrets: e9582fdd622296c976cbc10a5ba7d6702c28a24fe80795ea5b84ba443a56c827
         checksum/metadata-secret: b2fe937560e9635aeb01fce9100c2f836c5880f81c802565ce95fbcc8a56da4c
@@ -1602,7 +1602,7 @@ spec:
             name: dpg-processing-bucket
         - secretRef:
             name: dpg-processing-bucket-transformed
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -1652,7 +1652,7 @@ spec:
           value: "15"
         - name: AIRFLOW_HOME
           value: /opt/airflow
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: triggerer-log-groomer
         resources: {}
@@ -1711,7 +1711,7 @@ spec:
             name: dpg-processing-bucket
         - secretRef:
             name: dpg-processing-bucket-transformed
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: wait-for-airflow-migrations
         resources: {}
@@ -1821,7 +1821,7 @@ spec:
             secretKeyRef:
               key: webserver-secret-key
               name: airflow-webserver-secret
-        image: shamrock-local-registry.localhost:44411/library/airflow:2.9.0-python3.12
+        image: shamrock-local-registry.localhost:37311/library/airflow:2.9.0-python3.12
         imagePullPolicy: IfNotPresent
         name: run-airflow-migrations
         resources: {}

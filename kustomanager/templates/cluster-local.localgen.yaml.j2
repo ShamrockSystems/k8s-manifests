@@ -12,7 +12,7 @@ subnet: auto
 token: ShamrockLocalDevToken
 volumes:
   - # Bootstrap: Argo CD
-    volume: {{ repo_path -}}/builds/local/argocd/build.yaml:/var/lib/rancher/k3s/server/manifests/zz-00-argocd.yaml:Z
+    volume: {{ repo_path -}}/builds/cluster-local/argocd/build.yaml:/var/lib/rancher/k3s/server/manifests/zz-00-argocd.yaml:Z
     nodeFilters: ["server:*"]
   - # Bootstrap: ApplicationSet
     volume: {{ repo_path -}}/cluster-local/applicationset:/var/lib/rancher/k3s/server/manifests/zz-01-applicationset:Z
