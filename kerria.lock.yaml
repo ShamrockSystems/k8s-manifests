@@ -160,11 +160,11 @@ status:
       buildHash: 0de9e235957f68321f9d00562a1fc3fb074fa49c77d03220e72d6217c76fc0e8
       buildHashType: sha256
       buildPath: builds/cluster-metal/dpg-processing
-    - timestamp: "2024-05-15T19:20:33-05:00"
-      discoHash: 4ad6777feb15b4ca6dc679afb03ea13461858bff211ae35281ae70f36a9f0eeb
+    - timestamp: "2024-12-16T21:29:09-06:00"
+      discoHash: 4d662e512b548a207c5139deb73086b25eaf06cee8c044d16f526d0debe1450d
       discoHashType: sha256
       discoPath: cluster-metal/argocd
-      buildHash: ff5cd32a79c35d39620ed63d5a59df7111720862441ec46dd3a832dea1c7307e
+      buildHash: fdc066adffe827699db5fd1d7580894c616deb11135edce9e0d99566ba7503e1
       buildHashType: sha256
       buildPath: builds/cluster-metal/argocd
     - timestamp: "2024-03-07T23:30:06Z"
