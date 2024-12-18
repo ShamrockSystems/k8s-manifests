@@ -13321,10 +13321,7 @@ data:
   hubble-export-file-max-backups: "5"
   hubble-export-file-max-size-mb: "10"
   hubble-listen-address: :4244
-  hubble-metrics: dns drop tcp icmp policy:sourceContext=app|workload-name|pod|reserved-identity;destinationContext=app|workload-name|pod|dns|reserved-identity;labelsContext=source_namespace,destination_namespace
-    flow:sourceContext=workload-name|reserved-identity;destinationContext=workload-name|reserved-identity
-    kafka:labelsContext=source_namespace,source_workload,destination_namespace,destination_workload,traffic_direction;sourceContext=workload-name|reserved-identity;destinationContext=workload-name|reserved-identity
-    httpV2:sourceContext=workload-name|pod-name|reserved-identity;destinationContext=workload-name|pod-name|reserved-identity;labelsContext=source_namespace,destination_namespace,traffic_direction
+  hubble-metrics: dns drop tcp flow port-distribution icmp
   hubble-metrics-server: :9965
   hubble-metrics-server-enable-tls: "false"
   hubble-socket-path: /var/run/cilium/hubble.sock
@@ -14463,7 +14460,7 @@ kind: CiliumLoadBalancerIPPool
 metadata:
   name: metal-services
 spec:
-  cidrs:
+  blocks:
   - cidr: 10.83.108.0/24
 ---
 apiVersion: gateway.networking.k8s.io/v1beta1
