@@ -13317,7 +13317,7 @@ data:
   gateway-api-secrets-namespace: cilium-secrets
   gateway-api-service-externaltrafficpolicy: Cluster
   gateway-api-xff-num-trusted-hops: "0"
-  hubble-disable-tls: "false"
+  hubble-disable-tls: "true"
   hubble-export-file-max-backups: "5"
   hubble-export-file-max-size-mb: "10"
   hubble-listen-address: :4244
@@ -13325,9 +13325,6 @@ data:
   hubble-metrics-server: :9965
   hubble-metrics-server-enable-tls: "false"
   hubble-socket-path: /var/run/cilium/hubble.sock
-  hubble-tls-cert-file: /var/lib/cilium/tls/hubble/server.crt
-  hubble-tls-client-ca-files: /var/lib/cilium/tls/hubble/client-ca.crt
-  hubble-tls-key-file: /var/lib/cilium/tls/hubble/server.key
   identity-allocation-mode: crd
   identity-gc-interval: 15m0s
   identity-heartbeat-timeout: 30m0s
@@ -13401,11 +13398,10 @@ metadata:
 ---
 apiVersion: v1
 data:
-  config.yaml: "cluster-name: default\npeer-service: \"hubble-peer.kube-system.svc.cluster.local.:443\"\nlisten-address:
+  config.yaml: "cluster-name: default\npeer-service: \"hubble-peer.kube-system.svc.cluster.local.:80\"\nlisten-address:
     :4245\ngops: true\ngops-port: \"9893\"\nmetrics-listen-address: \":9966\"\ndial-timeout:
-    \nretry-timeout: \nsort-buffer-len-max: \nsort-buffer-drain-timeout: \ntls-hubble-client-cert-file:
-    /var/lib/hubble-relay/tls/client.crt\ntls-hubble-client-key-file: /var/lib/hubble-relay/tls/client.key\ntls-hubble-server-ca-files:
-    /var/lib/hubble-relay/tls/hubble-server-ca.crt\n\ndisable-server-tls: true\n"
+    \nretry-timeout: \nsort-buffer-len-max: \nsort-buffer-drain-timeout: \ndisable-client-tls:
+    true\n\ndisable-server-tls: true\n"
 kind: ConfigMap
 metadata:
   name: hubble-relay-config
@@ -13544,7 +13540,7 @@ spec:
   internalTrafficPolicy: Local
   ports:
   - name: peer-service
-    port: 443
+    port: 80
     protocol: TCP
     targetPort: 4244
   selector:
@@ -13791,9 +13787,6 @@ spec:
         - mountPath: /etc/hubble-relay
           name: config
           readOnly: true
-        - mountPath: /var/lib/hubble-relay/tls
-          name: tls
-          readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: null
@@ -13809,19 +13802,6 @@ spec:
             path: config.yaml
           name: hubble-relay-config
         name: config
-      - name: tls
-        projected:
-          defaultMode: 256
-          sources:
-          - secret:
-              items:
-              - key: tls.crt
-                path: client.crt
-              - key: tls.key
-                path: client.key
-              - key: ca.crt
-                path: hubble-server-ca.crt
-              name: hubble-relay-client-certs
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -14091,9 +14071,6 @@ spec:
           readOnly: true
         - mountPath: /run/xtables.lock
           name: xtables-lock
-        - mountPath: /var/lib/cilium/tls/hubble
-          name: hubble-tls
-          readOnly: true
         - mountPath: /tmp
           name: tmp
       hostNetwork: true
@@ -14350,20 +14327,6 @@ spec:
           path: /proc/sys/kernel
           type: Directory
         name: host-proc-sys-kernel
-      - name: hubble-tls
-        projected:
-          defaultMode: 256
-          sources:
-          - secret:
-              items:
-              - key: tls.crt
-                path: server.crt
-              - key: tls.key
-                path: server.key
-              - key: ca.crt
-                path: client-ca.crt
-              name: hubble-server-certs
-              optional: true
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 2
@@ -14393,53 +14356,6 @@ spec:
     organizations:
     - Shamrock Systems LLC
   usages:
-  - server auth
-  - client auth
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: hubble-relay-client-certs
-  namespace: kube-system
-spec:
-  commonName: '*.hubble-relay.cilium.io'
-  dnsNames:
-  - '*.hubble-relay.cilium.io'
-  duration: 8760h0m0s
-  isCA: false
-  issuerRef:
-    group: cert-manager.io
-    kind: ClusterIssuer
-    name: selfsigned
-  privateKey:
-    rotationPolicy: Always
-  secretName: hubble-relay-client-certs
-  usages:
-  - signing
-  - key encipherment
-  - client auth
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: hubble-server-certs
-  namespace: kube-system
-spec:
-  commonName: '*.default.hubble-grpc.cilium.io'
-  dnsNames:
-  - '*.default.hubble-grpc.cilium.io'
-  duration: 8760h0m0s
-  isCA: false
-  issuerRef:
-    group: cert-manager.io
-    kind: ClusterIssuer
-    name: selfsigned
-  privateKey:
-    rotationPolicy: Always
-  secretName: hubble-server-certs
-  usages:
-  - signing
-  - key encipherment
   - server auth
   - client auth
 ---
