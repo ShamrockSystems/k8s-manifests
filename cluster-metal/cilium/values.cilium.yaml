@@ -1197,7 +1197,7 @@ hubble:
       #                 certificates not provided by the user at installation
       #                 time.
       # - certmanager:  This method use cert-manager to generate & rotate certificates.
-      method: cronJob
+      method: certmanager
       # -- Generated certificates validity duration in days.
       certValidityDuration: 1095
       # -- Schedule for certificates regeneration (regardless of their expiration date).
