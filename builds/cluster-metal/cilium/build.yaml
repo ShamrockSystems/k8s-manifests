@@ -13734,7 +13734,6 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      annotations: null
       labels:
         app.kubernetes.io/name: hubble-relay
         app.kubernetes.io/part-of: cilium
@@ -13796,19 +13795,12 @@ spec:
           readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
-      priorityClassName: null
       restartPolicy: Always
       securityContext:
         fsGroup: 65532
       serviceAccountName: hubble-relay
       terminationGracePeriodSeconds: 1
       volumes:
-      - configMap:
-          items:
-          - key: config.yaml
-            path: config.yaml
-          name: hubble-relay-config
-        name: config
       - name: tls
         projected:
           defaultMode: 256
@@ -13820,8 +13812,19 @@ spec:
               - key: tls.key
                 path: client.key
               - key: ca.crt
-                path: hubble-server-ca.crt
+                path: hubble-client-ca.crt
               name: hubble-relay-client-certs
+          - secret:
+              items:
+              - key: ca.crt
+                path: hubble-server-ca.crt
+              name: hubble-server-certs
+      - configMap:
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: hubble-relay-config
+        name: config
 ---
 apiVersion: apps/v1
 kind: Deployment
