@@ -2,22 +2,13 @@
 
 ## Setup
 
-The tooling for this repository is managed with PDM.
+The tooling for this repository is managed with `uv`.
 
 ```sh
-pdm install
+uv sync
+uv run pre-commit install
 ```
 
 ## Usage
 
-This project is managed by Kustomanager, an in-tree Python-based tool.
-
-### Add project directory
-```sh
-kustomanager add metal argocd
-```
-
-### Rebuild projects
-```sh
-kustomanager build
-```
+This project is managed by [Kerria](https://github.com/kerria-dev/kerria), which builds manifests to VCS.

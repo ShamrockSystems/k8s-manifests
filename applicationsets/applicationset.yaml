@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: kustomanager
+  name: kerria
   namespace: argocd
 spec:
   goTemplate: true
@@ -17,7 +17,7 @@ spec:
       name: 'in-cluster-{{.path.basename}}'
       namespace: argocd
     spec:
-      project: "kustomanager"
+      project: "kerria"
       source:
         repoURL: https://github.com/ShamrockSystems/k8s-manifests.git
         targetRevision: HEAD

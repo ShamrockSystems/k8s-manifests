@@ -1,12 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kustomanager
+  name: kerria
   namespace: argocd
 spec:
   destination:
     name: in-cluster
-  project: kustomanager
+  project: kerria
   source:
     repoURL: https://github.com/ShamrockSystems/k8s-manifests.git
     targetRevision: HEAD
