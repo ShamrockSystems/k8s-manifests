@@ -349,3 +349,10 @@ status:
       buildHash: 56417dc5d828b756609df215d5c0513897449a04350c9616f540d65254d9f928
       buildHashType: sha256
       buildPath: builds/cluster-metal/system-upgrade
+    - timestamp: "2024-12-18T21:24:29-06:00"
+      discoHash: d964f96eedb7e928491ae3171c4971832e1a35fb68580e7c29af0898e2affe5a
+      discoHashType: sha256
+      discoPath: cluster-metal/kubevirt-operator
+      buildHash: 77d2eb503518b4eacd32f829effeda281b77923ac906e92145a351c8cb2e874c
+      buildHashType: sha256
+      buildPath: builds/cluster-metal/kubevirt-operator
