@@ -13734,6 +13734,7 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      annotations: null
       labels:
         app.kubernetes.io/name: hubble-relay
         app.kubernetes.io/part-of: cilium
@@ -13795,12 +13796,19 @@ spec:
           readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
+      priorityClassName: null
       restartPolicy: Always
       securityContext:
         fsGroup: 65532
       serviceAccountName: hubble-relay
       terminationGracePeriodSeconds: 1
       volumes:
+      - configMap:
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: hubble-relay-config
+        name: config
       - name: tls
         projected:
           defaultMode: 256
@@ -13812,19 +13820,8 @@ spec:
               - key: tls.key
                 path: client.key
               - key: ca.crt
-                path: hubble-client-ca.crt
-              name: hubble-relay-client-certs
-          - secret:
-              items:
-              - key: ca.crt
                 path: hubble-server-ca.crt
-              name: hubble-server-certs
-      - configMap:
-          items:
-          - key: config.yaml
-            path: config.yaml
-          name: hubble-relay-config
-        name: config
+              name: hubble-relay-client-certs
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -14402,6 +14399,32 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
+  name: hubble-ca-cert
+  namespace: kube-system
+spec:
+  commonName: hubble-ca
+  duration: 87600h
+  isCA: true
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: selfsigned
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  renewBefore: 720h
+  secretName: hubble-ca-tls
+  subject:
+    organizations:
+    - Shamrock Systems LLC
+  usages:
+  - server auth
+  - client auth
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
   name: hubble-relay-client-certs
   namespace: kube-system
 spec:
@@ -14412,8 +14435,8 @@ spec:
   isCA: false
   issuerRef:
     group: cert-manager.io
-    kind: ClusterIssuer
-    name: selfsigned
+    kind: Issuer
+    name: hubble-ca-issuer
   privateKey:
     rotationPolicy: Always
   secretName: hubble-relay-client-certs
@@ -14435,8 +14458,8 @@ spec:
   isCA: false
   issuerRef:
     group: cert-manager.io
-    kind: ClusterIssuer
-    name: selfsigned
+    kind: Issuer
+    name: hubble-ca-issuer
   privateKey:
     rotationPolicy: Always
   secretName: hubble-server-certs
@@ -14445,6 +14468,15 @@ spec:
   - key encipherment
   - server auth
   - client auth
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: hubble-ca-issuer
+  namespace: kube-system
+spec:
+  ca:
+    secretName: hubble-ca-tls
 ---
 apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool

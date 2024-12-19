@@ -8,6 +8,8 @@ resources:
   - ./ciliumloadbalancerpool.services.yaml
   - ./ciliumloadbalancerpool.home.yaml
   - ./certificate.yaml
+  - ./issuer/certificate.yaml
+  - ./issuer/issuer.yaml
   - ./gatewayclass.yaml
   - ./gateway.yaml
   - ./grafanadashboard.yaml
@@ -29,4 +31,3 @@ patches:
       - op: replace
         path: /apiVersion
         value: batch/v1
-  - path: overlays/deployment.yaml

@@ -209,11 +209,11 @@ status:
       buildHash: 346ff056162c2a03672fa6ee8ea4d27b729087ac5496ab758a9029463e0618ba
       buildHashType: sha256
       buildPath: builds/cluster-metal/kubernetes-dashboard
-    - timestamp: "2024-12-18T17:45:08-06:00"
-      discoHash: 8a51db1de5be9184a9334fe17517d1de280a9fde4d293f1c1dae73f1aaffd84b
+    - timestamp: "2024-12-18T18:15:23-06:00"
+      discoHash: b0d55411a01f2169469ff487c93193273070b3c95906cf07a239d190ae351626
       discoHashType: sha256
       discoPath: cluster-metal/cilium
-      buildHash: d317dc94466854d754c5f7c5bd60ebf82484193e79a6cd225b87a438b86bc633
+      buildHash: d3b54fc519b4665602554802438bf135b5804fef7cee40d97ea82ccd244e4862
       buildHashType: sha256
       buildPath: builds/cluster-metal/cilium
     - timestamp: "2024-04-10T03:05:51Z"

@@ -1298,8 +1298,8 @@ hubble:
       # -- certmanager issuer used when hubble.tls.auto.method=certmanager.
       certManagerIssuerRef:
         group: cert-manager.io
-        kind: ClusterIssuer
-        name: selfsigned
+        kind: Issuer
+        name: hubble-ca-issuer
     # -- The Hubble server certificate and private key
     server:
       # -- Name of the Secret containing the certificate and key for the Hubble server.
@@ -3227,8 +3227,8 @@ clustermesh:
         # -- certmanager issuer used when clustermesh.apiserver.tls.auto.method=certmanager.
         certManagerIssuerRef:
           group: cert-manager.io
-          kind: ClusterIssuer
-          name: selfsigned
+          kind: Issuer
+          name: hubble-ca-issuer
       # -- base64 encoded PEM values for the clustermesh-apiserver server certificate and private key.
       # Used if 'auto' is not enabled.
       server:
