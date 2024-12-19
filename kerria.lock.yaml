@@ -48,11 +48,11 @@ status:
       buildHash: c0e307e7a6d226329f1b92909195fdb497cae3093f552b90607d06793b1e4d3a
       buildHashType: sha256
       buildPath: builds/cluster-metal/sealed-secrets
-    - timestamp: "2024-01-17T16:40:43Z"
-      discoHash: 3f0fc30018c4882ed0c7e754a1e5ad27e62488540e4123d50e0c34f55892d942
+    - timestamp: "2024-12-18T19:03:49-06:00"
+      discoHash: 02cf4f53139fbcd294114853314598da1e91c68cf1deec1872ebf19317a42956
       discoHashType: sha256
       discoPath: cluster-metal/whereabouts
-      buildHash: 4ac71987ab6a2c9558971de96ddadab251be619c2197b2613d702467fba34c06
+      buildHash: aebe7aeed2aeaf044519f37c88df883cfbe122432e3486791d8706ccfe061674
       buildHashType: sha256
       buildPath: builds/cluster-metal/whereabouts
     - timestamp: "2024-01-17T17:56:36Z"
