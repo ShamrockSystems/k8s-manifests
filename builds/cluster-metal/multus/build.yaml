@@ -70,7 +70,9 @@ rules:
   - pods/status
   verbs:
   - get
+  - list
   - update
+  - watch
 - apiGroups:
   - ""
   - events.k8s.io
@@ -96,43 +98,23 @@ subjects:
 ---
 apiVersion: v1
 data:
-  cni-conf.json: |
+  daemon-config.json: |
     {
-      "name": "multus-cni-network",
-      "type": "multus",
-      "capabilities": {
-        "portMappings": true
-      },
-      "delegates": [
-        {
-          "cniVersion": "0.3.1",
-          "name": "default-cni-network",
-          "plugins": [
-            {
-              "type": "flannel",
-              "name": "flannel.1",
-                "delegate": {
-                  "isDefaultGateway": true,
-                  "hairpinMode": true
-                }
-              },
-              {
-                "type": "portmap",
-                "capabilities": {
-                  "portMappings": true
-                }
-              }
-          ]
-        }
-      ],
-      "kubeconfig": "/etc/cni/net.d/multus.d/multus.kubeconfig"
+        "chrootDir": "/hostroot",
+        "cniVersion": "0.3.1",
+        "logLevel": "verbose",
+        "logToStderr": true,
+        "cniConfigDir": "/host/etc/cni/net.d",
+        "multusAutoconfigDir": "/host/etc/cni/net.d",
+        "multusConfigFile": "auto",
+        "socketDir": "/host/run/multus/"
     }
 kind: ConfigMap
 metadata:
   labels:
     app: multus
     tier: node
-  name: multus-cni-config
+  name: multus-daemon-config
   namespace: kube-system
 ---
 apiVersion: apps/v1
@@ -156,13 +138,14 @@ spec:
         tier: node
     spec:
       containers:
-      - args:
-        - --multus-conf-file=auto
-        - --multus-autoconfig-dir=/host/etc/cni/net.d
-        - --cni-conf-dir=/host/etc/cni/net.d
-        command:
-        - /thin_entrypoint
-        image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot
+      - command:
+        - /usr/src/multus-cni/bin/multus-daemon
+        env:
+        - name: MULTUS_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick
         name: kube-multus
         resources:
           limits:
@@ -173,21 +156,38 @@ spec:
             memory: 50Mi
         securityContext:
           privileged: true
+        terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /host/etc/cni/net.d
           name: cni
-        - mountPath: /host/opt/cni/bin
+        - mountPath: /opt/cni/bin
           name: cnibin
-        - mountPath: /tmp/multus-conf
-          name: multus-cfg
+        - mountPath: /host/run
+          name: host-run
+        - mountPath: /var/lib/cni/multus
+          name: host-var-lib-cni-multus
+        - mountPath: /var/lib/kubelet
+          mountPropagation: HostToContainer
+          name: host-var-lib-kubelet
+        - mountPath: /run/k8s.cni.cncf.io
+          name: host-run-k8s-cni-cncf-io
+        - mountPath: /run/netns
+          mountPropagation: HostToContainer
+          name: host-run-netns
+        - mountPath: /etc/cni/net.d/multus.d
+          name: multus-daemon-config
+          readOnly: true
+        - mountPath: /hostroot
+          mountPropagation: HostToContainer
+          name: hostroot
       hostNetwork: true
+      hostPID: true
       initContainers:
-      - args:
-        - --type
-        - thin
-        command:
-        - /install_multus
-        image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot
+      - command:
+        - cp
+        - /usr/src/multus-cni/bin/multus-shim
+        - /host/opt/cni/bin/multus-shim
+        image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick
         name: install-multus-binary
         resources:
           requests:
@@ -195,6 +195,7 @@ spec:
             memory: 15Mi
         securityContext:
           privileged: true
+        terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /host/opt/cni/bin
           mountPropagation: Bidirectional
@@ -213,11 +214,29 @@ spec:
       - hostPath:
           path: /opt/cni/bin
         name: cnibin
+      - hostPath:
+          path: /
+        name: hostroot
       - configMap:
           items:
-          - key: cni-conf.json
-            path: 70-multus.conf
-          name: multus-cni-config
-        name: multus-cfg
+          - key: daemon-config.json
+            path: daemon-config.json
+          name: multus-daemon-config
+        name: multus-daemon-config
+      - hostPath:
+          path: /run
+        name: host-run
+      - hostPath:
+          path: /var/lib/cni/multus
+        name: host-var-lib-cni-multus
+      - hostPath:
+          path: /var/lib/kubelet
+        name: host-var-lib-kubelet
+      - hostPath:
+          path: /run/k8s.cni.cncf.io
+        name: host-run-k8s-cni-cncf-io
+      - hostPath:
+          path: /run/netns/
+        name: host-run-netns
   updateStrategy:
     type: RollingUpdate
