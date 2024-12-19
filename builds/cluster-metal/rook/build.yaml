@@ -18178,7 +18178,8 @@ spec:
       "ipam": {
         "type": "whereabouts",
         "range": "10.83.67.0/24",
-        "range_start": "10.83.67.64"
+        "range_start": "10.83.67.64",
+        "node_slice_size": "/22"
       }
     }
 ---

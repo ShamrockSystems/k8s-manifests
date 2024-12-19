@@ -125,11 +125,11 @@ status:
       buildHash: 84bb0cacff5ecd29e995d7b36a9c9a1fe5d0a296097869cf02e836f285b47cf5
       buildHashType: sha256
       buildPath: builds/cluster-metal/grafana
-    - timestamp: "2024-02-12T23:20:44Z"
-      discoHash: 579da69d73171ba580b9e5d39faf796b596814427bdd1c24830e343995751085
+    - timestamp: "2024-12-18T20:18:16-06:00"
+      discoHash: 95945add6fc9467f4699d61cccff9e8506c07a808905d171d5fc2c6755335897
       discoHashType: sha256
       discoPath: cluster-metal/rook
-      buildHash: 88e66a7e4083a2dac9bb668e306bdda7a5d28fe1d4305abb405eba2dc116c481
+      buildHash: 42e3ed2016a31cca81f623890a2150b450937fd631e5bff25eb1bbe34e8c7ba5
       buildHashType: sha256
       buildPath: builds/cluster-metal/rook
     - timestamp: "2024-02-12T23:30:31Z"
