@@ -3,3 +3,6 @@ kind: Kustomization
 
 resources:
   - https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v4.1.4/deployments/multus-daemonset-thick.yml
+
+patches:
+  - path: overlays/daemonset.yaml

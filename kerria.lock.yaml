@@ -27,11 +27,11 @@ status:
       buildHash: 88a22a1eb66af1e07126e70d61c090791e416503c692c2394e426e225571b001
       buildHashType: sha256
       buildPath: builds/cluster-metal/gateway-api
-    - timestamp: "2024-12-18T19:08:24-06:00"
-      discoHash: 9e57b68c51523c1f9ea56675452fc57b86cc5dc9120d26bbbc85c84759601fb9
+    - timestamp: "2024-12-18T19:17:40-06:00"
+      discoHash: 192273fd747c7471aa1d48cc700706e5e45179e1f997d97c3494c6d550683081
       discoHashType: sha256
       discoPath: cluster-metal/multus
-      buildHash: baa5e54e08da121454614318177a4fe7c691e994d739b8e827f0c0c8a3423c81
+      buildHash: 3774d935a7844ec672aeb4212baa10cffab95aecc5fb866d87effc0fec1a848c
       buildHashType: sha256
       buildPath: builds/cluster-metal/multus
     - timestamp: "2024-01-17T16:40:29Z"
