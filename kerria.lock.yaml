@@ -132,11 +132,11 @@ status:
       buildHash: 42e3ed2016a31cca81f623890a2150b450937fd631e5bff25eb1bbe34e8c7ba5
       buildHashType: sha256
       buildPath: builds/cluster-metal/rook
-    - timestamp: "2024-02-12T23:30:31Z"
-      discoHash: 156839e040185285e9079fa98ebac7e1ac7157a0dc24144f6fe21980b55137e1
+    - timestamp: "2024-12-18T22:25:19-06:00"
+      discoHash: 07511e160cb1fad7bdd67412f8b13a1a39ed7563452b31bbcd53e7855df1aacc
       discoHashType: sha256
       discoPath: cluster-metal/kube-prometheus
-      buildHash: 99f69db66bf64b111a774a5a0ce0e4387888f8f484d2bc7ee412997bf17ee870
+      buildHash: cf4aeff58568c576ddbd2626de6356f6a10fb2422099a7795acf1a2cf8a392cb
       buildHashType: sha256
       buildPath: builds/cluster-metal/kube-prometheus
     - timestamp: "2024-02-13T01:56:27Z"

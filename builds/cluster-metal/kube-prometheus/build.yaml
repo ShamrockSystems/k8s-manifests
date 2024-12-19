@@ -81003,7 +81003,7 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 32Gi
+            storage: 128Gi
         storageClassName: block-replicated
   version: 2.46.0
 ---
