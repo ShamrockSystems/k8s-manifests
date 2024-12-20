@@ -9,7 +9,7 @@ spec:
       "cniVersion": "0.3.1",
       "name": "migration-bridge",
       "type": "ipvlan",
-      "master": "eth1",
+      "master": "eno2vlan310",
       "mode": "l2",
       "mtu": 9000,
       "ipam": {
