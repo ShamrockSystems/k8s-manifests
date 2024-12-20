@@ -125,11 +125,11 @@ status:
       buildHash: 84bb0cacff5ecd29e995d7b36a9c9a1fe5d0a296097869cf02e836f285b47cf5
       buildHashType: sha256
       buildPath: builds/cluster-metal/grafana
-    - timestamp: "2024-12-18T20:18:16-06:00"
-      discoHash: 95945add6fc9467f4699d61cccff9e8506c07a808905d171d5fc2c6755335897
+    - timestamp: "2024-12-19T18:14:47-06:00"
+      discoHash: 579da69d73171ba580b9e5d39faf796b596814427bdd1c24830e343995751085
       discoHashType: sha256
       discoPath: cluster-metal/rook
-      buildHash: 42e3ed2016a31cca81f623890a2150b450937fd631e5bff25eb1bbe34e8c7ba5
+      buildHash: e00455162a4c03c5e59e96cfcd96fb2cae19c19674178516b4f04ee9882377c6
       buildHashType: sha256
       buildPath: builds/cluster-metal/rook
     - timestamp: "2024-12-18T22:25:19-06:00"
@@ -356,10 +356,10 @@ status:
       buildHash: 77d2eb503518b4eacd32f829effeda281b77923ac906e92145a351c8cb2e874c
       buildHashType: sha256
       buildPath: builds/cluster-metal/kubevirt-operator
-    - timestamp: "2024-12-19T16:10:51-06:00"
-      discoHash: de64f9a2b5072fd18501bd86598a996e767d058dc2d3bd3f7f18600ccd9d01ea
+    - timestamp: "2024-12-19T18:14:47-06:00"
+      discoHash: ac58170656f71e4c362f6d3d552f1a6f7f049a9703d7230e913e5fa55b1838be
       discoHashType: sha256
       discoPath: cluster-metal/kubevirt
-      buildHash: 052de94cf7136ab6adf65a4c50a84359c783ff0916d7775577ace7832c269e04
+      buildHash: 441b4357e6c1dc5cd9619bfccce8450784dd2b2cf586a5d23103a7cdb3982903
       buildHashType: sha256
       buildPath: builds/cluster-metal/kubevirt

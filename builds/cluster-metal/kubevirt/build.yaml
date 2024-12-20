@@ -15,8 +15,7 @@ spec:
       "ipam": {
         "type": "whereabouts",
         "range": "10.76.10.10/24",
-        "range_start": "10.76.10.64",
-        "node_slice_size": "/22"
+        "range_start": "10.76.10.64"
       }
     }
 ---
