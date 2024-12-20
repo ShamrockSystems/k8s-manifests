@@ -14,7 +14,7 @@ spec:
       "mtu": 9000,
       "ipam": {
         "type": "whereabouts",
-        "range": "10.76.10.10/24",
+        "range": "10.76.10.0/24",
         "range_start": "10.76.10.64"
       }
     }
