@@ -363,10 +363,10 @@ status:
       buildHash: 1af818d52a44becd4fdd4572d36cbd25b36f9fff70b1c6c5d8246c9409ce9e58
       buildHashType: sha256
       buildPath: builds/cluster-metal/kubevirt
-    - timestamp: "2024-12-19T19:53:41-06:00"
-      discoHash: 6eb667ade92e18edee63790495a99182fbb51e79b5dc89d32191fd159f70187c
+    - timestamp: "2024-12-21T10:54:16-06:00"
+      discoHash: fd4233a9c45e53e843bbd3129981fcd8a69367b5092e2e4ca29a2f5d40861c63
       discoHashType: sha256
       discoPath: cluster-metal/windows
-      buildHash: facfb69dcc3224841c5b0f7271f51f5cdaf316b39d1d7cf9dca027d33cd7cf22
+      buildHash: a527d75ad01db8f648936f0888f094e3ff4e81403407b296a32d429299e30492
       buildHashType: sha256
       buildPath: builds/cluster-metal/windows

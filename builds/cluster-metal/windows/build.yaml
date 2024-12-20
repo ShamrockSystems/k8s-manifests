@@ -44,15 +44,15 @@ spec:
           bus: virtio
         name: cloudinitdisk
       interfaces:
-      - masquerade: {}
+      - bridge: {}
         name: domain
     resources:
       requests:
         memory: 1024M
   networks:
   - multus:
+      default: true
       networkName: domain-network
-      primary: true
     name: domain
   terminationGracePeriodSeconds: 0
   volumes:
@@ -84,15 +84,15 @@ spec:
           bus: virtio
         name: cloudinitdisk
       interfaces:
-      - masquerade: {}
+      - bridge: {}
         name: domain
     resources:
       requests:
         memory: 1024M
   networks:
   - multus:
+      default: true
       networkName: domain-network
-      primary: true
     name: domain
   terminationGracePeriodSeconds: 0
   volumes:
