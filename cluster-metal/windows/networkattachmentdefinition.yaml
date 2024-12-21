@@ -18,3 +18,24 @@ spec:
         "range_start": "10.76.20.64"
       }
     }
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: domain-network
+  namespace: kube-system
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "windows-domain",
+      "type": "ipvlan",
+      "master": "eno2vlan320",
+      "mode": "l2",
+      "mtu": 9000,
+      "ipam": {
+        "type": "whereabouts",
+        "range": "10.76.20.0/24",
+        "range_start": "10.76.20.64"
+      }
+    }
