@@ -3,5 +3,4 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
-  - ./networkattachmentdefinition.yaml
   - ./virtualmachineinstance.yaml

@@ -19,6 +19,23 @@ spec:
       }
     }
 ---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: passt-network
+  namespace: kubevirt
+spec:
+  config: |
+    {
+      "cniVersion": "1.0.0",
+      "name": "netbindingpasst",
+      "plugins": [
+        {
+          "type": "kubevirt-passt-binding"
+        }
+      ]
+    }
+---
 apiVersion: kubevirt.io/v1
 kind: KubeVirt
 metadata:
@@ -30,8 +47,18 @@ spec:
     developerConfiguration:
       featureGates:
       - LiveMigration
+      - NetworkBindingPlugins
     migrations:
       network: migration-network
+    network:
+      binding:
+        passt:
+          computeResourceOverhead:
+            requests:
+              memory: 500Mi
+          migration: {}
+          networkAttachmentDefinition: kubevirt/passt-network
+          sidecarImage: quay.io/kubevirt/network-passt-binding:20250105_6b393ef5f3
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
   workloadUpdateStrategy: {}

@@ -10,8 +10,18 @@ spec:
     developerConfiguration:
       featureGates:
         - LiveMigration
+        - NetworkBindingPlugins
     migrations:
       network: migration-network
+    network:
+      binding:
+        passt:
+          networkAttachmentDefinition: kubevirt/passt-network
+          sidecarImage: quay.io/kubevirt/network-passt-binding:20250105_6b393ef5f3
+          migration: {}
+          computeResourceOverhead:
+            requests:
+              memory: 500Mi
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
   workloadUpdateStrategy: {}

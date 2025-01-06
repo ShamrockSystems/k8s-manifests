@@ -17,16 +17,20 @@ spec:
             bus: virtio
           name: cloudinitdisk
       interfaces:
-        - bridge: {}
-          name: domain
+        - name: cluster
+          binding:
+            name: passt
+        - name: domain
+          bridge: {}
     resources:
       requests:
         memory: 1024M
   networks:
+    - name: cluster
+      pod: {}
     - name: domain
       multus:
-        default: true
-        networkName: domain-network
+        networkName: domain-net
   terminationGracePeriodSeconds: 0
   volumes:
     - containerDisk:
@@ -57,16 +61,20 @@ spec:
             bus: virtio
           name: cloudinitdisk
       interfaces:
-        - bridge: {}
-          name: domain
+        - name: cluster
+          binding:
+            name: passt
+        - name: domain
+          bridge: {}
     resources:
       requests:
         memory: 1024M
   networks:
+    - name: cluster
+      pod: {}
     - name: domain
       multus:
-        default: true
-        networkName: domain-network
+        networkName: domain-net
   terminationGracePeriodSeconds: 0
   volumes:
     - containerDisk:
@@ -78,3 +86,23 @@ spec:
           #cloud-config
           password: fedora
           chpasswd: { expire: False }
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: domain-net
+  namespace: windows
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "windows-domain",
+      "plugins": [
+        {
+          "type": "bridge",
+          "bridge": "eno2vmbr0",
+          "vlan": 320,
+          "ipam": {}
+        }
+      ]
+    }
