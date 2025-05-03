@@ -17435,7 +17435,7 @@ metadata:
 spec:
   cephVersion:
     allowUnsupported: false
-    image: quay.io/ceph/ceph:v18.2.1
+    image: quay.io/ceph/ceph:v18.2.6
   cleanupPolicy:
     allowUninstallWithVolumes: false
     confirmation: ""
