@@ -17831,7 +17831,7 @@ spec:
 apiVersion: ceph.rook.io/v1
 kind: CephClient
 metadata:
-  name: extnode-dandelion0
+  name: extnodedandelion0
   namespace: rook-ceph
 spec:
   caps:
