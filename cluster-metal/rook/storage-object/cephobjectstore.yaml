@@ -42,6 +42,7 @@ spec:
   preservePoolsOnDelete: true
   # The gateway service configuration
   gateway:
+
     # A reference to the secret in the rook namespace where the ssl certificate is stored
     sslCertificateRef: object-erasure-selfsigned
     # The port that RGW pods will listen on (http)
@@ -51,7 +52,7 @@ spec:
     # The number of pods in the rgw deployment
     instances: 1
     # The affinity rules to apply to the rgw deployment or daemonset.
-    placement:
+    placement: ~
     #  nodeAffinity:
     #    requiredDuringSchedulingIgnoredDuringExecution:
     #      nodeSelectorTerms:
@@ -66,12 +67,12 @@ spec:
     #  podAffinity:
     #  podAntiAffinity:
     # A key/value list of annotations
-    annotations:
+    annotations: ~
     #  key: value
     # A key/value list of labels
-    labels:
+    labels: ~
     #  key: value
-    resources:
+    resources: ~
     # The requests and limits set here, allow the object store gateway Pod(s) to use half of one CPU core and 1 gigabyte of memory
     #  limits:
     #    cpu: "500m"
