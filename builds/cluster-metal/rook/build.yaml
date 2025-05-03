@@ -17321,7 +17321,7 @@ spec:
             secretKeyRef:
               key: ceph-username
               name: rook-ceph-mon
-        image: quay.io/ceph/ceph:v18.2.1
+        image: quay.io/ceph/ceph:v18.2.6
         imagePullPolicy: IfNotPresent
         name: rook-ceph-tools
         securityContext:
