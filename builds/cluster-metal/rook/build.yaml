@@ -17607,6 +17607,21 @@ spec:
     distributed: 1
 ---
 apiVersion: ceph.rook.io/v1
+kind: CephNFS
+metadata:
+  name: rook-nfs
+  namespace: rook-ceph
+spec:
+  security: null
+  server:
+    active: 1
+    annotations: null
+    labels: null
+    logLevel: NIV_INFO
+    placement: null
+    resources: null
+---
+apiVersion: ceph.rook.io/v1
 kind: CephObjectStore
 metadata:
   name: object-erasure
