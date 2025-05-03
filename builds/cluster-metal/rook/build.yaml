@@ -17829,6 +17829,17 @@ spec:
       interval: 60s
 ---
 apiVersion: ceph.rook.io/v1
+kind: CephClient
+metadata:
+  name: extnode-dandelion0
+  namespace: rook-ceph
+spec:
+  caps:
+    mds: allow rw, allow rw path=/
+    mon: allow r
+    osd: allow rw tag cephfs
+---
+apiVersion: ceph.rook.io/v1
 kind: CephCluster
 metadata:
   name: rook-ceph

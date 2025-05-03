@@ -16,6 +16,7 @@ resources:
   - https://raw.githubusercontent.com/rook/rook/v1.13.3/deploy/examples/monitoring/service-monitor.yaml
   - https://raw.githubusercontent.com/rook/rook/v1.13.3/deploy/examples/monitoring/exporter-service-monitor.yaml
   - ./grafanadashboard.yaml
+  - ./cephclient.dandelion0.yaml
 
 patches:
   - path: overlays/operator.yaml
