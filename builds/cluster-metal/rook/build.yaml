@@ -17419,13 +17419,13 @@ spec:
 apiVersion: ceph.rook.io/v1
 kind: CephClient
 metadata:
-  name: extnodedandelion0
+  name: extnode-dandelion0
   namespace: rook-ceph
 spec:
   caps:
-    mds: allow rw, allow rw path=/
+    mds: allow r, allow rw path=/
     mon: allow r
-    osd: allow rw tag cephfs
+    osd: allow rw tag cephfs data=filesystem-erasure
 ---
 apiVersion: ceph.rook.io/v1
 kind: CephCluster
