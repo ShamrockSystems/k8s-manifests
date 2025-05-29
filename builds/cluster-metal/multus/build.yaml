@@ -184,9 +184,11 @@ spec:
       hostPID: true
       initContainers:
       - command:
-        - cp
-        - /usr/src/multus-cni/bin/multus-shim
-        - /host/opt/cni/bin/multus-shim
+        - /usr/src/multus-cni/bin/install_multus
+        - -d
+        - /host/opt/cni/bin
+        - -t
+        - thick
         image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick
         name: install-multus-binary
         resources:
