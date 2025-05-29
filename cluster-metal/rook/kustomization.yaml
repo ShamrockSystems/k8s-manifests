@@ -13,6 +13,7 @@ resources:
   - ./storage-filesystem/
   - ./storage-object/
   - ./cephnfs.yaml
+  - ./loadbalancer.nfs.yaml
   - ./httproute.yaml
   - https://raw.githubusercontent.com/rook/rook/v1.17.1/deploy/examples/monitoring/service-monitor.yaml
   - https://raw.githubusercontent.com/rook/rook/v1.17.1/deploy/examples/monitoring/exporter-service-monitor.yaml

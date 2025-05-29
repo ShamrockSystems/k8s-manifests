@@ -1,0 +1,11 @@
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "metal-cephnet"
+spec:
+  blocks:
+    - start: "10.83.67.32"
+      stop: "10.83.67.63"
+  serviceSelector:
+    matchLabels:
+      ipPool: metal-cephnet

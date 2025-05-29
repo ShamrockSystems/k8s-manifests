@@ -125,11 +125,11 @@ status:
       buildHash: 84bb0cacff5ecd29e995d7b36a9c9a1fe5d0a296097869cf02e836f285b47cf5
       buildHashType: sha256
       buildPath: builds/cluster-metal/grafana
-    - timestamp: "2025-05-03T17:15:39-04:00"
-      discoHash: 9a7a772658c08abb480681d376882b8a3deaf730214080a6cba051deab44c8d9
+    - timestamp: "2025-05-29T18:12:27-05:00"
+      discoHash: bd7aecfb95731909a531eb3f88828f28407db60e790fd786671a2290fe40f466
       discoHashType: sha256
       discoPath: cluster-metal/rook
-      buildHash: 692f607b12301f5726031b46359cc628f2d03821d4515f00e576c07fc1a865a6
+      buildHash: 99f991ed198d3999f43f3915e072892bb5da155e9f0af6aeef3af0650bdeb03e
       buildHashType: sha256
       buildPath: builds/cluster-metal/rook
     - timestamp: "2024-12-18T22:25:19-06:00"
@@ -209,11 +209,11 @@ status:
       buildHash: 346ff056162c2a03672fa6ee8ea4d27b729087ac5496ab758a9029463e0618ba
       buildHashType: sha256
       buildPath: builds/cluster-metal/kubernetes-dashboard
-    - timestamp: "2024-12-18T18:15:23-06:00"
-      discoHash: b0d55411a01f2169469ff487c93193273070b3c95906cf07a239d190ae351626
+    - timestamp: "2025-05-29T18:12:28-05:00"
+      discoHash: e04a3d63a96582ac20b49e7c19e09033b4a65a880d5fae7a16db2c837f551332
       discoHashType: sha256
       discoPath: cluster-metal/cilium
-      buildHash: d3b54fc519b4665602554802438bf135b5804fef7cee40d97ea82ccd244e4862
+      buildHash: e9ba9d2eede99f990119b824a43b241600e79847698a42293fc2a68ecee15d32
       buildHashType: sha256
       buildPath: builds/cluster-metal/cilium
     - timestamp: "2024-04-10T03:05:51Z"

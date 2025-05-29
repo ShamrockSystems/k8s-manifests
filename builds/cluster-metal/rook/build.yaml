@@ -17156,6 +17156,23 @@ metadata:
   name: rook-ceph-operator-config
   namespace: rook-ceph
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ipPool: metal-cephnet
+  name: rook-nfs-lb
+  namespace: rook-ceph
+spec:
+  ports:
+  - name: nfs
+    port: 2049
+    protocol: TCP
+    targetPort: 2049
+  selector:
+    ceph_nfs: rook-nfs
+  type: LoadBalancer
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
