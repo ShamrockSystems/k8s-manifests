@@ -17159,6 +17159,8 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    lbipam.cilium.io/ips: 10.83.67.32
   labels:
     ipPool: metal-cephnet
   name: rook-nfs-lb

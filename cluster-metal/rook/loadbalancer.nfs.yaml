@@ -3,6 +3,8 @@ kind: Service
 metadata:
   labels:
     ipPool: metal-cephnet
+  annotations:
+    "lbipam.cilium.io/ips": "10.83.67.32"
   name: rook-nfs-lb
   namespace: rook-ceph
 spec:
