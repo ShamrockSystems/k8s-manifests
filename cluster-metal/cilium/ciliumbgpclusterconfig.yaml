@@ -8,7 +8,6 @@ spec:
   bgpInstances:
     - name: as4199764547
       localASN: 4199764547
-      localPort: 179
       peers:
         - name: as4199764548
           peerASN: 4199764548
