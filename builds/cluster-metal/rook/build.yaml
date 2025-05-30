@@ -17137,10 +17137,16 @@ data:
   CSI_RBD_FSGROUPPOLICY: File
   ROOK_CEPH_ALLOW_LOOP_DEVICES: "false"
   ROOK_CEPH_COMMANDS_TIMEOUT_SECONDS: "15"
+  ROOK_CSI_ATTACHER_IMAGE: registry.k8s.io/sig-storage/csi-attacher:v4.8.0
+  ROOK_CSI_CEPH_IMAGE: quay.io/cephcsi/cephcsi:v3.14.0
   ROOK_CSI_DISABLE_DRIVER: "false"
   ROOK_CSI_ENABLE_CEPHFS: "true"
   ROOK_CSI_ENABLE_NFS: "false"
   ROOK_CSI_ENABLE_RBD: "true"
+  ROOK_CSI_PROVISIONER_IMAGE: registry.k8s.io/sig-storage/csi-provisioner:v5.1.0
+  ROOK_CSI_REGISTRAR_IMAGE: registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0
+  ROOK_CSI_RESIZER_IMAGE: registry.k8s.io/sig-storage/csi-resizer:v1.13.1
+  ROOK_CSI_SNAPSHOTTER_IMAGE: registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0
   ROOK_CUSTOM_HOSTNAME_LABEL: ""
   ROOK_DISABLE_DEVICE_HOTPLUG: "false"
   ROOK_DISCOVER_DEVICES_INTERVAL: 60m
