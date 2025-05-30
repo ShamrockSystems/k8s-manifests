@@ -14479,6 +14479,54 @@ spec:
     secretName: hubble-ca-tls
 ---
 apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPAdvertisement
+metadata:
+  labels:
+    advertise: dandelion
+  name: lb-vips-dandelion
+  namespace: kube-system
+spec:
+  advertisements:
+  - advertisementType: Service
+    service:
+      addresses:
+      - LoadBalancerIP
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPClusterConfig
+metadata:
+  name: cluster-bgp
+  namespace: kube-system
+spec:
+  bgpInstances:
+  - localASN: 4199764547
+    localPort: 179
+    name: as4199764547
+    peers:
+    - name: as4199764548
+      peerASN: 4199764548
+      peerAddress: 10.83.86.20
+      peerConfigRef:
+        name: ext-peer-dandelion
+  nodeSelector: {}
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPPeerConfig
+metadata:
+  name: ext-peer-dandelion
+  namespace: kube-system
+spec:
+  families:
+  - advertisements:
+      matchLabels:
+        advertise: dandelion
+    afi: ipv4
+    safi: unicast
+  timers:
+    holdTimeSeconds: 15
+    keepAliveTimeSeconds: 5
+---
+apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: metal-cephnet
