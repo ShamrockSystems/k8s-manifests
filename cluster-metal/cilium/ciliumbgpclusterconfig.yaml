@@ -6,11 +6,11 @@ metadata:
 spec:
   nodeSelector: {}
   bgpInstances:
-    - name: as4199764547
-      localASN: 4199764547
+    - name: as64567
+      localASN: 64567
       peers:
-        - name: as4199764548
-          peerASN: 4199764548
+        - name: as64568
+          peerASN: 64568
           peerAddress: 10.83.86.20
           peerConfigRef:
             name: ext-peer-dandelion
