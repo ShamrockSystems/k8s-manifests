@@ -309,6 +309,8 @@ securityContext:
       - NET_ADMIN
       # Used since cilium creates raw sockets, etc...
       - NET_RAW
+      # Shamrock User: BGP port 179 port bind
+      - NET_BIND_SERVICE
       # Used since cilium monitor uses mmap
       - IPC_LOCK
       # Used in iptables. Consider removing once we are iptables-free
@@ -323,8 +325,8 @@ securityContext:
       # Both PERFMON and BPF requires kernel 5.8, container runtime
       # cri-o >= v1.22.0 or containerd >= v1.5.0.
       # If available, SYS_ADMIN can be removed.
-      #- PERFMON
-      #- BPF
+      # - PERFMON
+      # - BPF
       # Allow discretionary access control (e.g. required for package installation)
       - DAC_OVERRIDE
       # Allow to set Access Control Lists (ACLs) on arbitrary files (e.g. required for package installation)

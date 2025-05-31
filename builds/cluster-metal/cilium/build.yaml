@@ -17329,6 +17329,7 @@ spec:
             - KILL
             - NET_ADMIN
             - NET_RAW
+            - NET_BIND_SERVICE
             - IPC_LOCK
             - SYS_MODULE
             - SYS_ADMIN
