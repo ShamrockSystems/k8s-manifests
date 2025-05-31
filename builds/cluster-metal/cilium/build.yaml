@@ -17780,6 +17780,12 @@ metadata:
 spec:
   advertisements:
   - advertisementType: Service
+    selector:
+      matchExpressions:
+      - key: bgpDisable
+        operator: NotIn
+        values:
+        - dandelion
     service:
       addresses:
       - LoadBalancerIP

@@ -11,3 +11,6 @@ spec:
       service:
         addresses:
           - LoadBalancerIP
+      selector:
+        matchExpressions:
+          - {key: bgpDisable, operator: NotIn, values: ['dandelion']}
