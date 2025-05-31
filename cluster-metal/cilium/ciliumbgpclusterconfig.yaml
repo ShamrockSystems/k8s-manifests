@@ -14,3 +14,25 @@ spec:
           peerAddress: 10.83.86.20
           peerConfigRef:
             name: ext-peer-dandelion
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPNodeConfigOverride
+metadata:
+  name: r710a.metal.lan.shamrock.systems
+  namespace: kube-system
+spec:
+  bgpInstances:
+    - name: as64567
+      routerID: "10.83.67.10"
+      localPort: 179
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPNodeConfigOverride
+metadata:
+  name: r710b.metal.lan.shamrock.systems
+  namespace: kube-system
+spec:
+  bgpInstances:
+    - name: as64567
+      routerID: "10.83.67.11"
+      localPort: 179
