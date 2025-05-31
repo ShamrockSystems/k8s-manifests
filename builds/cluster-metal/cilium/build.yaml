@@ -17819,9 +17819,6 @@ spec:
         advertise: dandelion
     afi: ipv4
     safi: unicast
-  timers:
-    holdTimeSeconds: 15
-    keepAliveTimeSeconds: 5
 ---
 apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool

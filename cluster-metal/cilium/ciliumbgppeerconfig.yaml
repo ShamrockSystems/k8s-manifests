@@ -4,9 +4,6 @@ metadata:
   name: ext-peer-dandelion
   namespace: kube-system
 spec:
-  timers:
-    holdTimeSeconds: 15
-    keepAliveTimeSeconds: 5
   families:
     - afi: ipv4
       safi: unicast
