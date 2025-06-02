@@ -17803,7 +17803,7 @@ spec:
     peers:
     - name: as64568
       peerASN: 64568
-      peerAddress: 10.83.86.20
+      peerAddress: 10.83.67.20
       peerConfigRef:
         name: ext-peer-dandelion
   nodeSelector: {}
